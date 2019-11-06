@@ -1,15 +1,6 @@
 P8105 Data Science - Group Project Proposal
 ================
 
-  - [Group Members and UNIs](#group-members-and-unis)
-  - [\[Tentative\] Project Title](#tentative-project-title)
-  - [Motivation for the Project](#motivation-for-the-project)
-  - [Intended Final Products](#intended-final-products)
-  - [Anticipated Data Source(s)](#anticipated-data-sources)
-  - [Planned Analyses/Visualizations/Coding
-    Challenges](#planned-analysesvisualizationscoding-challenges)
-  - [Planned Timeline](#planned-timeline)
-
 #### Group Members and UNIs
 
 *In alphabetical order:*
@@ -24,24 +15,34 @@ P8105 Data Science - Group Project Proposal
 
 #### \[Tentative\] Project Title
 
-**INSERT INFO HERE**
+“The effects of gentrification on community conflict and housing
+conditions”
 
 -----
 
 #### Motivation for the Project
 
-We want to assess whether or not there is evidence to support the
-hypothesis that as the population gets more white, do housing conditions
-end up improving? During times where one population is rising and
-another is decreasing, is there a difference in 311 complaints?
+Gentrification is a growing problem across NYC and the US, leading to
+rent increases, the displacement of communities, and community conflict.
+We want to assess how changes in the proportion of different racial and
+ethnic populations relates to changes in housing conditions. We also
+want to investigate community conflicts by looking at the rate and type
+of 311 complaints as the population in an area is changing. We
+hypothesize that a shift towards white/european populations will result
+in improved housing conditions, and that changes in population
+proportions will lead to a increase in 311 complaints.
 
 -----
 
 #### Intended Final Products
 
 1.  Describe the distribution of 311 complaints with respect to
-    differences in housing and sub-populations.  
-2.  Time-series analysis of 311 complaints.
+    differences in housing and sub-populations.
+2.  Time series analysis of living conditions (lead, plumbing, water,
+    elevator, infestations, etc.) as it relates to underlying
+    populations across NYC.
+3.  Time-series analysis of 311 complaints with respect to changing
+    population proportions.
 
 -----
 
@@ -64,11 +65,23 @@ Study](https://ajph.aphapublications.org/doi/full/10.2105/AJPH.2006.093229)
 
 ##### *Analyses*
 
-  - Time Series Analysis
+1.  Time Series Analyses: We will use census data to calculate
+    proportions of different racial and ethnic populations across the 5
+    boroughs of NYC for the past 10-20 years. We will then look at the
+    incidence and type of housing and 311 complaints across the same
+    time period.
+2.  Targeted analyses: We will identify key population shifts in the
+    data and perform focused statistical analyses to test our
+    hypotheses.
 
 ##### *Visualizations*
 
-**INSERT INFO HERE**
+1.  NYC Maps - a dashboard where the year can be selected and the
+    population, 311 rate, or housing condition can be selected for.
+2.  The rate of each type of housing issue within each population within
+    each borough
+3.  Before/after plot of population shift and how that affected living
+    conditions and 311 complaints (will look at both type and rate).
 
 ##### *Coding Challenges*
 
