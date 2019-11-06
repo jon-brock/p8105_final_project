@@ -102,6 +102,8 @@ Study](https://ajph.aphapublications.org/doi/full/10.2105/AJPH.2006.093229)
   - Week 3 (11/18/19 - 11/24/19): **INSERT INFO HERE**
 
   - Week 4 (11/25/19 - 12/01/19): **INSERT INFO HERE**
+    
+      - *Thanksgiving week*
 
   - Week 5 (12/02/19 - 12/08/19): **INSERT INFO HERE**
     
@@ -112,6 +114,6 @@ Study](https://ajph.aphapublications.org/doi/full/10.2105/AJPH.2006.093229)
       - (12/05/19 by 20:00) Brief assessment of teammates’ contributions
         (as a short document) due
 
-  - Week 6 (12/10/19): **Final Presentations "In-Class**
+  - Week 6 (12/10/19): **Final Presentations “In-Class”**
 
 -----
