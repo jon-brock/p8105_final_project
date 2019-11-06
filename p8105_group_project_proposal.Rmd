@@ -1,0 +1,64 @@
+---
+title: "P8105 Data Science - Group Project Proposal"
+output: 
+    github_document:
+        toc: TRUE
+        toc_depth: 2
+---
+
+#### Group Members and UNIs  
+
+*In alphabetical order:*  
+
+1. Jon Brock (JPB2210)  
+1. Ava Hamilton (AH3108)  
+1. Steven Lawrence (SL4269)  
+1. Molly Martorella (MEM2331)  
+1. Stephen Powers (SP3694)
+
+***  
+
+#### [Tentative] Project Title  
+
+**INSERT INFO HERE**  
+
+***  
+
+#### Motivation for the Project  
+
+**INSERT INFO HERE**  
+
+***
+
+#### Intended Final Products  
+
+**INSERT INFO HERE**  
+
+***
+
+#### Anticipated Data Source(s)  
+
+**INSERT INFO HERE**  
+
+***  
+
+#### Planned Analyses/Visualizations/Coding Challenges  
+##### *Analyses*  
+
+**INSERT INFO HERE**  
+
+##### *Visualizations*  
+
+**INSERT INFO HERE**  
+
+##### *Coding Challenges*  
+
+**INSERT INFO HERE**  
+
+***  
+
+#### Planned Timeline  
+
+**INSERT INFO HERE**  
+
+***  
