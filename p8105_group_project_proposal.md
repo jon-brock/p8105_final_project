@@ -1,6 +1,15 @@
 P8105 Data Science - Group Project Proposal
 ================
 
+  - [Group Members and UNIs](#group-members-and-unis)
+  - [Project Title](#project-title)
+  - [Motivation for the Project](#motivation-for-the-project)
+  - [Intended Final Products](#intended-final-products)
+  - [Anticipated Data Source(s)](#anticipated-data-sources)
+  - [Planned Analyses/Visualizations/Coding
+    Challenges](#planned-analysesvisualizationscoding-challenges)
+  - [Planned Timeline](#planned-timeline)
+
 #### Group Members and UNIs
 
 *In alphabetical order:*
@@ -13,7 +22,7 @@ P8105 Data Science - Group Project Proposal
 
 -----
 
-#### \[Tentative\] Project Title
+#### Project Title
 
 “The effects of gentrification on community conflict and housing
 conditions”
@@ -69,7 +78,7 @@ Study](https://ajph.aphapublications.org/doi/full/10.2105/AJPH.2006.093229)
     proportions of different racial and ethnic populations across the 5
     boroughs of NYC for the past 10-20 years. We will then look at the
     incidence and type of housing and 311 complaints across the same
-    time period.
+    time period.  
 2.  Targeted analyses: We will identify key population shifts in the
     data and perform focused statistical analyses to test our
     hypotheses.
@@ -77,9 +86,9 @@ Study](https://ajph.aphapublications.org/doi/full/10.2105/AJPH.2006.093229)
 ##### *Visualizations*
 
 1.  NYC Maps - a dashboard where the year can be selected and the
-    population, 311 rate, or housing condition can be selected for.
+    population, 311 rate, or housing condition can be selected for.  
 2.  The rate of each type of housing issue within each population within
-    each borough
+    each borough.  
 3.  Before/after plot of population shift and how that affected living
     conditions and 311 complaints (will look at both type and rate).
 
@@ -97,10 +106,10 @@ Study](https://ajph.aphapublications.org/doi/full/10.2105/AJPH.2006.093229)
       - Project review in-person meeting - No deliverables this week
       - Have census, housing, and 311 data tidied.
   - Week 3 (11/18/19 - 11/24/19):
-      - Make backbone of eventual website.
-      - Create basic plots showing
+      - Make backbone of eventual website
+      - Create basic plots showing \[ENTER INFO\]
   - Week 4 (11/25/19 - 12/01/19):
-      - 
+      - \[TBD\]
   - Week 5 (12/02/19 - 12/08/19):
       - (12/05/19 by 16:00) Written report giving detailed project
         description due  
@@ -108,6 +117,6 @@ Study](https://ajph.aphapublications.org/doi/full/10.2105/AJPH.2006.093229)
         explanatory video (published online) due  
       - (12/05/19 by 20:00) Brief assessment of teammates’ contributions
         (as a short document) due
-  - Week 6 (12/10/19): **Final Presentations "In-Class**
+  - Week 6 (12/10/19): **Final Presentations “In-Class”**
 
 -----

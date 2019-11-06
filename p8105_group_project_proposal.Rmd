@@ -18,7 +18,7 @@ output:
 
 ***  
 
-#### [Tentative] Project Title  
+#### Project Title  
 
 "The effects of gentrification on community conflict and housing conditions"
 
@@ -51,14 +51,14 @@ Gentrification is a growing problem across NYC and the US, leading to rent incre
 #### Planned Analyses/Visualizations/Coding Challenges  
 ##### *Analyses*  
 
-1. Time Series Analyses: We will use census data to calculate proportions of different racial and ethnic populations across the 5 boroughs of NYC for the past 10-20 years. We will then look at the incidence and type of housing and 311 complaints across the same time period.
-1. Targeted analyses: We will identify key population shifts in the data and perform focused statistical analyses to test our hypotheses.
+1. Time Series Analyses: We will use census data to calculate proportions of different racial and ethnic populations across the 5 boroughs of NYC for the past 10-20 years. We will then look at the incidence and type of housing and 311 complaints across the same time period.  
+1. Targeted analyses: We will identify key population shifts in the data and perform focused statistical analyses to test our hypotheses.  
 
 ##### *Visualizations*  
 
-1. NYC Maps - a dashboard where the year can be selected and the population, 311 rate, or housing condition can be selected for.
-1. The rate of each type of housing issue within each population within each borough
-1. Before/after plot of population shift and how that affected living conditions and 311 complaints (will look at both type and rate).
+1. NYC Maps - a dashboard where the year can be selected and the population, 311 rate, or housing condition can be selected for.  
+1. The rate of each type of housing issue within each population within each borough.  
+1. Before/after plot of population shift and how that affected living conditions and 311 complaints (will look at both type and rate).  
 
 ##### *Coding Challenges*  
 
@@ -76,18 +76,17 @@ Gentrification is a growing problem across NYC and the US, leading to rent incre
     -  Have census, housing, and 311 data tidied.
     
 - Week 3 (11/18/19 - 11/24/19):
-    -  Make backbone of eventual website.
-    -  Create basic plots showing
+    -  Make backbone of eventual website
+    -  Create basic plots showing [ENTER INFO]
 
 - Week 4 (11/25/19 - 12/01/19):
-    -  
+    -  [TBD]
 
 - Week 5 (12/02/19 - 12/08/19):
     - (12/05/19 by 16:00) Written report giving detailed project description due  
     - (12/05/19 by 16:00) Webpage overview of project, with short explanatory video (published online) due  
     - (12/05/19 by 20:00) Brief assessment of teammates' contributions (as a short document) due  
     
-- Week 6 (12/10/19): **Final Presentations "In-Class**
-
+- Week 6 (12/10/19): **Final Presentations "In-Class"**
 
 ***  
