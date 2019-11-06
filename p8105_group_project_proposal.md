@@ -98,9 +98,14 @@ Study](https://ajph.aphapublications.org/doi/full/10.2105/AJPH.2006.093229)
       - Have census, housing, and 311 data tidied.
   - Week 3 (11/18/19 - 11/24/19):
       - Make backbone of eventual website.
-      - Create basic plots showing
+      - Plotting of changing populations over time, changing 311
+        complaint rates, and of different housing conditions among
+        populations and neighborhoods overtime.
   - Week 4 (11/25/19 - 12/01/19):
-      - 
+      - Create dashboard that synthesizes timecourse analyses into a
+        plotly map.
+      - Finalize building of website including other plots and more
+        focused plots and analyses of changing population structure.
   - Week 5 (12/02/19 - 12/08/19):
       - (12/05/19 by 16:00) Written report giving detailed project
         description due  
