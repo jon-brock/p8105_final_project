@@ -90,7 +90,7 @@ Study](https://ajph.aphapublications.org/doi/full/10.2105/AJPH.2006.093229)
 
   - Week 4 (11/25/19 - 12/01/19): **INSERT INFO HERE**
     
-      - Thanksgiving week
+      - *Thanksgiving week*
 
   - Week 5 (12/02/19 - 12/08/19): **INSERT INFO HERE**
     
