@@ -36,10 +36,10 @@ rent increases, the displacement of communities, and community conflict.
 We want to assess how changes in the proportion of different racial and
 ethnic populations relates to changes in housing conditions. We also
 want to investigate community conflicts by looking at the rate and type
-of 311 complaints as the population in an area is changing. We
-hypothesize that a shift towards white/european populations will result
-in improved housing conditions, and that changes in population
-proportions will lead to a increase in 311 complaints.
+of 311 complaints as the population in an area changes. We hypothesize
+that a shift towards white/european populations will result in improved
+housing conditions, and that changes in population proportions will lead
+to a increase in 311 complaints.
 
 -----
 
@@ -50,7 +50,7 @@ proportions will lead to a increase in 311 complaints.
 2.  Time series analysis of living conditions (lead, plumbing, water,
     elevator, infestations, etc.) as it relates to underlying
     populations across NYC.
-3.  Time-series analysis of 311 complaints with respect to changing
+3.  Time series analysis of 311 complaints with respect to changing
     population proportions.
 
 -----
@@ -68,8 +68,6 @@ Data](https://www1.nyc.gov/site/planning/planning-level/nyc-population/nyc-popul
 [Immigration and Risk of Children Lead Poisoning: Case-Control
 Study](https://ajph.aphapublications.org/doi/full/10.2105/AJPH.2006.093229)
 
-Census api for r; population estimates. 
-
 -----
 
 #### Planned Analyses/Visualizations/Coding Challenges
@@ -80,9 +78,7 @@ Census api for r; population estimates.
     proportions of different racial and ethnic populations across the 5
     boroughs of NYC for the past 10-20 years. We will then look at the
     incidence and type of housing and 311 complaints across the same
-    time period. We will use the autocorrelation function to assess seasonality
-    and use spearman rank sum test to identify the presence of trend in the number
-    of 311 rate over the time period 10-20 years. 
+    time period.  
 2.  Targeted analyses: We will identify key population shifts in the
     data and perform focused statistical analyses to test our
     hypotheses.
@@ -90,18 +86,15 @@ Census api for r; population estimates.
 ##### *Visualizations*
 
 1.  NYC Maps - a dashboard where the year can be selected and the
-    population, 311 rate, or housing condition can be selected for.  
-2.  The rate of each type of housing issue within each population within
-    each borough.  
+    population, 311 rate, or housing condition.  
+2.  The rate of each type of housing issue within each population
+    stratified by borough.  
 3.  Before/after plot of population shift and how that affected living
     conditions and 311 complaints (will look at both type and rate).
-4.  Seasonal plot of 311 rate 
-5.  Bivariate choropleth map of 311 rate and sub population estimates by region
 
 ##### *Coding Challenges*
 
-**INSERT INFO HERE**
-1.  merging census data with 311 complaint data
+1.  Merging census data with 311 complaint data  
 2.  Bivariate choropleth maps of 311 rate and sub population estimates
 
 -----
@@ -111,11 +104,11 @@ Census api for r; population estimates.
   - Week 1 (11/04/19 - 11/10/19):
       - (11/07/19 by 13:00) Form a team and submit this proposal
   - Week 2 (11/11/19 - 11/17/19):
-      - Project review in-person meeting - No deliverables this week  
+      - Project review in-person meeting - no deliverables this week  
       - Have census, housing, and 311 data tidied
   - Week 3 (11/18/19 - 11/24/19):
       - Make backbone of eventual website  
-      - Create basic plots showing \[ENTER INFO\]  
+      - Create basic plots
       - Plotting of changing populations over time, changing 311
         complaint rates, and of different housing conditions among
         populations and neighborhoods overtime
