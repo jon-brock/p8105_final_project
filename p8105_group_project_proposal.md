@@ -96,11 +96,13 @@ Census api for r; population estimates.
 3.  Before/after plot of population shift and how that affected living
     conditions and 311 complaints (will look at both type and rate).
 4.  Seasonal plot of 311 rate 
+5.  Bivariate choropleth map of 311 rate and sub population estimates by region
 
 ##### *Coding Challenges*
 
 **INSERT INFO HERE**
-1.  
+1.  merging census data with 311 complaint data
+2.  Bivariate choropleth maps of 311 rate and sub population estimates
 
 -----
 
