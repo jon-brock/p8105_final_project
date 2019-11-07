@@ -68,6 +68,8 @@ Data](https://www1.nyc.gov/site/planning/planning-level/nyc-population/nyc-popul
 [Immigration and Risk of Children Lead Poisoning: Case-Control
 Study](https://ajph.aphapublications.org/doi/full/10.2105/AJPH.2006.093229)
 
+Census api for r; population estimates. 
+
 -----
 
 #### Planned Analyses/Visualizations/Coding Challenges
@@ -78,7 +80,9 @@ Study](https://ajph.aphapublications.org/doi/full/10.2105/AJPH.2006.093229)
     proportions of different racial and ethnic populations across the 5
     boroughs of NYC for the past 10-20 years. We will then look at the
     incidence and type of housing and 311 complaints across the same
-    time period.  
+    time period. We will use the autocorrelation function to assess seasonality
+    and use spearman rank sum test to identify the presence of trend in the number
+    of 311 rate over the time period 10-20 years. 
 2.  Targeted analyses: We will identify key population shifts in the
     data and perform focused statistical analyses to test our
     hypotheses.
@@ -91,6 +95,7 @@ Study](https://ajph.aphapublications.org/doi/full/10.2105/AJPH.2006.093229)
     each borough.  
 3.  Before/after plot of population shift and how that affected living
     conditions and 311 complaints (will look at both type and rate).
+4.  Seasonal plot of 311 rate 
 
 ##### *Coding Challenges*
 
