@@ -25,10 +25,8 @@ token <- "QsuUJQpyjGciXV5KibPhY64hO"
 ```{r}
 
 brooklyn<-RSocrata::read.socrata(
-    url="https://data.cityofnewyork.us/resource/erm2-nwe9.csv?borough=BROOKLYN&select=$group_by=incident_zip&$limit=1000", 
+    url="https://data.cityofnewyork.us/resource/erm2-nwe9.csv?borough=BROOKLYN&$limit=1000", 
     app_token = token) 
-
-brooklyn %>% pull(borough) %>% head()
 
 dim(brooklyn)
 
@@ -36,19 +34,24 @@ dim(brooklyn)
 
 ```{r}
 
-manhattan<-RSocrata::read.socrata(url="https://data.cityofnewyork.us/resource/erm2-nwe9.csv?borough=MAnhattan", app_token = token) 
+#manhattan<-RSocrata::read.socrata(url="https://data.cityofnewyork.us/resource/erm2-nwe9.csv?borough=MANHATTAN&$limit=100000", app_token = token) 
 
 dim(manhattan)
+
+#write_csv(manhattan, "manhattan_311_100k.csv")
+
+manhattan_csv <- read_csv("manhattan_311_100k.csv")
+
+head(manhattan_csv)
 
 ```
 
 ```{r}
-nyc_311_data<-RSocrata::read.socrata(url="https://data.cityofnewyork.us/resource/erm2-nwe9.csv?$select=borough$group=incident_zip&$limit=1000", 
+nyc_311_data<-RSocrata::read.socrata(url="https://data.cityofnewyork.us/resource/erm2-nwe9.csv?$limit=1000", 
                                      app_token = token
                                     ) 
 
 dim(nyc_311_data)
 
-nyc_311_data %>% pull(borough) %>% table()
 ```
 
