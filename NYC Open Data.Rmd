@@ -25,20 +25,28 @@ token <- "QsuUJQpyjGciXV5KibPhY64hO"
 ```{r}
 
 brooklyn<-RSocrata::read.socrata(
-    url="https://data.cityofnewyork.us/resource/erm2-nwe9.csv?borough=BROOKLYN&$limit=1000", 
+    url="https://data.cityofnewyork.us/resource/erm2-nwe9.csv?borough=BROOKLYN&$limit=100000", 
     app_token = token) 
 
+write_csv(brooklyn, "brooklyn_311_100k.csv")
+
+brooklyn_csv <- read_csv("brooklyn_311_100k.csv")
+
 dim(brooklyn)
+
+head(brooklyn_csv)
 
 ```
 
 ```{r}
 
-#manhattan<-RSocrata::read.socrata(url="https://data.cityofnewyork.us/resource/erm2-nwe9.csv?borough=MANHATTAN&$limit=100000", app_token = token) 
+manhattan<-RSocrata::read.socrata(
+    url="https://data.cityofnewyork.us/resource/erm2-nwe9.csv?borough=MANHATTAN&$limit=100000", 
+    app_token = token) 
 
 dim(manhattan)
 
-#write_csv(manhattan, "manhattan_311_100k.csv")
+write_csv(manhattan, "manhattan_311_100k.csv")
 
 manhattan_csv <- read_csv("manhattan_311_100k.csv")
 
