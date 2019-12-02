@@ -1,0 +1,66 @@
+﻿MapID,Area Name,Median_Income,community_board
+,Bronx,36593,
+,Brooklyn,52782,
+,Manhattan,79781,
+,Queens,62008,
+,Staten Island,76244,
+,New York City,57782,
+101,BX1 - Mott Haven/Melrose,23375,01 BRONX
+102,BX2 - Hunts Point/Longwood,28525,02 BRONX
+103,BX3 - Morrisania/Crotona,28316,03 BRONX
+104,BX4 - Highbridge/Concourse,27971,04 BRONX
+105,BX5 - Fordham/University Heights,26229,05 BRONX
+106,BX6 - Belmont/East Tremont,27122,06 BRONX
+107,BX7 - Kingsbridge Hghts/Bedford Park,32231,07 BRONX
+108,BX8 - Riverdale/Fieldston,63260,08 BRONX
+109,BX9 - Parkchester/Soundview,40007,09 BRONX
+110,BX10 - Throgs Neck/Co-op City,60740,10 BRONX
+111,BX11 - Morris Park/Bronxdale,50481,11 BRONX
+112,BX12 - Williamsbridge/Baychester,47298,12 BRONX
+201,BK1 - Greenpoint/Williamsburg,55355,01 BROOKLYN
+202,BK2 - Fort Greene/Brooklyn Heights,91068,02 BROOKLYN
+203,BK3 - Bedford Stuyvesant,47646,03 BROOKLYN
+204,BK4 - Bushwick,46974,04 BROOKLYN
+205,BK5 - East New York/Starrett City,38860,05 BROOKLYN
+206,BK6 - Park Slope/Carroll Gardens,107315,06 BROOKLYN
+207,BK7 - Sunset Park,49337,07 BROOKLYN
+208,BK8 - Crown Heights,48404,08 BROOKLYN
+209,BK9 - South Crown Heights/Prospect,45563,09 BROOKLYN
+210,BK10 - Bay Ridge/Dyker Heights,63527,10 BROOKLYN
+211,BK11 - Bensonhurst,50771,11 BROOKLYN
+212,BK12 - Borough Park,44024,12 BROOKLYN
+213,BK13 - Coney Island,34558,13 BROOKLYN
+214,BK14 - Flatbush/Midwood,49883,14 BROOKLYN
+215,BK15 - Sheepshead Bay,62102,15 BROOKLYN
+216,BK16 - Brownsville,30018,16 BROOKLYN
+217,BK17 - East Flatbush,47920,17 BROOKLYN
+218,BK18 - Flatlands/Canarsie,76631,18 BROOKLYN
+301,MN1 - Financial District,147841,01 MANHATTAN
+302,MN2 - Greenwich Village/Soho,126370,02 MANHATTAN
+303,MN3 - Lower East Side/Chinatown,46408,03 MANHATTAN
+304,MN4 - Clinton/Chelsea,91364,04 MANHATTAN
+305,MN5 - Midtown,105638,05 MANHATTAN
+306,MN6 - Stuyvesant Town/Turtle Bay,104601,06 MANHATTAN
+307,MN7 - Upper West Side,105751,07 MANHATTAN
+308,MN8 - Upper East Side,131701,08 MANHATTAN
+309,MN9 - Morningside Heights/Hamilton,45835,09 MANHATTAN
+310,MN10 - Central Harlem,44794,10 MANHATTAN
+311,MN11 - East Harlem,24635,11 MANHATTAN
+312,MN12 - Washington Heights/Inwood,45416,12 MANHATTAN
+401,QU1 - Astoria,43095,01 QUEENS
+402,QU2 - Woodside/Sunnyside,65702,02 QUEENS
+403,QU3 - Jackson Heights,56644,03 QUEENS
+404,QU4 - Elmhurst/Corona,46829,04 QUEENS
+405,QU5 - Ridgewood/Maspeth,69473,05 QUEENS
+406,QU6 - Rego Park/Forest Hills,67136,06 QUEENS
+407,QU7 - Flushing/Whitestone,55352,07 QUEENS
+408,QU8 - Hillcrest/Fresh Meadows,67435,08 QUEENS
+409,QU9 - Ozone Park/Woodhaven,65564,09 QUEENS
+410,QU10 - S. Ozone Park/Howard Beach,68871,10 QUEENS
+411,QU11 - Bayside/Little Neck,74377,11 QUEENS
+412,QU12 - Jamaica/Hollis,60371,12 QUEENS
+413,QU13 - Queens Village,79939,13 QUEENS
+414,QU14 - Rockaway/Broad Channel,57003,14 QUEENS
+501,SI1 - St. George/Stapleton,58195,01 STATEN ISLAND
+502,SI2 - S. Beach/Willowbrook,74879,02 STATEN ISLAND
+503,SI3 - Tottenville/Great Kills,88653,03 STATEN ISLAND
