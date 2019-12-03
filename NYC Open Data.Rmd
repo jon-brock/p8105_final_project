@@ -201,3 +201,13 @@ nycedit = nyc311 %>%
 summary(nycedit$complaint_simp)
 ```
 
+### Income and percent hisp/black variables from American Community Survey by Community District
+```{r}
+
+inc_df = read_csv("./Med_income_2017.csv") %>% janitor::clean_names()
+
+add_inc = left_join(nycedit_cb, inc_df, by = "community_board")
+
+```
+
+
