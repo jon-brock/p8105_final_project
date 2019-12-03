@@ -78,16 +78,19 @@ add_inc = left_join(nycedit_cb, inc_df, by = "community_board")
 
 nycedit_cb2 = add_inc %>% 
     filter(is.na(median_income) == FALSE) %>% 
-    select(community_board, number_complaints, median_income, num_unsolved, num_health_complaint, year) %>% 
+    select(community_board, number_complaints, median_income, num_unsolved, num_health_complaint, year, borough, per_black_nh, per_hisp, per_white_nh) %>% 
     distinct() %>% 
     arrange(community_board)
 
-nyc_cb2 = glm(num_health_complaint ~ median_income + num_unsolved + year, data = nycedit_cb2)
+nyc_cb2 = glm(number_complaints ~ median_income + num_unsolved + year + borough + per_black_nh + per_hisp + per_white_nh, data = nycedit_cb2)
 summary(nyc_cb2)
 
+health_cb = glm(num_health_complaint ~ median_income + num_unsolved + year + borough + per_black_nh + per_hisp, data = nycedit_cb2)
+summary(health_cb)
 
 
-nyc_model = glm(open_complaint ~ median_income + year + health_complaint, data = add_inc)
+
+nyc_model = glm(open_complaint ~ median_income + year + health_complaint + borough + per_black_nh + per_hisp, data = add_inc)
 
 summary(nyc_model)
 
