@@ -1,0 +1,14 @@
+name: ""
+output_dir: "."
+navbar:
+  title: ""
+  left:
+    - text: ""
+      href: 
+    - text: ""
+      href: 
+    - text: ""
+      href: 
+output:
+  html_document:
+    theme: sandstone
