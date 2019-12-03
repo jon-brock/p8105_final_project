@@ -82,7 +82,7 @@ nycedit_cb2 = add_inc %>%
     distinct() %>% 
     arrange(community_board)
 
-nyc_cb2 = glm(number_complaints ~ median_income + num_unsolved + year + borough + per_black_nh + per_hisp + per_white_nh, data = nycedit_cb2)
+nyc_cb2 = glm(number_complaints ~ median_income + num_unsolved + year + borough + per_black_nh + per_hisp, data = nycedit_cb2)
 summary(nyc_cb2)
 
 health_cb = glm(num_health_complaint ~ median_income + num_unsolved + year + borough + per_black_nh + per_hisp, data = nycedit_cb2)
@@ -90,7 +90,7 @@ summary(health_cb)
 
 
 
-nyc_model = glm(open_complaint ~ median_income + year + health_complaint + borough + per_black_nh + per_hisp, data = add_inc)
+nyc_model = glm(open_complaint ~ median_income + year + health_complaint + borough + per_black_nh + per_hisp + complaint_simp, data = add_inc)
 
 summary(nyc_model)
 
