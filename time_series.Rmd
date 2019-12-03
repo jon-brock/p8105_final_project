@@ -1,0 +1,27 @@
+---
+title: "timeseries"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(tseries)
+library(forecast)
+```
+
+```{r}
+nyc_311 %>% 
+    table(complaint_type)
+
+nyc_311 %>% 
+    select(created_year, created_month, complaint_type) %>% 
+    group_by()
+    summarize(
+        n = 
+    )
+```
+
