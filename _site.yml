@@ -1,13 +1,15 @@
-name: ""
+name: "P8105 - Data Science"
 output_dir: "."
 navbar:
-  title: ""
+  title: "Team 4"
   left:
-    - text: ""
+    - text: "Home"
       href: 
-    - text: ""
+    - text: "Statistics"
       href: 
-    - text: ""
+    - text: "Plots"
+      href: 
+    - text: "Models"
       href: 
 output:
   html_document:
