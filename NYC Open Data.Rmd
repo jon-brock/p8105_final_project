@@ -169,6 +169,8 @@ nyc311 = read_csv("/Users/avahamilton/Dropbox/Biostat MS/Data Science I/final/p8
 
 summary(nyc311$city)
 
+
+
 nycedit = nyc311 %>% 
     filter(borough != "Unspecified") %>% 
     mutate(
@@ -182,20 +184,29 @@ nycedit = nyc311 %>%
         community_board = as.factor(community_board),
         open_complaint = ifelse(is.na(closed_date),  1, 0),
         complaint_simp = case_when(
-            str_detect(complaint_type,  regex("street", ignore_case = TRUE))|str_detect(complaint_type,  regex("sidewalk", ignore_case = TRUE))|str_detect(complaint_type,  regex("curb", ignore_case = TRUE))|str_detect(complaint_type,  regex("vehicle", ignore_case = TRUE)) ~ "Street Condition",
+            str_detect(complaint_type,  regex("street", ignore_case = TRUE))|str_detect(complaint_type,  regex("sidewalk", ignore_case = TRUE))|str_detect(complaint_type,  regex("curb", ignore_case = TRUE)) ~ "Street Condition",
             str_detect(complaint_type,  regex("noise", ignore_case = TRUE)) ~ "Noise",
             str_detect(complaint_type, regex("heat", ignore_case = TRUE)) ~ "Heat",
-            str_detect(complaint_type, regex("water", ignore_case = TRUE))|str_detect(complaint_type, regex("plumbing", ignore_case = TRUE))|str_detect(complaint_type, regex("boiler", ignore_case = TRUE)) ~ "Water/plumbing",
+            str_detect(complaint_type, regex("water", ignore_case = TRUE))| str_detect(complaint_type, regex("leak", ignore_case = TRUE))|str_detect(complaint_type, regex("plumbing", ignore_case = TRUE))|str_detect(complaint_type, regex("boiler", ignore_case = TRUE)) ~ "Water/plumbing",
             str_detect(complaint_type, regex("paint", ignore_case = TRUE)) ~ "Paint/Plaster",
-            str_detect(complaint_type, regex("asbestos", ignore_case = TRUE))|str_detect(complaint_type, regex("lead", ignore_case = TRUE))|str_detect(complaint_type, regex("hazard", ignore_case = TRUE)) ~ "Hazard Material",
-            str_detect(complaint_type, regex("elevator", ignore_case = TRUE)) ~ "Elevator",
-            str_detect(complaint_type, regex("sanita", ignore_case = TRUE))|str_detect(complaint_type, regex("rodent", ignore_case = TRUE))|str_detect(complaint_type, regex("dirty", ignore_case = TRUE)) ~ "Sanitation",
+            str_detect(complaint_type, regex("asbestos", ignore_case = TRUE))|str_detect(complaint_type, regex("lead", ignore_case = TRUE))|str_detect(complaint_type, regex("hazard", ignore_case = TRUE))|str_detect(complaint_type, regex("mold", ignore_case = TRUE)) ~ "Hazard Material",
+            str_detect(complaint_type, regex("elevator", ignore_case = TRUE)) |str_detect(complaint_type, regex("maintenance", ignore_case = TRUE))|str_detect(complaint_type, regex("electric", ignore_case = TRUE))|str_detect(complaint_type, regex("stairs", ignore_case = TRUE))|str_detect(complaint_type, regex("window", ignore_case = TRUE)) |str_detect(complaint_type, regex("appliance", ignore_case = TRUE)) ~ "Maintenance",
+            str_detect(complaint_type, regex("sanita", ignore_case = TRUE))|str_detect(complaint_type, regex("rodent", ignore_case = TRUE))|str_detect(complaint_type, regex("dirty", ignore_case = TRUE))|str_detect(complaint_type, regex("sew", ignore_case = TRUE))|str_detect(complaint_type, regex("standing water", ignore_case = TRUE)) ~ "Sanitation",
             str_detect(complaint_type, regex("tree", ignore_case = TRUE)) ~ "Tree",
-            str_detect(complaint_type, regex("parking", ignore_case = TRUE))|str_detect(complaint_type, regex("car", ignore_case = TRUE))|str_detect(complaint_type, regex("drive", ignore_case = TRUE)) ~ "Car"
+            str_detect(complaint_type, regex("parking", ignore_case = TRUE))|str_detect(complaint_type, regex("car", ignore_case = TRUE))|str_detect(complaint_type, regex("drive", ignore_case = TRUE))|str_detect(complaint_type,  regex("vehicle", ignore_case = TRUE))|str_detect(complaint_type,  regex("traffic", ignore_case = TRUE)) ~ "Car/Traffic",
+            str_detect(complaint_type, regex("air quality", ignore_case = TRUE)) ~ "Air Quality",
+            str_detect(complaint_type, regex("collection", ignore_case = TRUE)) ~ "Collection",
+            str_detect(complaint_type, regex("homeless", ignore_case = TRUE))|str_detect(complaint_type, regex("panhandling", ignore_case = TRUE)) ~ "Homeless"
         ),
         health_complaint = ifelse(
-            complaint_simp %in% c("Heat", "Water/Plumbing", "Hazard Material", "Sanitation"), 1,0),
-        complaint_simp = as.factor(complaint_simp)
+            complaint_simp %in% c("Heat", "Water/Plumbing", "Hazard Material", "Sanitation", "Air Quality"), 1,0),
+        complaint_simp = as.factor(complaint_simp),
+        open_health = case_when(
+            open_complaint == 1 & health_complaint == 1 ~ 1,
+            open_complaint == 0 | health_complaint == 0 ~ 0
+        ),
+        openCorr = ifelse(status == "Closed", 0, 1),
+        status = as.factor(status)
     )
 
 summary(nycedit$complaint_simp)
@@ -203,6 +214,17 @@ summary(nycedit$complaint_simp)
 
 ### Income and percent hisp/black variables from American Community Survey by Community District
 ```{r}
+
+nycedit_cb = nycedit %>% 
+    group_by(community_board, year) %>%
+    add_count(community_board, name = "number_complaints") %>% 
+    mutate(
+        num_unsolved = sum(open_complaint),
+        num_health_complaint = sum(health_complaint)
+    ) %>% 
+    select(number_complaints, num_unsolved, everything())
+
+
 
 inc_df = read_csv("./Med_income_2017.csv") %>% janitor::clean_names()
 
