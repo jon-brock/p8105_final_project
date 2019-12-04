@@ -18,7 +18,7 @@ nyc <- read_csv(file = "../p8105nyc_311_100k.csv") %>%
     janitor::clean_names()
 
 
-nyc_tidy <- nyc %>% 
+nyc_tidy <- nyc %>%   select(-unique_key, -city, -park_borough, -agency, -agency_name, -descriptor, -incident_zip, -incident_address, -street_name, -cross_street_1, -cross_street_2, -intersection_street_1, -intersection_street_2, -landmark, -facility_type, -resolution_description, -resolution_action_updated_date, -bbl, -x_coordinate_state_plane, -y_coordinate_state_plane, -open_data_channel_type, -park_facility_name, -vehicle_type, -taxi_company_borough, -taxi_pick_up_location, -bridge_highway_name, -bridge_highway_direction, -bridge_highway_segment, -latitude, -longitude, -location, -road_ramp, -location_type, -address_type) %>% 
     filter(borough != "Unspecified") %>% 
     separate(closed_date, 
              into = c("closed_month","closed_day","closed_year"), 
