@@ -4,7 +4,6 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-<<<<<<< HEAD:DaysToClose.Rmd
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -22,7 +21,6 @@ filter(borough != "Unspecified")
 
 
 nyc_tidy <- new_311 %>% 
-=======
 #install.packages("RSocrata")
 #devtools::install_github("Chicago/RSocrata")
 library(RSocrata)
@@ -38,7 +36,6 @@ nyc <- read_csv(file = "../p8105nyc_311_100k.csv") %>%
     janitor::clean_names()
 
 nyc_tidy <- nyc %>%   
->>>>>>> 64e3fcb461e02ae6f2e87be3fbbc2bd641b209c7:regression_analysis.Rmd
     filter(borough != "Unspecified") %>% 
     separate(closed_date, 
              into = c("closed_month","closed_day","closed_year"), 
@@ -186,19 +183,22 @@ A complaint was labeled unresolved if its status was not labeled as "closed". Th
 ```{r}
 add_inc %>%
     filter(status == "Closed") %>% 
-=======
 ### Aggregating data to community district and year level
 
 To examine the effect of community district level variables on total number of complaints we must first aggregate to the community district level. We are also interested in how year effects the number of complaints in each district so we group by year as well to produce complaint totals for each year and community district.
 
 Once we have complaint totals, we do not want individual complaint information anymore. We select distinct year * community district observations. 
+
+```
+
+
 ```{r message = FALSE}
 
 # grouping by community district and year
 cb_group_year = add_inc %>% 
     group_by(community_board, created_year) %>%
     add_count(community_board, name = "number_complaints") %>% 
->>>>>>> 64e3fcb461e02ae6f2e87be3fbbc2bd641b209c7:regression_analysis.Rmd
+
     mutate(
         closed_year = as.numeric(closed_year),
         closed_month = as.numeric(closed_month),
@@ -229,7 +229,7 @@ cb_group_year = add_inc %>%
   
   summary()
 
-<<<<<<< HEAD:DaysToClose.Rmd
+
 
     
   #  filter(
@@ -237,7 +237,7 @@ cb_group_year = add_inc %>%
   #  ) %>% 
     ggplot(aes(x= diff_dayt, fill = income_bracket))+ geom_density(alpha = 0.5)+scale_fill_viridis_d()
 
-=======
+
 ########## including year
 cb_group_year_distinct = cb_group_year %>% 
     select(community_board, number_complaints, inc_1000s, num_unsolved, num_health_complaint, borough, per_black_nh, per_hisp, per_white_nh, median_income, num_open_health, created_year, year_fac, pop_1000s) %>% 
@@ -248,12 +248,11 @@ cb_group_year_distinct = cb_group_year %>%
         )
 
 cb_group_year_distinct = within(cb_group_year_distinct, borough <- relevel(borough, ref = "MANHATTAN"))
->>>>>>> 64e3fcb461e02ae6f2e87be3fbbc2bd641b209c7:regression_analysis.Rmd
 
 #figure out why is there values greater than 1300 days
 ```
 
-<<<<<<< HEAD:DaysToClose.Rmd
+
 ```{r}
 
 add_inc %>%
@@ -378,6 +377,3 @@ On average, for each additional year we see `r round(pull((summary(num_unsolved_
 
 Based on the adjusted R-squared value,  number of unresolved complaints in a CD are `r 100*round(pull((summary(num_unsolved_model_year) %>% broom::glance()),adj.r.squared),4)`% predicted by this combination of variables. Residuals appear to follow a normal distribution.
 
-
-
->>>>>>> 64e3fcb461e02ae6f2e87be3fbbc2bd641b209c7:regression_analysis.Rmd
