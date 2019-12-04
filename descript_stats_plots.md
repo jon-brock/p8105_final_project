@@ -1,33 +1,49 @@
----
-title: "Descriptive stats plots"
-author: "Molly Martorella"
-date: "12/3/2019"
-output: github_document
----
-
-```{r setup, include=FALSE}
-
-library(tidyverse)
-
-knitr::opts_chunk$set(echo = TRUE)
-
-theme_set(theme_bw())
-```
+Descriptive stats plots
+================
+Molly Martorella
+12/3/2019
 
 # Data
 
 ## NYC 311
 
-Load and tidy the data. Data is 100k randomly sampled complaints from all neighborhoods across all NYC boroughs (600k total samples). Years sampled were 2014-2018.
+Load and tidy the data. Data is 100k randomly sampled complaints from
+all neighborhoods across all NYC boroughs (600k total samples). Years
+sampled were 2014-2018.
 
 Data downloaded from:
-https://wetransfer.com/downloads/f8c5d6c17483e279ff56018db9c44cc420191201000026/c5f48b
+<https://wetransfer.com/downloads/f8c5d6c17483e279ff56018db9c44cc420191201000026/c5f48b>
 
-```{r, warning=FALSE}
-
+``` r
 nyc <- read_csv(file = "./p8105nyc_311_100k.csv") %>% 
     janitor::clean_names()
+```
 
+    ## Parsed with column specification:
+    ## cols(
+    ##   .default = col_character(),
+    ##   unique_key = col_double(),
+    ##   created_year = col_double(),
+    ##   created_time = col_time(format = ""),
+    ##   incident_zip = col_double(),
+    ##   landmark = col_logical(),
+    ##   bbl = col_double(),
+    ##   x_coordinate_state_plane = col_double(),
+    ##   y_coordinate_state_plane = col_double(),
+    ##   vehicle_type = col_logical(),
+    ##   taxi_company_borough = col_logical(),
+    ##   taxi_pick_up_location = col_logical(),
+    ##   bridge_highway_name = col_logical(),
+    ##   bridge_highway_direction = col_logical(),
+    ##   road_ramp = col_logical(),
+    ##   bridge_highway_segment = col_logical(),
+    ##   latitude = col_double(),
+    ##   longitude = col_double()
+    ## )
+
+    ## See spec(...) for full column specifications.
+
+``` r
 nyc_tidy <- nyc %>% 
     filter(borough != "Unspecified") %>% 
     separate(closed_date, 
@@ -129,29 +145,37 @@ nyc_tidy <- nyc %>%
        # openCorr = ifelse(status == "Closed", yes = 0, no = 1),
         status = as.factor(status)
     )
-
 ```
 
-Used skimr::skim, colnames, and levels(factor(nyc$complaint_type)) to investigate and tidy the data. New variables were created to establish a binary status for closed (0) or open (1) complaints.
+Used skimr::skim, colnames, and levels(factor(nyc$complaint\_type)) to
+investigate and tidy the data. New variables were created to establish a
+binary status for closed (0) or open (1) complaints.
 
-Key variables include: `year`, `borough`, `community_board`, `complaint_type`, and `status`.
+Key variables include: `year`, `borough`, `community_board`,
+`complaint_type`, and `status`.
 
 Newly added variables include:
 
-1. `complaint_simp` - based on key words, condenses complaint types into the following categories:'
+1.  `complaint_simp` - based on key words, condenses complaint types
+    into the following categories:’
 
-2. `health_complaint` - binary yes (1) or no (0), based on health associated categories within `complaint_simp`.
+2.  `health_complaint` - binary yes (1) or no (0), based on health
+    associated categories within `complaint_simp`.
 
-3. `open_health_complaint` - binary categorization, either health complaint that is open (1), or non-health related complaint or closed health complaint (0).
+3.  `open_health_complaint` - binary categorization, either health
+    complaint that is open (1), or non-health related complaint or
+    closed health complaint (0).
 
-4. `open_complaint` - binary categorization, closed `status` (0), open (1)
+4.  `open_complaint` - binary categorization, closed `status` (0), open
+    (1)
 
 ## Income and population characteristics data:
 
-The variable, `community_board`, will be used to left join NYC 311 data with income and population characteristics data sourced from American Community Survey by Community District.
+The variable, `community_board`, will be used to left join NYC 311 data
+with income and population characteristics data sourced from American
+Community Survey by Community District.
 
-```{r}
-
+``` r
 inc_df = read_csv("./Med_income_2017.csv") %>% 
     janitor::clean_names() %>% 
     mutate(
@@ -171,18 +195,36 @@ inc_df = read_csv("./Med_income_2017.csv") %>%
         income_bracket = as.factor(income_bracket),
         income_bracket = fct_relevel(income_bracket, c("20k-30k", "30-40k", "40-50k", "50-60k", "60-70k", "70-80k", "80-90k", "90-100k", "100-125k", "125k+"))
     )
-
-
-nyc_inc = left_join(nyc_tidy, inc_df, by = "community_board")
-
 ```
 
-`income_bracket` and `inc_1000s` (rounds income and divides by 1000) variables were added to the neighborhood population characteristics data to ease downstream plots and analyses. The data were left joined using the `community_board` variable.
+    ## Parsed with column specification:
+    ## cols(
+    ##   MapID = col_double(),
+    ##   `Area Name` = col_character(),
+    ##   Median_Income = col_double(),
+    ##   community_board = col_character(),
+    ##   per_blackNH = col_double(),
+    ##   per_whiteNH = col_double(),
+    ##   per_hisp = col_double(),
+    ##   per_other = col_double(),
+    ##   `Total Population` = col_double()
+    ## )
+
+``` r
+nyc_inc = left_join(nyc_tidy, inc_df, by = "community_board")
+```
+
+    ## Warning: Column `community_board` joining factor and character vector, coercing
+    ## into character vector
+
+`income_bracket` and `inc_1000s` (rounds income and divides by 1000)
+variables were added to the neighborhood population characteristics data
+to ease downstream plots and analyses. The data were left joined using
+the `community_board` variable.
 
 ## Combined and tidied data for plotting
 
-```{r}
-
+``` r
 nyc_plots <- nyc_inc %>% 
     group_by(area_name, created_year) %>%
     add_count(area_name, name = "number_complaints") %>% 
@@ -192,130 +234,127 @@ nyc_plots <- nyc_inc %>%
         num_open_health = sum(open_health_complaint)
     ) %>% 
     select(-unique_key, -city, -park_borough, -agency, -agency_name, -descriptor, -incident_zip, -incident_address, -street_name, -cross_street_1, -cross_street_2, -intersection_street_1, -intersection_street_2, -landmark, -facility_type, -resolution_description, -resolution_action_updated_date, -bbl, -x_coordinate_state_plane, -y_coordinate_state_plane, -open_data_channel_type, -park_facility_name, -vehicle_type, -taxi_company_borough, -taxi_pick_up_location, -bridge_highway_name, -bridge_highway_direction, -bridge_highway_segment, -latitude, -longitude, -location, -road_ramp, -location_type, -address_type, -map_id)
-
 ```
 
-The newly combined dataframe was grouped according to `area_name`, a key variable from the population characteristics dataset that provides the local neighborhood name within the borough. Extraneous variables were removed to reduce the dataframe size and ease manipulation of the data.
+The newly combined dataframe was grouped according to `area_name`, a key
+variable from the population characteristics dataset that provides the
+local neighborhood name within the borough. Extraneous variables were
+removed to reduce the dataframe size and ease manipulation of the data.
 
 Newly added variables include:
 
-1. `number_complaints` - total number of complaints within the given neighborhood the complaint was filed.
+1.  `number_complaints` - total number of complaints within the given
+    neighborhood the complaint was filed.
 
-2. `num_unsolved` - total number of open/unresolved complaints within the neighborhood the complaint was filed.
+2.  `num_unsolved` - total number of open/unresolved complaints within
+    the neighborhood the complaint was filed.
 
-3. `num_health_complaint` - total number of health related complaints within the neighborhood the complaint was filed.
+3.  `num_health_complaint` - total number of health related complaints
+    within the neighborhood the complaint was filed.
 
-4. `num_open_health` - total number of open/unresolved health complaints within the neighborhood the complaint was filed.
+4.  `num_open_health` - total number of open/unresolved health
+    complaints within the neighborhood the complaint was filed.
 
 # Function for calculating days until complaint resolution
 
 NEED THIS???
 
-
 # Plots
 
 ## Total number of complaints
 
-Proportion complaints broken down by income bracket and then by income brakcet and borough:
+Complaints broken down by income bracket:
 
-```{r}
-
+``` r
 nyc_plots %>% 
     filter(!is.na(income_bracket)) %>% 
-    group_by(income_bracket) %>% 
-    summarize(n = n(),
-              proportion = n/nrow(nyc_plots)) %>% 
-    ggplot(aes(x = income_bracket, y = proportion)) +
+    group_by(borough, created_year) %>% 
+    add_count(borough, name = "borough_complaints") %>% 
+    ggplot(aes(x = income_bracket, y = borough_complaints)) +
     geom_col() +
-    ylab("Proportion of Total Complaints") +
-    ggtitle("Relative Number of Complaints Filed from Each Income Bracket")
-
-nyc_plots %>% 
-    filter(!is.na(income_bracket)) %>% 
-    group_by(income_bracket, borough) %>% 
-    summarize(n = n(),
-              proportion = n/nrow(nyc_plots)) %>% 
-    ggplot(aes(x = income_bracket, y = proportion)) +
-    geom_col() +
-    ylab("Proportion of Total Complaints") +
-    facet_wrap(~borough, scales = "free_x")
-
+    ylab("Total Complaints")
 ```
 
-Middle class income groups proportionally file the most complaints across all income brackets. The only exception is the Bronx, in which the proportion of 311 complaints is higher in the lowest income group.
+![](descript_stats_plots_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 Total complaints within each neighborhood of each borough:
 
-```{r}
-
+``` r
 nyc_plots %>% 
-    filter(!is.na(area_name)) %>% 
-    group_by(area_name, borough) %>% 
-    summarize(n = n()) %>% 
-    ggplot(aes(x = area_name, y = n)) +
+    filter(borough == "BRONX",
+           !is.na(area_name)) %>% 
+    group_by(area_name) %>% 
+    add_count(area_name, name = "neighborhood_complaints") %>% 
+    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
     geom_col() +
     ylab("Total Complaints") +
     xlab("Neighborhood") +
     theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-    ggtitle("Complaints by Neighborhood") +
-    facet_wrap(~borough, scales = "free_x")
-
+    ggtitle("Bronx Complaints by Neighborhood")
 ```
 
-Total number of `complaint_simp` broken down by each borough and income bracket:
+![](descript_stats_plots_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
-Should I change this to median number?
-
-```{r}
-
+``` r
 nyc_plots %>% 
-    filter(!is.na(income_bracket),
-           !is.na(complaint_simp)) %>% 
-    group_by(income_bracket, borough, complaint_simp) %>% 
-    summarize(n = n(),
-              proportion = n/nrow(nyc_plots)) %>% 
-    ggplot(aes(x = income_bracket, y = proportion, fill = complaint_simp)) +
+    filter(borough == "MANHATTAN",
+           !is.na(area_name)) %>% 
+    group_by(area_name) %>% 
+    add_count(area_name, name = "neighborhood_complaints") %>% 
+    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
     geom_col() +
-    facet_wrap(~borough)
-
+    ylab("Total Complaints") +
+    xlab("Neighborhood") +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    ggtitle("Manhattan Complaints by Neighborhood")
 ```
 
-# Proportion of unsolved cases by income bracket
+![](descript_stats_plots_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->
 
-```{r}
-
-p <- nyc_plots %>% 
-    filter(!is.na(income_bracket)) %>% 
-    group_by(income_bracket, borough, open_complaint) %>% 
-    summarize(n = n()) %>% 
-    pivot_wider(names_from = open_complaint, values_from = n) %>% 
-    rename(closed = '0',
-           open = '1')
-
-p %>% mutate(proportion = (open/closed)) %>% 
-    ggplot(aes(x = income_bracket, y = proportion)) +
+``` r
+nyc_plots %>% 
+    filter(borough == "QUEENS",
+           !is.na(area_name)) %>% 
+    group_by(area_name) %>% 
+    add_count(area_name, name = "neighborhood_complaints") %>% 
+    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
     geom_col() +
-    facet_wrap(~borough, scales = "free_x") +
-    ggtitle("Proportion of Open Cases Within Each Income Bracket")
-
+    ylab("Total Complaints") +
+    xlab("Neighborhood") +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    ggtitle("Queens Complaints by Neighborhood")
 ```
 
+![](descript_stats_plots_files/figure-gfm/unnamed-chunk-5-3.png)<!-- -->
 
+``` r
+nyc_plots %>% 
+    filter(borough == "BROOKLYN",
+           !is.na(area_name)) %>% 
+    group_by(area_name) %>% 
+    add_count(area_name, name = "neighborhood_complaints") %>% 
+    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
+    geom_col() +
+    ylab("Total Complaints") +
+    xlab("Neighborhood") +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    ggtitle("Brooklyn Complaints by Neighborhood")
+```
 
+![](descript_stats_plots_files/figure-gfm/unnamed-chunk-5-4.png)<!-- -->
 
-- number unsolved (open) cases versus income bracket - look at health complaints.
-- number of unsolved (open) cases within each neighborhood with color representing proportion black, hispanic
+``` r
+nyc_plots %>% 
+    filter(borough == "STATEN ISLAND",
+           !is.na(area_name)) %>% 
+    group_by(area_name) %>% 
+    add_count(area_name, name = "neighborhood_complaints") %>% 
+    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
+    geom_col() +
+    ylab("Total Complaints") +
+    xlab("Neighborhood") +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    ggtitle("Staten Island Complaints by Neighborhood")
+```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+![](descript_stats_plots_files/figure-gfm/unnamed-chunk-5-5.png)<!-- -->
