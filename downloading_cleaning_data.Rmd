@@ -165,7 +165,7 @@ head()
 ## Ava cleaning
 ```{r}
 
-nyc311 = read_csv("/Users/avahamilton/Dropbox/Biostat MS/Data Science I/final/p8105nyc_311_100k.csv") %>% 
+nyc311 = read_csv("./p8105nyc_311_100k.csv") %>% 
     janitor::clean_names()
 
 

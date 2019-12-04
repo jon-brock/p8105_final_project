@@ -1,6 +1,16 @@
 ---
 title: "<span style='font-size: 25px'>Project Overview</style>"
 ---
+<<<<<<< HEAD
+[DRAFT]
+
+Inspiration: We live in one of the most expensive, as well as one of the most diverse, cities in the world. As such, there is going to be a plethora of conflict. We thought it would be an interesting research endeavor to utilize the massive 311 complaint data to see how community needs are 
+
+
+
+
+
+=======
 
 __Motivation:__ Provide an overview of the project goals and motivation.
 
@@ -29,12 +39,14 @@ We also included aggregated American Commmunity Survey (ACS) data in our analysi
 
 
 __Exploratory analysis:__ Visualizations, summaries, and exploratory statistical analyses. Justify the steps you took, and show any major changes to your ideas.
+
 XXX
 
 __Additional analysis:__  If you undertake formal statistical analyses, describe these in detail
 
-We conducted linear models to examine predictors of number of complaints from 2014-2018 per community district. Our three outcomes were total number of complaints, number of health complaints, and number of unresolved complaints. We looked at number of complaints from 2014-2018 predicted by year, borough, community district (CD) level variables including median income (in the 1000s), total population (in the 1000s), percent non-hispanic black, percent hispanic, and number of unresolved complaints. 
+We conducted linear models to examine predictors of number of complaints from 2014-2018 per community district. Our three outcomes were total number of complaints, number of health complaints, and number of unresolved complaints. We looked at these categories of complaints from 2014-2018 predicted by year, borough, and community district level variables including median income (in the 1000s), total population (in the 1000s), percent non-hispanic black and percent Hispanic. For total number of complaints and health complaints we included number of unresolved complaints as a predictor as well. 
 
 
 __Discussion:__ What were your findings? Are they what you expect? What insights into the data can you make?
 XXX
+>>>>>>> 063d6f02e10bbe86c4ae7e08e9d0810435d71ebe

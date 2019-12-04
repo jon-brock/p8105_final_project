@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Ava Hamilton" />
+
+
+<title>downloading_cleaning_data</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/sandstone.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 61px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h2 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h3 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h4 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h5 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h6 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Team 4</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="statistics.html">Statistics</a>
+</li>
+<li>
+  <a href="plots.html">Plots</a>
+</li>
+<li>
+  <a href="models.html">Models</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">downloading_cleaning_data</h1>
+<h4 class="author">Ava Hamilton</h4>
+<h4 class="date">12/3/2019</h4>
+
+</div>
+
+
+<pre class="r"><code>#library(RSocrata)
+library(tidyverse)</code></pre>
+<p>This token is to beable to acces data from the socrata repository.</p>
+<pre class="r"><code>token &lt;- &quot;QsuUJQpyjGciXV5KibPhY64hO&quot;</code></pre>
+<p>Here is an example to pull data from the API. the <code>url</code> includes the endpoint for the dataset ending with a <code>?</code>. Subsequently, using the variable names a query functions to organize the data ie: <code>$limit</code> and <code>borough=BROOKLYN</code>. However this did not work as I planned so I described how I collected the data below.</p>
+<pre class="r"><code>brooklyn&lt;-RSocrata::read.socrata(
+    url=&quot;https://data.cityofnewyork.us/resource/erm2-nwe9.csv?borough=BROOKLYN&amp;$created_date between `2014/04/23 12:00:00 and 2018/03/05 12:00:00`&amp;$limit=100&quot;, 
+    app_token = token) 
+
+write_csv(brooklyn, &quot;brooklyn_311_100k.csv&quot;)
+
+brooklyn_csv &lt;- read_csv(&quot;brooklyn_311_100k.csv&quot;)
+
+dim(brooklyn)
+
+head(brooklyn_csv)</code></pre>
+<p>#Importing and merging data</p>
+<p>I downloaded the data from the NYC Open data website filtering for each boorough and time frame 2014 - 2018. Then I sampled from each dataset, containing 700k - 3 million rows, 100k data points in r, cleaned the <code>created_date</code> variable, and checked for equal sampling across the years.</p>
+<p>Brooklyn</p>
+<pre class="r"><code>read_csv(&quot;311_brooklyn.csv&quot;) %&gt;%
+    sample_n(100000, replace = F) %&gt;%
+     separate(`Created Date`, into = c(&quot;month&quot;,&quot;day&quot;,&quot;year&quot;), sep = &quot;\\/&quot; ) %&gt;%
+    separate(year, into = c(&quot;year&quot;,&quot;time&quot;), sep = &quot; &quot;) %&gt;%
+    write_csv(., &quot;brooklyn_311_100k.csv&quot;)
+
+brooklyn&lt;- read_csv(&quot;brooklyn_311_100k.csv&quot;)
+
+table(brooklyn100k$year)</code></pre>
+<p>Manhattan</p>
+<pre class="r"><code>read_csv(&quot;311_manhattan.csv&quot;) %&gt;%
+    sample_n(100000, replace = F) %&gt;%
+     separate(`Created Date`, into = c(&quot;month&quot;,&quot;day&quot;,&quot;year&quot;), sep = &quot;\\/&quot; ) %&gt;%
+    separate(year, into = c(&quot;year&quot;,&quot;time&quot;), sep = &quot; &quot;) %&gt;%
+    write_csv(., &quot;manhattan_311_100k.csv&quot;)
+
+manhattan&lt;- read_csv(&quot;manhattan_311_100k.csv&quot;)
+
+table(manhattan$year)</code></pre>
+<p>Queens</p>
+<pre class="r"><code>read_csv(&quot;311_queens.csv&quot;)%&gt;%
+    sample_n(100000, replace = F) %&gt;%
+     separate(`Created Date`, into = c(&quot;month&quot;,&quot;day&quot;,&quot;year&quot;), sep = &quot;\\/&quot; ) %&gt;%
+    separate(year, into = c(&quot;year&quot;,&quot;time&quot;), sep = &quot; &quot;) %&gt;%
+    write_csv(., &quot;queens_311_100k&quot;)
+
+queens&lt;- read_csv(&quot;queens_311_100k&quot;)
+
+table(queens$year)</code></pre>
+<p>Bronx</p>
+<pre class="r"><code>read_csv(&quot;311_bronx.csv&quot;)%&gt;%
+    sample_n(100000, replace = F) %&gt;%
+     separate(`Created Date`, into = c(&quot;month&quot;,&quot;day&quot;,&quot;year&quot;), sep = &quot;\\/&quot; ) %&gt;%
+    separate(year, into = c(&quot;year&quot;,&quot;time&quot;), sep = &quot; &quot;) %&gt;%
+    write_csv(., &quot;bronx_311_100k.csv&quot;)
+
+bronx&lt;- read_csv(&quot;bronx_311_100k.csv&quot;)
+
+table(bronx$year)</code></pre>
+<p>Staten Island</p>
+<pre class="r"><code>read_csv(&quot;311_statenisland.csv&quot;)  %&gt;%
+    sample_n(100000, replace = F) %&gt;%
+     separate(`Created Date`, into = c(&quot;month&quot;,&quot;day&quot;,&quot;year&quot;), sep = &quot;\\/&quot; ) %&gt;%
+    separate(year, into = c(&quot;year&quot;,&quot;time&quot;), sep = &quot; &quot;) %&gt;%
+    write_csv(., &quot;statenisland_311_100k.csv&quot;)
+
+statenisland &lt;- read_csv(&quot;statenisland_311_100k.csv&quot;)
+
+table(statenisland$year)</code></pre>
+<p>Unspecified</p>
+<pre class="r"><code>read_csv(&quot;311_unspecified.csv&quot;)  %&gt;%
+    sample_n(100000, replace = F) %&gt;%
+     separate(`Created Date`, into = c(&quot;month&quot;,&quot;day&quot;,&quot;year&quot;), sep = &quot;\\/&quot; ) %&gt;%
+    separate(year, into = c(&quot;year&quot;,&quot;time&quot;), sep = &quot; &quot;) %&gt;%
+    write_csv(.,&quot;unspecified_311_100k&quot;)
+
+unspec &lt;- read_csv(&quot;unspecified_311_100k&quot;)
+
+head(unspec)
+
+table(unspec$year)</code></pre>
+<p>Combinging all the datasets of 100k data points.</p>
+<pre class="r"><code>rbind(brooklyn, manhattan, queens, bronx, statenisland, unspec) %&gt;%
+    rename(created_year = &quot;year&quot; , created_day = &quot;day&quot;,created_month = &quot;month&quot;,created_time = &quot;time&quot;) %&gt;%
+    janitor::clean_names() %&gt;%
+   # write_csv(., &quot;p8105nyc_311_100k.csv&quot;)</code></pre>
+<pre class="r"><code>nyc_311&lt;-read_csv(&quot;p8105nyc_311_100k.csv&quot;) </code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   .default = col_character(),
+##   unique_key = col_double(),
+##   created_year = col_double(),
+##   created_time = col_time(format = &quot;&quot;),
+##   incident_zip = col_double(),
+##   landmark = col_logical(),
+##   bbl = col_double(),
+##   x_coordinate_state_plane = col_double(),
+##   y_coordinate_state_plane = col_double(),
+##   vehicle_type = col_logical(),
+##   taxi_company_borough = col_logical(),
+##   taxi_pick_up_location = col_logical(),
+##   bridge_highway_name = col_logical(),
+##   bridge_highway_direction = col_logical(),
+##   road_ramp = col_logical(),
+##   bridge_highway_segment = col_logical(),
+##   latitude = col_double(),
+##   longitude = col_double()
+## )</code></pre>
+<pre><code>## See spec(...) for full column specifications.</code></pre>
+<pre><code>## Warning: 13949 parsing failures.
+##    row                   col           expected                        actual                    file
+## 100085 taxi_pick_up_location 1/0/T/F/TRUE/FALSE WEST   50 STREET AND BROADWAY &#39;p8105nyc_311_100k.csv&#39;
+## 100150 taxi_pick_up_location 1/0/T/F/TRUE/FALSE JFK Airport                   &#39;p8105nyc_311_100k.csv&#39;
+## 100172 taxi_pick_up_location 1/0/T/F/TRUE/FALSE 625 EAST 14 STREET MANHATTAN  &#39;p8105nyc_311_100k.csv&#39;
+## 100215 taxi_pick_up_location 1/0/T/F/TRUE/FALSE Other                         &#39;p8105nyc_311_100k.csv&#39;
+## 100268 taxi_pick_up_location 1/0/T/F/TRUE/FALSE Other                         &#39;p8105nyc_311_100k.csv&#39;
+## ...... ..................... .................. ............................. .......................
+## See problems(...) for more details.</code></pre>
+<pre class="r"><code>nyc_311 %&gt;% 
+head()</code></pre>
+<pre><code>## # A tibble: 6 x 44
+##   unique_key created_month created_day created_year created_time closed_date
+##        &lt;dbl&gt; &lt;chr&gt;         &lt;chr&gt;              &lt;dbl&gt; &lt;time&gt;       &lt;chr&gt;      
+## 1   33634279 06            18                  2016 06:42:00     06/23/2016…
+## 2   37460780 10            18                  2017 04:15:02     10/18/2017…
+## 3   40770610 11            07                  2018 07:39:00     11/09/2018…
+## 4   31672801 10            03                  2015 11:28:42     10/20/2015…
+## 5   32081401 11            27                  2015 10:58:11     11/27/2015…
+## 6   27824485 04            10                  2014 12:00:00     04/25/2014…
+## # … with 38 more variables: agency &lt;chr&gt;, agency_name &lt;chr&gt;,
+## #   complaint_type &lt;chr&gt;, descriptor &lt;chr&gt;, location_type &lt;chr&gt;,
+## #   incident_zip &lt;dbl&gt;, incident_address &lt;chr&gt;, street_name &lt;chr&gt;,
+## #   cross_street_1 &lt;chr&gt;, cross_street_2 &lt;chr&gt;, intersection_street_1 &lt;chr&gt;,
+## #   intersection_street_2 &lt;chr&gt;, address_type &lt;chr&gt;, city &lt;chr&gt;,
+## #   landmark &lt;lgl&gt;, facility_type &lt;chr&gt;, status &lt;chr&gt;, due_date &lt;chr&gt;,
+## #   resolution_description &lt;chr&gt;, resolution_action_updated_date &lt;chr&gt;,
+## #   community_board &lt;chr&gt;, bbl &lt;dbl&gt;, borough &lt;chr&gt;,
+## #   x_coordinate_state_plane &lt;dbl&gt;, y_coordinate_state_plane &lt;dbl&gt;,
+## #   open_data_channel_type &lt;chr&gt;, park_facility_name &lt;chr&gt;, park_borough &lt;chr&gt;,
+## #   vehicle_type &lt;lgl&gt;, taxi_company_borough &lt;lgl&gt;,
+## #   taxi_pick_up_location &lt;lgl&gt;, bridge_highway_name &lt;lgl&gt;,
+## #   bridge_highway_direction &lt;lgl&gt;, road_ramp &lt;lgl&gt;,
+## #   bridge_highway_segment &lt;lgl&gt;, latitude &lt;dbl&gt;, longitude &lt;dbl&gt;,
+## #   location &lt;chr&gt;</code></pre>
+<div id="ava-cleaning" class="section level2">
+<h2>Ava cleaning</h2>
+<pre class="r"><code>nyc311 = read_csv(&quot;./p8105nyc_311_100k.csv&quot;) %&gt;% 
+    janitor::clean_names()</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   .default = col_character(),
+##   unique_key = col_double(),
+##   created_year = col_double(),
+##   created_time = col_time(format = &quot;&quot;),
+##   incident_zip = col_double(),
+##   landmark = col_logical(),
+##   bbl = col_double(),
+##   x_coordinate_state_plane = col_double(),
+##   y_coordinate_state_plane = col_double(),
+##   vehicle_type = col_logical(),
+##   taxi_company_borough = col_logical(),
+##   taxi_pick_up_location = col_logical(),
+##   bridge_highway_name = col_logical(),
+##   bridge_highway_direction = col_logical(),
+##   road_ramp = col_logical(),
+##   bridge_highway_segment = col_logical(),
+##   latitude = col_double(),
+##   longitude = col_double()
+## )</code></pre>
+<pre><code>## See spec(...) for full column specifications.</code></pre>
+<pre><code>## Warning: 13949 parsing failures.
+##    row                   col           expected                        actual                      file
+## 100085 taxi_pick_up_location 1/0/T/F/TRUE/FALSE WEST   50 STREET AND BROADWAY &#39;./p8105nyc_311_100k.csv&#39;
+## 100150 taxi_pick_up_location 1/0/T/F/TRUE/FALSE JFK Airport                   &#39;./p8105nyc_311_100k.csv&#39;
+## 100172 taxi_pick_up_location 1/0/T/F/TRUE/FALSE 625 EAST 14 STREET MANHATTAN  &#39;./p8105nyc_311_100k.csv&#39;
+## 100215 taxi_pick_up_location 1/0/T/F/TRUE/FALSE Other                         &#39;./p8105nyc_311_100k.csv&#39;
+## 100268 taxi_pick_up_location 1/0/T/F/TRUE/FALSE Other                         &#39;./p8105nyc_311_100k.csv&#39;
+## ...... ..................... .................. ............................. .........................
+## See problems(...) for more details.</code></pre>
+<pre class="r"><code>nycedit = nyc311 %&gt;% 
+    filter(borough != &quot;Unspecified&quot;) %&gt;% 
+    mutate(
+        year = as.numeric(created_year),
+        month = as.numeric(created_month),
+        day = as.numeric(created_day),
+        city = as.factor(city),
+        borough = as.factor(park_borough),
+        agency = as.factor(agency),
+        complaint_type = as.factor(complaint_type),
+        community_board = as.factor(community_board),
+        open_complaint = ifelse(is.na(closed_date),  1, 0),
+        complaint_simp = case_when(
+            str_detect(complaint_type,  regex(&quot;street&quot;, ignore_case = TRUE))|str_detect(complaint_type,  regex(&quot;sidewalk&quot;, ignore_case = TRUE))|str_detect(complaint_type,  regex(&quot;curb&quot;, ignore_case = TRUE)) ~ &quot;Street Condition&quot;,
+            str_detect(complaint_type,  regex(&quot;noise&quot;, ignore_case = TRUE)) ~ &quot;Noise&quot;,
+            str_detect(complaint_type, regex(&quot;heat&quot;, ignore_case = TRUE)) ~ &quot;Heat&quot;,
+            str_detect(complaint_type, regex(&quot;water&quot;, ignore_case = TRUE))| str_detect(complaint_type, regex(&quot;leak&quot;, ignore_case = TRUE))|str_detect(complaint_type, regex(&quot;plumbing&quot;, ignore_case = TRUE))|str_detect(complaint_type, regex(&quot;boiler&quot;, ignore_case = TRUE)) ~ &quot;Water/plumbing&quot;,
+            str_detect(complaint_type, regex(&quot;paint&quot;, ignore_case = TRUE)) ~ &quot;Paint/Plaster&quot;,
+            str_detect(complaint_type, regex(&quot;asbestos&quot;, ignore_case = TRUE))|str_detect(complaint_type, regex(&quot;lead&quot;, ignore_case = TRUE))|str_detect(complaint_type, regex(&quot;hazard&quot;, ignore_case = TRUE))|str_detect(complaint_type, regex(&quot;mold&quot;, ignore_case = TRUE)) ~ &quot;Hazard Material&quot;,
+            str_detect(complaint_type, regex(&quot;elevator&quot;, ignore_case = TRUE)) |str_detect(complaint_type, regex(&quot;maintenance&quot;, ignore_case = TRUE))|str_detect(complaint_type, regex(&quot;electric&quot;, ignore_case = TRUE))|str_detect(complaint_type, regex(&quot;stairs&quot;, ignore_case = TRUE))|str_detect(complaint_type, regex(&quot;window&quot;, ignore_case = TRUE)) |str_detect(complaint_type, regex(&quot;appliance&quot;, ignore_case = TRUE)) ~ &quot;Maintenance&quot;,
+            str_detect(complaint_type, regex(&quot;sanita&quot;, ignore_case = TRUE))|str_detect(complaint_type, regex(&quot;rodent&quot;, ignore_case = TRUE))|str_detect(complaint_type, regex(&quot;dirty&quot;, ignore_case = TRUE))|str_detect(complaint_type, regex(&quot;sew&quot;, ignore_case = TRUE))|str_detect(complaint_type, regex(&quot;standing water&quot;, ignore_case = TRUE)) ~ &quot;Sanitation&quot;,
+            str_detect(complaint_type, regex(&quot;tree&quot;, ignore_case = TRUE)) ~ &quot;Tree&quot;,
+            str_detect(complaint_type, regex(&quot;parking&quot;, ignore_case = TRUE))|str_detect(complaint_type, regex(&quot;car&quot;, ignore_case = TRUE))|str_detect(complaint_type, regex(&quot;drive&quot;, ignore_case = TRUE))|str_detect(complaint_type,  regex(&quot;vehicle&quot;, ignore_case = TRUE))|str_detect(complaint_type,  regex(&quot;traffic&quot;, ignore_case = TRUE)) ~ &quot;Car/Traffic&quot;,
+            str_detect(complaint_type, regex(&quot;air quality&quot;, ignore_case = TRUE)) ~ &quot;Air Quality&quot;,
+            str_detect(complaint_type, regex(&quot;collection&quot;, ignore_case = TRUE)) ~ &quot;Collection&quot;,
+            str_detect(complaint_type, regex(&quot;homeless&quot;, ignore_case = TRUE))|str_detect(complaint_type, regex(&quot;panhandling&quot;, ignore_case = TRUE)) ~ &quot;Homeless&quot;
+        ),
+        health_complaint = ifelse(
+            complaint_simp %in% c(&quot;Heat&quot;, &quot;Water/Plumbing&quot;, &quot;Hazard Material&quot;, &quot;Sanitation&quot;, &quot;Air Quality&quot;), 1,0),
+        complaint_simp = as.factor(complaint_simp),
+        open_health = case_when(
+            open_complaint == 1 &amp; health_complaint == 1 ~ 1,
+            open_complaint == 0 | health_complaint == 0 ~ 0
+        ),
+        openCorr = ifelse(status == &quot;Closed&quot;, 0, 1),
+        status = as.factor(status)
+    )
+
+summary(nycedit$complaint_simp)</code></pre>
+<pre><code>##      Air Quality      Car/Traffic       Collection  Hazard Material 
+##             2478            68988            18252             2427 
+##             Heat         Homeless      Maintenance            Noise 
+##            42951             4813            26357            69236 
+##    Paint/Plaster       Sanitation Street Condition             Tree 
+##            12662            47418            71366            16849 
+##   Water/plumbing             NA&#39;s 
+##            48193            68010</code></pre>
+<div id="income-and-percent-hispblack-variables-from-american-community-survey-by-community-district" class="section level3">
+<h3>Income and percent hisp/black variables from American Community Survey by Community District</h3>
+<pre class="r"><code>nycedit_cb = nycedit %&gt;% 
+    group_by(community_board, year) %&gt;%
+    add_count(community_board, name = &quot;number_complaints&quot;) %&gt;% 
+    mutate(
+        num_unsolved = sum(open_complaint),
+        num_health_complaint = sum(health_complaint)
+    ) %&gt;% 
+    select(number_complaints, num_unsolved, everything())
+
+
+
+inc_df = read_csv(&quot;./Med_income_2017.csv&quot;) %&gt;% janitor::clean_names()</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   MapID = col_double(),
+##   `Area Name` = col_character(),
+##   Median_Income = col_double(),
+##   community_board = col_character(),
+##   per_blackNH = col_double(),
+##   per_whiteNH = col_double(),
+##   per_hisp = col_double(),
+##   per_other = col_double(),
+##   `Total Population` = col_double()
+## )</code></pre>
+<pre class="r"><code>add_inc = left_join(nycedit_cb, inc_df, by = &quot;community_board&quot;)</code></pre>
+<pre><code>## Warning: Column `community_board` joining factor and character vector, coercing
+## into character vector</code></pre>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
