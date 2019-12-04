@@ -438,7 +438,7 @@ $(document).ready(function () {
 <p>Key variables include: <code>year</code>, <code>borough</code>, <code>community_board</code>, <code>complaint_type</code>, and <code>status</code>.</p>
 <p>Newly added variables include:</p>
 <ol style="list-style-type: decimal">
-<li><p><code>complaint_simp</code> - based on key words, condenses complaint types into the following categories:’</p></li>
+<li><p><code>complaint_simp</code> - based on key words, condenses complaint types into the following categories: Air Quality, Car/Traffic, Collection, Hazard Material, Heat, Homeless, Maintenance, Noise, Paint/Plaster, Sanitation, Street Condition, Tree, and Water/plumbing.</p></li>
 <li><p><code>health_complaint</code> - binary yes (1) or no (0), based on health associated categories within <code>complaint_simp</code>.</p></li>
 <li><p><code>open_health_complaint</code> - binary categorization, either health complaint that is open (1), or non-health related complaint or closed health complaint (0).</p></li>
 <li><p><code>open_complaint</code> - binary categorization, closed <code>status</code> (0), open (1)</p></li>
@@ -506,8 +506,8 @@ $(document).ready(function () {
 </div>
 <div id="plots" class="section level1">
 <h1>Plots</h1>
-<div id="total-number-of-complaints-by-income-bracket" class="section level2">
-<h2>Total number of complaints by income bracket</h2>
+<div id="total-number-of-complaints-by-income-bracket" class="section level4">
+<h4>Total number of complaints by income bracket</h4>
 <pre class="r"><code># nyc_plots %&gt;% 
 #     filter(!is.na(income_bracket)) %&gt;% 
 #     group_by(income_bracket) %&gt;% 
@@ -533,9 +533,8 @@ nyc_plots %&gt;%
 <p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>Middle class income groups proportionally file the most complaints across all income brackets. The only exception is the Bronx, in which the proportion of 311 complaints is higher in the lowest income group.</p>
 </div>
-</div>
-<div id="proportion-of-unsolved-cases-by-income-bracket" class="section level1">
-<h1>Proportion of unsolved cases by income bracket</h1>
+<div id="proportion-of-unsolved-cases-by-income-bracket" class="section level4">
+<h4>Proportion of unsolved cases by income bracket</h4>
 <p>Proportion open:</p>
 <pre class="r"><code>p &lt;- nyc_plots %&gt;% 
     filter(!is.na(income_bracket)) %&gt;% 
@@ -555,8 +554,8 @@ p %&gt;% mutate(proportion = (open/closed)) %&gt;%
     theme(axis.text.x = element_text(angle = 60, hjust = 1))</code></pre>
 <p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 </div>
-<div id="total-health-related-complaints-broken-down-by-income-bracket" class="section level1">
-<h1>Total Health related complaints broken down by income bracket</h1>
+<div id="total-health-related-complaints-broken-down-by-income-bracket" class="section level4">
+<h4>Total Health related complaints broken down by income bracket</h4>
 <pre class="r"><code>nyc_plots %&gt;% 
     filter(!is.na(income_bracket)) %&gt;% 
     group_by(income_bracket, borough, health_complaint) %&gt;% 
@@ -571,11 +570,30 @@ p %&gt;% mutate(proportion = (open/closed)) %&gt;%
     theme(axis.text.x = element_text(angle = 60, hjust = 1))</code></pre>
 <p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 </div>
-<div id="proportion-health-related-complaints-open-broken-down-by-income-bracket" class="section level1">
-<h1>Proportion Health related complaints open broken down by income bracket:</h1>
+<div id="proportion-health-related-complaints-open-broken-down-by-income-bracket" class="section level4">
+<h4>Proportion Health related complaints open broken down by income bracket:</h4>
+<pre class="r"><code>h &lt;- nyc_plots %&gt;% 
+    filter(!is.na(income_bracket),
+           health_complaint == 1) %&gt;% 
+    group_by(income_bracket, borough, open_complaint) %&gt;% 
+    summarize(n = n()) %&gt;% 
+    pivot_wider(names_from = open_complaint, values_from = n) %&gt;% 
+    rename(closed = &#39;0&#39;,
+           open = &#39;1&#39;)
+
+h %&gt;% mutate(proportion = (open/closed)) %&gt;% 
+    ggplot(aes(x = income_bracket, y = proportion, fill = income_bracket)) +
+    geom_col() +
+    facet_wrap(~borough, scales = &quot;free_x&quot;) +
+    ggtitle(&quot;Proportion of Health Related Open Cases Within Each Income Bracket&quot;) +
+    xlab(&quot;Income Bracket&quot;) +
+    ylab(&quot;Proportion Open&quot;) +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1))</code></pre>
+<pre><code>## Warning: Removed 1 rows containing missing values (position_stack).</code></pre>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 </div>
-<div id="median-income-of-each-complaint-category" class="section level1">
-<h1>Median income of each complaint category:</h1>
+<div id="median-income-of-each-complaint-category" class="section level4">
+<h4>Median income of each complaint category:</h4>
 <pre class="r"><code>nyc_plots %&gt;% 
     filter(!is.na(median_income),
            !is.na(complaint_simp)) %&gt;% 
@@ -590,10 +608,27 @@ p %&gt;% mutate(proportion = (open/closed)) %&gt;%
     ylab(&quot;Median Income (thousands)&quot;) +
     xlab(&quot;Complaint Category&quot;) +
     ggtitle(&quot;Median Income of Community District where Complaint Category Occurs&quot;)</code></pre>
-<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre class="r"><code># open cases:
+
+nyc_plots %&gt;% 
+    filter(!is.na(median_income),
+           !is.na(complaint_simp),
+           open_complaint == 1) %&gt;% 
+    ggplot(aes(x = complaint_simp, 
+               y = (median_income/1000), 
+               fill = complaint_simp)) +
+    geom_boxplot() +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1),
+          legend.position = &quot;none&quot;) +
+    scale_y_continuous(breaks = scales::pretty_breaks(n = 10)) +
+    ylab(&quot;Median Income (thousands)&quot;) +
+    xlab(&quot;Complaint Category&quot;) +
+    ggtitle(&quot;Median Income of Community District where Open Complaint Category Occurs&quot;)</code></pre>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-8-2.png" width="672" /></p>
 </div>
-<div id="not-to-be-included" class="section level1">
-<h1>Not to be included:</h1>
+<div id="not-to-be-included" class="section level4">
+<h4>Not to be included:</h4>
 <p>Total complaints within each neighborhood of each borough:</p>
 <pre class="r"><code>nyc_plots %&gt;% 
     filter(!is.na(area_name)) %&gt;% 
@@ -606,7 +641,7 @@ p %&gt;% mutate(proportion = (open/closed)) %&gt;%
     theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
     ggtitle(&quot;Complaints by Neighborhood&quot;) +
     facet_wrap(~borough, scales = &quot;free_x&quot;)</code></pre>
-<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <pre class="r"><code>nyc_plots %&gt;% 
     filter(!is.na(community_board)) %&gt;% 
     group_by(community_board, borough) %&gt;% 
@@ -619,7 +654,7 @@ p %&gt;% mutate(proportion = (open/closed)) %&gt;%
     theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
     ggtitle(&quot;Complaints by Community Board&quot;) +
     facet_wrap(~borough, scales = &quot;free_x&quot;)</code></pre>
-<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-8-2.png" width="672" /></p>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-9-2.png" width="672" /></p>
 <p>other med income plot:</p>
 <pre class="r"><code># 
 # nyc_plots %&gt;% 
@@ -641,16 +676,71 @@ p %&gt;% mutate(proportion = (open/closed)) %&gt;%
 #            complaint_simp = fct_reorder(complaint_simp, 
 #                                         proportion, 
 #                                         .desc = TRUE)) %&gt;% </code></pre>
-<ul>
-<li>number unsolved (open) cases versus income bracket - look at health complaints.</li>
-<li>number of unsolved (open) cases within each neighborhood with color representing proportion black, hispanic</li>
-</ul>
+</div>
 </div>
 <div id="final-plots" class="section level1">
 <h1>Final Plots:</h1>
-<p>Total complaints broken down by neighborhood and borough? –&gt; Plots broken down by community district, incorporate proportions of race/population</p>
-<p>proportion open cases across each income group faceted by borough proportion open health cases across each income group faceted by borough</p>
-<p>density plot of number of days to close by income group - ??</p>
+<div id="proportion-of-unsolved-cases-by-income-bracket-1" class="section level2">
+<h2>Proportion of unsolved cases by income bracket</h2>
+<pre class="r"><code>p &lt;- nyc_plots %&gt;% 
+    filter(!is.na(income_bracket)) %&gt;% 
+    group_by(income_bracket, borough, open_complaint) %&gt;% 
+    summarize(n = n()) %&gt;% 
+    pivot_wider(names_from = open_complaint, values_from = n) %&gt;% 
+    rename(closed = &#39;0&#39;,
+           open = &#39;1&#39;)
+
+p %&gt;% mutate(proportion = (open/closed)) %&gt;% 
+    ggplot(aes(x = income_bracket, y = proportion, fill = income_bracket)) +
+    geom_col() +
+    facet_wrap(~borough, scales = &quot;free_x&quot;) +
+    ggtitle(&quot;Proportion of Open Cases Within Each Income Bracket&quot;) +
+    xlab(&quot;Income Bracket&quot;) +
+    ylab(&quot;Proportion Open&quot;) +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1))</code></pre>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+</div>
+<div id="median-income-of-each-complaint-category-1" class="section level2">
+<h2>Median income of each complaint category:</h2>
+<pre class="r"><code>nyc_plots %&gt;% 
+    filter(!is.na(median_income),
+           !is.na(complaint_simp)) %&gt;% 
+    mutate(complaint_simp = fct_reorder(complaint_simp, median_income)) %&gt;% 
+    ggplot(aes(x = complaint_simp, 
+               y = (median_income/1000), 
+               fill = complaint_simp)) +
+    geom_boxplot() +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1),
+          legend.position = &quot;none&quot;) +
+    scale_y_continuous(breaks = scales::pretty_breaks(n = 10)) +
+    ylab(&quot;Median Income (thousands)&quot;) +
+    xlab(&quot;Complaint Category&quot;) +
+    ggtitle(&quot;Median Income of Community District where Complaint Category Occurs&quot;)</code></pre>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+<div id="plot-of-percent-race-plotted-against-proportion-open" class="section level2">
+<h2>plot of percent race plotted against proportion open:</h2>
+<pre class="r"><code>r &lt;- nyc_plots %&gt;% 
+    pivot_longer(cols = per_black_nh:per_other, names_to = &quot;race&quot;, values_to = &quot;percent_pop&quot;) %&gt;% 
+    filter(!is.na(race),
+           !is.na(percent_pop)) %&gt;% 
+    group_by(race, borough, percent_pop, open_complaint) %&gt;% 
+    summarize(n = n()) %&gt;% 
+    pivot_wider(names_from = open_complaint, values_from = n) %&gt;% 
+    rename(closed = &#39;0&#39;,
+           open = &#39;1&#39;)
+
+r %&gt;% mutate(proportion = (open/(open + closed))) %&gt;% 
+    ggplot(aes(x = percent_pop, y = proportion, color = race)) +
+    geom_point() +
+    geom_smooth(se = FALSE) +
+    xlab(&quot;Percentage of Community District Population&quot;) +
+    ylab(&quot;Proportion Open&quot;) +
+    ggtitle(&quot;Unresolved Complaints as a Function of Neighborhood Population&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>density plot of number of days to close by income group or pop proportions?</p>
+</div>
 </div>
 
 
