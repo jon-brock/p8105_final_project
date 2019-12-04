@@ -6,6 +6,8 @@ navbar:
     - text: "Home"
       href: index.html
   right:
+    - text: "Full Report"
+      href: report.html
     - text: "Statistics"
       href: statistics.html
     - text: "Plots"
