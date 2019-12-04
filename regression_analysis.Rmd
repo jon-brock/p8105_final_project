@@ -60,7 +60,7 @@ nycedit = nyc311 %>%
 summary(nycedit$status)
 
 ####### THIS CODE IS LOOKING AT WHAT IS MISSING FROM OUR COMPLAIN AGGREGATION
-summary(nycedit$complaint_simp)
+summary(nyc_tidy$complaint_simp)
 
 test = nycedit %>% 
     filter(is.na(complaint_simp))
@@ -139,7 +139,12 @@ cb_group_year = add_inc %>%
 cb_group_distinct = cb_group %>% 
     select(community_board, number_complaints, inc_1000s, num_unsolved, num_health_complaint, borough, per_black_nh, per_hisp, per_white_nh, median_income, num_open_health, pop_1000s) %>% 
     distinct() %>% 
-    arrange(community_board)
+    arrange(community_board) %>% view()
+
+
+num_comp_model = lm(number_complaints ~ inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s*borough, data = cb_group_distinct)
+summary(num_comp_model)
+
 
 num_comp_model = lm(number_complaints ~ inc_1000s + num_unsolved + per_black_nh + per_hisp + borough, data = cb_group_distinct)
 summary(nyc_cb2)
@@ -183,6 +188,43 @@ summary(health_cb)
 
 ```
 
+comparing with vs without year
+```{r}
+
+
+num_comp_model = lm(number_complaints ~ inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s*borough, data = cb_group_distinct)
+summary(num_comp_model)
+
+
+num_comp_model = lm(number_complaints ~ inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s + borough, data = cb_group_distinct)
+
+
+num_comp_model_year = lm(number_complaints ~ inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s + borough +created_year, data = cb_group_year_distinct)
+
+
+summary(num_comp_model)
+summary(num_comp_model_year)
+
+
+num_health_model = lm(num_health_complaint ~  inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s + borough, data = cb_group_distinct)
+
+
+num_health_model_year = lm(num_health_complaint ~  inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s + borough +year_fac, data = cb_group_year_distinct)
+
+
+summary(num_health_model)
+summary(num_health_model_year)
+
+
+num_unsolved_model_year = lm(num_unsolved ~ inc_1000s + per_black_nh + per_hisp + pop_1000s + borough +created_year, data = cb_group_year_distinct)
+summary(num_unsolved_model_year)
+
+
+
+
+```
+
+# Final Models:
 
 
 

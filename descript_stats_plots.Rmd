@@ -46,7 +46,8 @@ nyc_tidy <- nyc %>%
         agency = as.factor(agency),
         complaint_type = as.factor(complaint_type),
         community_board = as.factor(community_board),
-        open_complaint = ifelse(is.na(closed_year),  yes = 1, no = 0),
+       open_complaint = ifelse(status == "Closed", yes = 0, no = 1),
+      # open_complaint = ifelse(is.na(closed_year),  yes = 1, no = 0),
         complaint_simp = case_when(
             str_detect(complaint_type, 
                        regex("street", ignore_case = TRUE))
@@ -125,7 +126,7 @@ nyc_tidy <- nyc %>%
             open_complaint == 1 & health_complaint == 1 ~ 1,
             open_complaint == 0 | health_complaint == 0 ~ 0
         ),
-        openCorr = ifelse(status == "Closed", yes = 0, no = 1),
+       # openCorr = ifelse(status == "Closed", yes = 0, no = 1),
         status = as.factor(status)
     )
 
@@ -143,7 +144,7 @@ Newly added variables include:
 
 3. `open_health_complaint` - binary categorization, either health complaint that is open (1), or non-health related complaint or closed health complaint (0).
 
-4. `openCorr` - binary categorization, closed `status` (0), open (1)
+4. `open_complaint` - binary categorization, closed `status` (0), open (1)
 
 ## Income and population characteristics data:
 
