@@ -29,7 +29,8 @@ nycedit = nyc311 %>%
         agency = as.factor(agency),
         complaint_type = as.factor(complaint_type),
         community_board = as.factor(community_board),
-        open_complaint = ifelse(is.na(closed_date),  1, 0),
+        open_complaint = ifelse(status == "Closed", 0, 1), # corrected open_complaint
+        #open_complaint = ifelse(is.na(closed_date),  1, 0),
         complaint_simp = case_when(
             str_detect(complaint_type,  regex("street", ignore_case = TRUE))|str_detect(complaint_type,  regex("sidewalk", ignore_case = TRUE))|str_detect(complaint_type,  regex("curb", ignore_case = TRUE)) ~ "Street Condition",
             str_detect(complaint_type,  regex("noise", ignore_case = TRUE)) ~ "Noise",
@@ -52,7 +53,6 @@ nycedit = nyc311 %>%
             open_complaint == 1 & health_complaint == 1 ~ 1,
             open_complaint == 0 | health_complaint == 0 ~ 0
         ),
-        openCorr = ifelse(status == "Closed", 0, 1),
         status = as.factor(status)
     )
 
@@ -67,92 +67,116 @@ test = nycedit %>%
 summary(test$complaint_type)
 
 
-# grouping by community district and year
-nycedit_cb_year = nycedit %>% 
-    group_by(community_board, year) %>%
-    add_count(community_board, name = "number_complaints") %>% 
+```
+
+
+```{r}
+
+inc_df = read_csv("./Med_income_2017.csv") %>% 
+    janitor::clean_names() %>% 
     mutate(
-        num_unsolved = sum(open_complaint),
-        num_health_complaint = sum(health_complaint),
-        num_open_health = sum(open_health)
-    ) %>% 
-    select(number_complaints, num_unsolved, num_open_health, everything())
+        pop_1000s = round(total_population/1000, 0),
+        inc_1000s = round(median_income/1000, 1),
+        income_bracket = case_when(
+            median_income >= 20000 & median_income <= 30000 ~ "20k-30k",
+            median_income > 30000 & median_income <= 40000 ~ "30-40k",
+            median_income > 40000 & median_income <= 50000 ~ "40-50k",
+            median_income > 50000 & median_income <= 60000 ~ "50-60k",
+            median_income > 60000 & median_income <= 70000 ~ "60-70k",
+            median_income > 70000 & median_income <= 80000 ~ "70-80k",
+            median_income > 80000 & median_income <= 90000 ~ "80-90k",
+            median_income > 90000 & median_income <= 100000 ~ "90-100k",
+            median_income > 100000 & median_income <= 125000 ~ "100-125k",
+            median_income > 125000 & median_income <= 150000 ~ "125k+",
+        ),
+        income_bracket = as.factor(income_bracket)
+    )
+add_inc = left_join(nycedit, inc_df, by = "community_board")
+
+# adding income to data and removing any observations that do not have a specific community board to link to income
+add_inc = left_join(nyc_tidy, inc_df, by = "community_board") %>% 
+    filter(is.na(median_income) == FALSE) %>% 
+    mutate(
+        year_fac = as.factor(created_year)
+    )
 
 
-# grouping by community district, NOT
-nycedit_cb = nycedit %>% 
+```
+
+
+Our question is: What neighborhood characteristics effect number and type of complaints? 
+
+```{r}
+
+
+# grouping by community district only
+cb_group = add_inc %>% 
     group_by(community_board) %>%
     add_count(community_board, name = "number_complaints") %>% 
     mutate(
         num_unsolved = sum(open_complaint),
         num_health_complaint = sum(health_complaint),
-        num_open_health = sum(open_health)
+        num_open_health = sum(open_health_complaint)
     ) %>% 
     select(number_complaints, num_unsolved, num_open_health, everything())
 
 
-nycedit %>% 
-    ggplot(aes(x = health_complaint)) +
-    geom_bar()
 
-```
-
-
-
-```{r}
-
-inc_df = read_csv("./Med_income_2017.csv") %>% janitor::clean_names()
-
-inc_df2 = inc_df %>% 
+# grouping by community district and year
+cb_group_year = add_inc %>% 
+    group_by(community_board, created_year) %>%
+    add_count(community_board, name = "number_complaints") %>% 
     mutate(
-        inc_1000s = round(median_income/1000, 1)
-    )
+        num_unsolved = sum(open_complaint),
+        num_health_complaint = sum(health_complaint),
+        num_open_health = sum(open_health_complaint)
+    ) %>% 
+    select(number_complaints, num_unsolved, num_open_health, everything())
 
-add_inc = left_join(nycedit_cb, inc_df2, by = "community_board")
-add_inc_year = left_join(nycedit_cb_year, inc_df2, by = "community_board")
 
 
 ## without year
-nycedit_cb2 = add_inc %>% 
-    filter(is.na(median_income) == FALSE) %>% 
-    select(community_board, number_complaints, inc_1000s, num_unsolved, num_health_complaint, borough, per_black_nh, per_hisp, per_white_nh, median_income, num_open_health) %>% 
+cb_group_distinct = cb_group %>% 
+    select(community_board, number_complaints, inc_1000s, num_unsolved, num_health_complaint, borough, per_black_nh, per_hisp, per_white_nh, median_income, num_open_health, pop_1000s) %>% 
     distinct() %>% 
     arrange(community_board)
 
-nyc_cb2 = lm(number_complaints ~ inc_1000s + num_unsolved + per_black_nh + per_hisp + borough, data = nycedit_cb2)
+num_comp_model = lm(number_complaints ~ inc_1000s + num_unsolved + per_black_nh + per_hisp + borough, data = cb_group_distinct)
 summary(nyc_cb2)
 
-health_cb = lm(num_health_complaint ~ inc_1000s + num_unsolved + borough + per_black_nh + per_hisp, data = nycedit_cb2)
+health_cb = lm(num_health_complaint ~ inc_1000s + num_unsolved + borough + per_black_nh + per_hisp, data = cb_group_distinct)
 summary(health_cb)
 
-
-nyc_open = lm(num_unsolved ~ inc_1000s + num_health_complaint + borough + per_black_nh + per_hisp, data = nycedit_cb2)
+## should only do open complaint when can control for year
+nyc_open = lm(num_unsolved ~ inc_1000s + num_health_complaint + borough + per_black_nh + per_hisp, data = cb_group_distinct)
 summary(nyc_open)
 
-nyc_open = lm(num_open_health ~ inc_1000s + borough + per_black_nh + per_hisp, data = nycedit_cb2)
+nyc_open = lm(num_open_health ~ inc_1000s + borough + per_black_nh + per_hisp, data = cb_group_distinct)
 summary(nyc_open)
 
 
-
-nycedit_cb_year2 = add_inc_year %>% 
-    filter(is.na(median_income) == FALSE) %>% 
-    select(community_board, number_complaints, inc_1000s, num_unsolved, num_health_complaint, borough, per_black_nh, per_hisp, per_white_nh, median_income, num_open_health, year) %>% 
+########## including year
+cb_group_year_distinct = cb_group_year %>% 
+    select(community_board, number_complaints, inc_1000s, num_unsolved, num_health_complaint, borough, per_black_nh, per_hisp, per_white_nh, median_income, num_open_health, created_year, year_fac, pop_1000s) %>% 
     distinct() %>% 
-    arrange(community_board)
+    arrange(community_board) 
 
 
+num_comp_model_year = lm(number_complaints ~ inc_1000s + num_unsolved + per_black_nh + per_hisp +created_year + pop_1000s + borough, data = cb_group_year_distinct)
+summary(num_comp_model_year)
 
 
-nyc_cb2 = glm(number_complaints ~ median_income + num_unsolved + year + per_black_nh + per_hisp, data = nycedit_cb_year2)
-summary(nyc_cb2)
+num_comp_model_year = lm(num_health_complaint ~ inc_1000s + num_unsolved + per_black_nh + per_hisp +year_fac + pop_1000s + borough, data = cb_group_year_distinct)
+summary(num_comp_model_year)
 
-health_cb = glm(num_health_complaint ~ median_income + num_unsolved + year + borough + per_black_nh + per_hisp, data = nycedit_cb_year2)
+
+health_cb = lm(num_unsolved ~ inc_1000s + num_health_complaint+ year_fac + per_black_nh + per_hisp + borough*pop_1000s, data = cb_group_year_distinct)
 summary(health_cb)
 
 
-nyc_model = glm(open_complaint ~ median_income + year + health_complaint + borough + per_black_nh + per_hisp + complaint_simp, data = add_inc)
+#nyc_model = lm(open_complaint ~ inc_1000s + year + health_complaint + borough + per_black_nh + per_hisp + complaint_simp, data = add_inc)
 
-summary(nyc_model)
+#summary(nyc_model)
 
 
 
