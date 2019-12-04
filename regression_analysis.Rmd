@@ -5,20 +5,22 @@ date: "12/1/2019"
 output: html_document
 ---
 
-```{r}
+```{r setup, include=FALSE}
 #install.packages("RSocrata")
 #devtools::install_github("Chicago/RSocrata")
 library(RSocrata)
 library(tidyverse)
+library(viridis)
+library(modelr)
+library(mgcv)
 
 ```
-
-```{r}
-nyc <- read_csv(file = "./p8105nyc_311_100k.csv") %>% 
+## read in data
+```{r message = FALSE}
+nyc <- read_csv(file = "../p8105nyc_311_100k.csv") %>% 
     janitor::clean_names()
 
-
-nyc_tidy <- nyc %>%   select(-unique_key, -city, -park_borough, -agency, -agency_name, -descriptor, -incident_zip, -incident_address, -street_name, -cross_street_1, -cross_street_2, -intersection_street_1, -intersection_street_2, -landmark, -facility_type, -resolution_description, -resolution_action_updated_date, -bbl, -x_coordinate_state_plane, -y_coordinate_state_plane, -open_data_channel_type, -park_facility_name, -vehicle_type, -taxi_company_borough, -taxi_pick_up_location, -bridge_highway_name, -bridge_highway_direction, -bridge_highway_segment, -latitude, -longitude, -location, -road_ramp, -location_type, -address_type) %>% 
+nyc_tidy <- nyc %>%   
     filter(borough != "Unspecified") %>% 
     separate(closed_date, 
              into = c("closed_month","closed_day","closed_year"), 
@@ -123,8 +125,8 @@ nyc_tidy <- nyc %>%   select(-unique_key, -city, -park_borough, -agency, -agency
 
 ```
 
-Adding income data 
-```{r}
+Adding community district data
+```{r message = FALSE}
 
 inc_df = read_csv("./Med_income_2017.csv") %>% 
     janitor::clean_names() %>% 
@@ -156,13 +158,9 @@ add_inc = left_join(nyc_tidy, inc_df, by = "community_board") %>%
 
 ```
 
+### Aggregating data to community district and year level
 
-## Our question is: What neighborhood characteristics effect number and type of complaints? 
-
-
-### data to keep:
-
-```{r}
+```{r message = FALSE}
 
 # grouping by community district and year
 cb_group_year = add_inc %>% 
@@ -182,37 +180,72 @@ cb_group_year_distinct = cb_group_year %>%
     distinct() %>% 
     arrange(community_board) %>% 
     mutate(
-        borough <- relevel(borough, ref = "MANHATTAN")
+        borough = relevel(borough, ref = "MANHATTAN")
         )
 
-cb_group_year_distinct <- within(cb_group_year_distinct, borough <- relevel(borough, ref = "MANHATTAN"))
+cb_group_year_distinct = within(cb_group_year_distinct, borough <- relevel(borough, ref = "MANHATTAN"))
 
 ```
 
+## What neighborhood characteristics effect number and type of complaints? 
 
-### Final Models:
+We looked at number of complaints from 2014-2018 predicted by year, borough, community district (CD) level variables including median income (in the 1000s), total population (in the 1000s), percent non-hispanic black, percent hispanic, and number of unresolved complaints. 
 
-```{r}
-
+#### Number of complaints by NYC community district:
+```{r message = FALSE}
 
 # number of complaints
 options(scipen = 5)
 
 num_comp_model_year = lm(number_complaints ~ inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s + borough +created_year, data = cb_group_year_distinct)
 
-summary(num_comp_model_year)
+
+summary(num_comp_model_year)  %>% broom::tidy() %>% knitr::kable()
+summary(num_comp_model_year) %>% broom::glance() %>% knitr::kable()
+
+par(mfrow = c(2,2))
+plot(num_comp_model_year)
+```
+
+*Comments:*
+
+The total number of complaints in significantly predicted by year, borough and CD number of unsolved complaints, percent Hispanic, and population total.
+
+
+
+#### Number of health-related complaints by NYC community district:
+```{r}
 
 # number of health complaints
 
-
 num_health_model_year = lm(num_health_complaint ~  inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s + borough +created_year, data = cb_group_year_distinct)
 
-summary(num_health_model_year)
+summary(num_health_model_year)  %>% broom::tidy() %>% knitr::kable()
+summary(num_health_model_year) %>% broom::glance() %>% knitr::kable()
+
+par(mfrow = c(2,2))
+plot(num_health_model_year)
+```
+
+
+*Comments:*
+
+Complaints were determined to be health related if they were about heat, hot water, sanitary conditions, poor air quality, or hazardous materials. The total number of health-related complaints in significantly predicted by borough and CD median income, percent non-Hispanic Black and Hispanic, and population total.
+
+#### Number of unresolved complaints by NYC community district:
+```{r}
+
 
 # number of unresolved
 
 num_unsolved_model_year = lm(num_unsolved ~ inc_1000s + per_black_nh + per_hisp + pop_1000s + borough +created_year, data = cb_group_year_distinct)
-summary(num_unsolved_model_year)
+
+summary(num_unsolved_model_year)  %>% broom::tidy() %>% knitr::kable()
+summary(num_unsolved_model_year) %>% broom::glance() %>% knitr::kable()
+
+
+par(mfrow = c(2,2))
+plot(num_unsolved_model_year)
 
 
 
@@ -220,14 +253,10 @@ summary(num_unsolved_model_year)
 ```
 
 
-We looked at number of complaints from 2014-2018 predicted by year, borough, community district (CD) level variables including median income (in the 1000s), total population (in the 1000s), percent non-hispanic black, percent hispanic, and number of unresolved complaints. 
 
-Number of complaints by NYC community district:
-The total number of complaints in significantly predicted by year, borough and CD number of unsolved complaints, percent Hispanic, and population total.
+*Comments:*
 
-Number of health-related complaints by NYC community district:
-Complaints were determined to be health related if they were about heat, hot water, sanitary conditions, poor air quality, or hazardous materials. The total number of health-related complaints in significantly predicted by borough and CD median income, percent non-Hispanic Black and Hispanic, and population total.
-
-Number of unresolved complaints by NYC community district:
 A complaint was labeled unresolved if its status was not labeled as "closed". The total number of unresolved complaints in significantly predicted by year of complaint, borough, and CD median income, number of unsolved complaints, percent non-Hispanic Black and Hispanic, and population total.
+
+
 
