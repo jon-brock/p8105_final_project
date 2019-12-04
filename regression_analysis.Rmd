@@ -14,55 +14,118 @@ library(tidyverse)
 ```
 
 ```{r}
-nyc311 = read_csv("/Users/avahamilton/Dropbox/Biostat MS/Data Science I/final/p8105nyc_311_100k.csv") %>% 
+nyc <- read_csv(file = "../p8105nyc_311_100k.csv") %>% 
     janitor::clean_names()
 
 
-nycedit = nyc311 %>% 
+nyc_tidy <- nyc %>% 
     filter(borough != "Unspecified") %>% 
+    separate(closed_date, 
+             into = c("closed_month","closed_day","closed_year"), 
+             sep = "\\/" ) %>%
+    separate(closed_year, 
+             into = c("closed_year","closed_time"), 
+             sep = " ") %>% 
     mutate(
-        year = as.numeric(created_year),
-        month = as.numeric(created_month),
-        day = as.numeric(created_day),
+        created_year = as.numeric(created_year),
+        created_month = as.numeric(created_month),
+        created_day = as.numeric(created_day),
         city = as.factor(city),
-        borough = as.factor(park_borough),
+        status = as.factor(status),
+        borough = as.factor(borough),
         agency = as.factor(agency),
         complaint_type = as.factor(complaint_type),
         community_board = as.factor(community_board),
-        open_complaint = ifelse(status == "Closed", 0, 1), # corrected open_complaint
-        #open_complaint = ifelse(is.na(closed_date),  1, 0),
+        open_complaint = ifelse(status == "Closed", yes = 0, no = 1),
+        # open_complaint = ifelse(is.na(closed_year),  yes = 1, no = 0),
         complaint_simp = case_when(
-            str_detect(complaint_type,  regex("street", ignore_case = TRUE))|str_detect(complaint_type,  regex("sidewalk", ignore_case = TRUE))|str_detect(complaint_type,  regex("curb", ignore_case = TRUE)) ~ "Street Condition",
-            str_detect(complaint_type,  regex("noise", ignore_case = TRUE)) ~ "Noise",
-            str_detect(complaint_type, regex("heat", ignore_case = TRUE)) ~ "Heat",
-            str_detect(complaint_type, regex("water", ignore_case = TRUE))| str_detect(complaint_type, regex("leak", ignore_case = TRUE))|str_detect(complaint_type, regex("plumbing", ignore_case = TRUE))|str_detect(complaint_type, regex("boiler", ignore_case = TRUE)) ~ "Water/plumbing",
-            str_detect(complaint_type, regex("paint", ignore_case = TRUE)) ~ "Paint/Plaster",
-            str_detect(complaint_type, regex("asbestos", ignore_case = TRUE))|str_detect(complaint_type, regex("lead", ignore_case = TRUE))|str_detect(complaint_type, regex("hazard", ignore_case = TRUE))|str_detect(complaint_type, regex("mold", ignore_case = TRUE)) ~ "Hazard Material",
-            str_detect(complaint_type, regex("elevator", ignore_case = TRUE)) |str_detect(complaint_type, regex("maintenance", ignore_case = TRUE))|str_detect(complaint_type, regex("electric", ignore_case = TRUE))|str_detect(complaint_type, regex("stairs", ignore_case = TRUE))|str_detect(complaint_type, regex("window", ignore_case = TRUE)) |str_detect(complaint_type, regex("appliance", ignore_case = TRUE)) ~ "Maintenance",
-            str_detect(complaint_type, regex("sanita", ignore_case = TRUE))|str_detect(complaint_type, regex("rodent", ignore_case = TRUE))|str_detect(complaint_type, regex("dirty", ignore_case = TRUE))|str_detect(complaint_type, regex("sew", ignore_case = TRUE))|str_detect(complaint_type, regex("standing water", ignore_case = TRUE)) ~ "Sanitation",
-            str_detect(complaint_type, regex("tree", ignore_case = TRUE)) ~ "Tree",
-            str_detect(complaint_type, regex("parking", ignore_case = TRUE))|str_detect(complaint_type, regex("car", ignore_case = TRUE))|str_detect(complaint_type, regex("drive", ignore_case = TRUE))|str_detect(complaint_type,  regex("vehicle", ignore_case = TRUE))|str_detect(complaint_type,  regex("traffic", ignore_case = TRUE)) ~ "Car/Traffic",
-            str_detect(complaint_type, regex("air quality", ignore_case = TRUE)) ~ "Air Quality",
-            str_detect(complaint_type, regex("collection", ignore_case = TRUE)) ~ "Collection",
-            str_detect(complaint_type, regex("homeless", ignore_case = TRUE))|str_detect(complaint_type, regex("panhandling", ignore_case = TRUE)) ~ "Homeless"
-        ),
+            str_detect(complaint_type, 
+                       regex("street", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("sidewalk", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("curb", ignore_case = TRUE)) ~ "Street Condition",
+            str_detect(complaint_type, 
+                       regex("noise", ignore_case = TRUE)) ~ "Noise",
+            str_detect(complaint_type, 
+                       regex("heat", ignore_case = TRUE)) ~ "Heat",
+            str_detect(complaint_type, 
+                       regex("water", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("leak", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("plumbing", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("boiler", ignore_case = TRUE)) ~ "Water/plumbing",
+            str_detect(complaint_type, 
+                       regex("paint", ignore_case = TRUE)) ~ "Paint/Plaster",
+            str_detect(complaint_type, 
+                       regex("asbestos", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("lead", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("hazard", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("mold", ignore_case = TRUE)) ~ "Hazard Material",
+            str_detect(complaint_type, 
+                       regex("elevator", ignore_case = TRUE)) 
+            |str_detect(complaint_type, 
+                        regex("maintenance", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("electric", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("stairs", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("window", ignore_case = TRUE)) 
+            |str_detect(complaint_type, 
+                        regex("appliance", ignore_case = TRUE)) ~ "Maintenance",
+            str_detect(complaint_type, 
+                       regex("sanita", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("rodent", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("dirty", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("sew", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("standing water", ignore_case = TRUE)) ~ "Sanitation",
+            str_detect(complaint_type, 
+                       regex("tree", ignore_case = TRUE)) ~ "Tree",
+            str_detect(complaint_type, 
+                       regex("parking", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("car", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("drive", ignore_case = TRUE))
+            |str_detect(complaint_type,  
+                        regex("vehicle", ignore_case = TRUE))
+            |str_detect(complaint_type,  
+                        regex("traffic", ignore_case = TRUE)) ~ "Car/Traffic",
+            str_detect(complaint_type, 
+                       regex("air", ignore_case = TRUE)) ~ "Air Quality",
+            str_detect(complaint_type, 
+                       regex("collection", ignore_case = TRUE)) ~ "Collection",
+            str_detect(complaint_type, 
+                       regex("homeless", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("panhandling", ignore_case = TRUE)) ~ "Homeless"),
         health_complaint = ifelse(
-            complaint_simp %in% c("Heat", "Water/Plumbing", "Hazard Material", "Sanitation", "Air Quality"), 1,0),
+            complaint_simp %in% c("Heat", "Water/Plumbing", "Hazard Material", "Sanitation", "Air Quality"), yes = 1, no = 0),
         complaint_simp = as.factor(complaint_simp),
-        open_health = case_when(
+        open_health_complaint = case_when(
             open_complaint == 1 & health_complaint == 1 ~ 1,
             open_complaint == 0 | health_complaint == 0 ~ 0
         ),
+        # openCorr = ifelse(status == "Closed", yes = 0, no = 1),
         status = as.factor(status)
     )
 
-
-summary(nycedit$status)
+summary(nyc_tidy$status)
 
 ####### THIS CODE IS LOOKING AT WHAT IS MISSING FROM OUR COMPLAIN AGGREGATION
 summary(nyc_tidy$complaint_simp)
 
-test = nycedit %>% 
+test = nyc_tidy %>% 
     filter(is.na(complaint_simp))
 summary(test$complaint_type)
 
@@ -91,7 +154,6 @@ inc_df = read_csv("./Med_income_2017.csv") %>%
         ),
         income_bracket = as.factor(income_bracket)
     )
-add_inc = left_join(nycedit, inc_df, by = "community_board")
 
 # adding income to data and removing any observations that do not have a specific community board to link to income
 add_inc = left_join(nyc_tidy, inc_df, by = "community_board") %>% 
@@ -106,21 +168,10 @@ add_inc = left_join(nyc_tidy, inc_df, by = "community_board") %>%
 
 Our question is: What neighborhood characteristics effect number and type of complaints? 
 
+
+# data to keep:
+
 ```{r}
-
-
-# grouping by community district only
-cb_group = add_inc %>% 
-    group_by(community_board) %>%
-    add_count(community_board, name = "number_complaints") %>% 
-    mutate(
-        num_unsolved = sum(open_complaint),
-        num_health_complaint = sum(health_complaint),
-        num_open_health = sum(open_health_complaint)
-    ) %>% 
-    select(number_complaints, num_unsolved, num_open_health, everything())
-
-
 
 # grouping by community district and year
 cb_group_year = add_inc %>% 
@@ -135,86 +186,40 @@ cb_group_year = add_inc %>%
 
 
 
-## without year
-cb_group_distinct = cb_group %>% 
-    select(community_board, number_complaints, inc_1000s, num_unsolved, num_health_complaint, borough, per_black_nh, per_hisp, per_white_nh, median_income, num_open_health, pop_1000s) %>% 
-    distinct() %>% 
-    arrange(community_board) %>% view()
-
-
-num_comp_model = lm(number_complaints ~ inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s*borough, data = cb_group_distinct)
-summary(num_comp_model)
-
-
-num_comp_model = lm(number_complaints ~ inc_1000s + num_unsolved + per_black_nh + per_hisp + borough, data = cb_group_distinct)
-summary(nyc_cb2)
-
-health_cb = lm(num_health_complaint ~ inc_1000s + num_unsolved + borough + per_black_nh + per_hisp, data = cb_group_distinct)
-summary(health_cb)
-
-## should only do open complaint when can control for year
-nyc_open = lm(num_unsolved ~ inc_1000s + num_health_complaint + borough + per_black_nh + per_hisp, data = cb_group_distinct)
-summary(nyc_open)
-
-nyc_open = lm(num_open_health ~ inc_1000s + borough + per_black_nh + per_hisp, data = cb_group_distinct)
-summary(nyc_open)
-
-
 ########## including year
 cb_group_year_distinct = cb_group_year %>% 
     select(community_board, number_complaints, inc_1000s, num_unsolved, num_health_complaint, borough, per_black_nh, per_hisp, per_white_nh, median_income, num_open_health, created_year, year_fac, pop_1000s) %>% 
     distinct() %>% 
-    arrange(community_board) 
+    arrange(community_board) %>% 
+    mutate(
+        borough <- relevel(borough, ref = "MANHATTAN")
+        )
 
-
-num_comp_model_year = lm(number_complaints ~ inc_1000s + num_unsolved + per_black_nh + per_hisp +created_year + pop_1000s + borough, data = cb_group_year_distinct)
-summary(num_comp_model_year)
-
-
-num_comp_model_year = lm(num_health_complaint ~ inc_1000s + num_unsolved + per_black_nh + per_hisp +year_fac + pop_1000s + borough, data = cb_group_year_distinct)
-summary(num_comp_model_year)
-
-
-health_cb = lm(num_unsolved ~ inc_1000s + num_health_complaint+ year_fac + per_black_nh + per_hisp + borough*pop_1000s, data = cb_group_year_distinct)
-summary(health_cb)
-
-
-#nyc_model = lm(open_complaint ~ inc_1000s + year + health_complaint + borough + per_black_nh + per_hisp + complaint_simp, data = add_inc)
-
-#summary(nyc_model)
-
-
-
+cb_group_year_distinct <- within(cb_group_year_distinct, borough <- relevel(borough, ref = "MANHATTAN"))
 
 ```
 
-comparing with vs without year
+
+# Final Models:
+
 ```{r}
 
 
-num_comp_model = lm(number_complaints ~ inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s*borough, data = cb_group_distinct)
-summary(num_comp_model)
-
-
-num_comp_model = lm(number_complaints ~ inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s + borough, data = cb_group_distinct)
-
+# number of complaints
+options(scipen = 5)
 
 num_comp_model_year = lm(number_complaints ~ inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s + borough +created_year, data = cb_group_year_distinct)
 
-
-summary(num_comp_model)
 summary(num_comp_model_year)
 
-
-num_health_model = lm(num_health_complaint ~  inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s + borough, data = cb_group_distinct)
-
-
-num_health_model_year = lm(num_health_complaint ~  inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s + borough +year_fac, data = cb_group_year_distinct)
+# number of health complaints
 
 
-summary(num_health_model)
+num_health_model_year = lm(num_health_complaint ~  inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s + borough +created_year, data = cb_group_year_distinct)
+
 summary(num_health_model_year)
 
+# number of unresolved
 
 num_unsolved_model_year = lm(num_unsolved ~ inc_1000s + per_black_nh + per_hisp + pop_1000s + borough +created_year, data = cb_group_year_distinct)
 summary(num_unsolved_model_year)
@@ -224,9 +229,15 @@ summary(num_unsolved_model_year)
 
 ```
 
-# Final Models:
 
+We looked at number of complaints from 2014-2018 predicted by year, borough, community district (CD) level variables including median income (in the 1000s), total population (in the 1000s), percent non-hispanic black, percent hispanic, and number of unresolved complaints. 
 
+Number of complaints by NYC community district:
+The total number of complaints in significantly predicted by year, borough and CD number of unsolved complaints, percent Hispanic, and population total.
 
+Number of health-related complaints by NYC community district:
+Complaints were determined to be health related if they were about heat, hot water, sanitary conditions, poor air quality, or hazardous materials. The total number of health-related complaints in significantly predicted by borough and CD median income, percent non-Hispanic Black and Hispanic, and population total.
 
+Number of unresolved complaints by NYC community district:
+A complaint was labeled unresolved if its status was not labeled as "closed". The total number of unresolved complaints in significantly predicted by year of complaint, borough, and CD median income, number of unsolved complaints, percent non-Hispanic Black and Hispanic, and population total.
 
