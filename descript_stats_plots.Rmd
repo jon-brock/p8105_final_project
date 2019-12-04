@@ -216,89 +216,95 @@ NEED THIS???
 
 ## Total number of complaints
 
-Complaints broken down by income bracket:
+Proportion complaints broken down by income bracket and then by income brakcet and borough:
 
 ```{r}
 
 nyc_plots %>% 
     filter(!is.na(income_bracket)) %>% 
-    group_by(borough, created_year) %>% 
-    add_count(borough, name = "borough_complaints") %>% 
-    ggplot(aes(x = income_bracket, y = borough_complaints)) +
+    group_by(income_bracket) %>% 
+    summarize(n = n(),
+              proportion = n/nrow(nyc_plots)) %>% 
+    ggplot(aes(x = income_bracket, y = proportion)) +
     geom_col() +
-    ylab("Total Complaints")
+    ylab("Proportion of Total Complaints") +
+    ggtitle("Relative Number of Complaints Filed from Each Income Bracket")
+
+nyc_plots %>% 
+    filter(!is.na(income_bracket)) %>% 
+    group_by(income_bracket, borough) %>% 
+    summarize(n = n(),
+              proportion = n/nrow(nyc_plots)) %>% 
+    ggplot(aes(x = income_bracket, y = proportion)) +
+    geom_col() +
+    ylab("Proportion of Total Complaints") +
+    facet_wrap(~borough, scales = "free_x")
 
 ```
+
+Middle class income groups proportionally file the most complaints across all income brackets. The only exception is the Bronx, in which the proportion of 311 complaints is higher in the lowest income group.
 
 Total complaints within each neighborhood of each borough:
 
 ```{r}
 
 nyc_plots %>% 
-    filter(borough == "BRONX",
-           !is.na(area_name)) %>% 
-    group_by(area_name) %>% 
-    add_count(area_name, name = "neighborhood_complaints") %>% 
-    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
+    filter(!is.na(area_name)) %>% 
+    group_by(area_name, borough) %>% 
+    summarize(n = n()) %>% 
+    ggplot(aes(x = area_name, y = n)) +
     geom_col() +
     ylab("Total Complaints") +
     xlab("Neighborhood") +
     theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-    ggtitle("Bronx Complaints by Neighborhood")
+    ggtitle("Complaints by Neighborhood") +
+    facet_wrap(~borough, scales = "free_x")
+
+```
+
+Total number of `complaint_simp` broken down by each borough and income bracket:
+
+Should I change this to median number?
+
+```{r}
 
 nyc_plots %>% 
-    filter(borough == "MANHATTAN",
-           !is.na(area_name)) %>% 
-    group_by(area_name) %>% 
-    add_count(area_name, name = "neighborhood_complaints") %>% 
-    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
+    filter(!is.na(income_bracket),
+           !is.na(complaint_simp)) %>% 
+    group_by(income_bracket, borough, complaint_simp) %>% 
+    summarize(n = n(),
+              proportion = n/nrow(nyc_plots)) %>% 
+    ggplot(aes(x = income_bracket, y = proportion, fill = complaint_simp)) +
     geom_col() +
-    ylab("Total Complaints") +
-    xlab("Neighborhood") +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-    ggtitle("Manhattan Complaints by Neighborhood")
+    facet_wrap(~borough)
 
-nyc_plots %>% 
-    filter(borough == "QUEENS",
-           !is.na(area_name)) %>% 
-    group_by(area_name) %>% 
-    add_count(area_name, name = "neighborhood_complaints") %>% 
-    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
-    geom_col() +
-    ylab("Total Complaints") +
-    xlab("Neighborhood") +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-    ggtitle("Queens Complaints by Neighborhood")
+```
 
-nyc_plots %>% 
-    filter(borough == "BROOKLYN",
-           !is.na(area_name)) %>% 
-    group_by(area_name) %>% 
-    add_count(area_name, name = "neighborhood_complaints") %>% 
-    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
-    geom_col() +
-    ylab("Total Complaints") +
-    xlab("Neighborhood") +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-    ggtitle("Brooklyn Complaints by Neighborhood")
+# Proportion of unsolved cases by income bracket
 
-nyc_plots %>% 
-    filter(borough == "STATEN ISLAND",
-           !is.na(area_name)) %>% 
-    group_by(area_name) %>% 
-    add_count(area_name, name = "neighborhood_complaints") %>% 
-    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
+```{r}
+
+p <- nyc_plots %>% 
+    filter(!is.na(income_bracket)) %>% 
+    group_by(income_bracket, borough, open_complaint) %>% 
+    summarize(n = n()) %>% 
+    pivot_wider(names_from = open_complaint, values_from = n) %>% 
+    rename(closed = '0',
+           open = '1')
+
+p %>% mutate(proportion = (open/closed)) %>% 
+    ggplot(aes(x = income_bracket, y = proportion)) +
     geom_col() +
-    ylab("Total Complaints") +
-    xlab("Neighborhood") +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-    ggtitle("Staten Island Complaints by Neighborhood")
+    facet_wrap(~borough, scales = "free_x") +
+    ggtitle("Proportion of Open Cases Within Each Income Bracket")
 
 ```
 
 
 
 
+- number unsolved (open) cases versus income bracket - look at health complaints.
+- number of unsolved (open) cases within each neighborhood with color representing proportion black, hispanic
 
 
 

@@ -512,77 +512,75 @@ $(document).ready(function () {
 <h1>Plots</h1>
 <div id="total-number-of-complaints" class="section level2">
 <h2>Total number of complaints</h2>
-<p>Complaints broken down by income bracket:</p>
+<p>Proportion complaints broken down by income bracket and then by income brakcet and borough:</p>
 <pre class="r"><code>nyc_plots %&gt;% 
     filter(!is.na(income_bracket)) %&gt;% 
-    group_by(borough, created_year) %&gt;% 
-    add_count(borough, name = &quot;borough_complaints&quot;) %&gt;% 
-    ggplot(aes(x = income_bracket, y = borough_complaints)) +
+    group_by(income_bracket) %&gt;% 
+    summarize(n = n(),
+              proportion = n/nrow(nyc_plots)) %&gt;% 
+    ggplot(aes(x = income_bracket, y = proportion)) +
     geom_col() +
-    ylab(&quot;Total Complaints&quot;)</code></pre>
+    ylab(&quot;Proportion of Total Complaints&quot;) +
+    ggtitle(&quot;Relative Number of Complaints Filed from Each Income Bracket&quot;)</code></pre>
 <p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code>nyc_plots %&gt;% 
+    filter(!is.na(income_bracket)) %&gt;% 
+    group_by(income_bracket, borough) %&gt;% 
+    summarize(n = n(),
+              proportion = n/nrow(nyc_plots)) %&gt;% 
+    ggplot(aes(x = income_bracket, y = proportion)) +
+    geom_col() +
+    ylab(&quot;Proportion of Total Complaints&quot;) +
+    facet_wrap(~borough, scales = &quot;free_x&quot;)</code></pre>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
+<p>Middle class income groups proportionally file the most complaints across all income brackets. The only exception is the Bronx, in which the proportion of 311 complaints is higher in the lowest income group.</p>
 <p>Total complaints within each neighborhood of each borough:</p>
 <pre class="r"><code>nyc_plots %&gt;% 
-    filter(borough == &quot;BRONX&quot;,
-           !is.na(area_name)) %&gt;% 
-    group_by(area_name) %&gt;% 
-    add_count(area_name, name = &quot;neighborhood_complaints&quot;) %&gt;% 
-    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
+    filter(!is.na(area_name)) %&gt;% 
+    group_by(area_name, borough) %&gt;% 
+    summarize(n = n()) %&gt;% 
+    ggplot(aes(x = area_name, y = n)) +
     geom_col() +
     ylab(&quot;Total Complaints&quot;) +
     xlab(&quot;Neighborhood&quot;) +
     theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-    ggtitle(&quot;Bronx Complaints by Neighborhood&quot;)</code></pre>
+    ggtitle(&quot;Complaints by Neighborhood&quot;) +
+    facet_wrap(~borough, scales = &quot;free_x&quot;)</code></pre>
 <p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Total number of <code>complaint_simp</code> broken down by each borough and income bracket:</p>
+<p>Should I change this to median number?</p>
 <pre class="r"><code>nyc_plots %&gt;% 
-    filter(borough == &quot;MANHATTAN&quot;,
-           !is.na(area_name)) %&gt;% 
-    group_by(area_name) %&gt;% 
-    add_count(area_name, name = &quot;neighborhood_complaints&quot;) %&gt;% 
-    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
+    filter(!is.na(income_bracket),
+           !is.na(complaint_simp)) %&gt;% 
+    group_by(income_bracket, borough, complaint_simp) %&gt;% 
+    summarize(n = n(),
+              proportion = n/nrow(nyc_plots)) %&gt;% 
+    ggplot(aes(x = income_bracket, y = proportion, fill = complaint_simp)) +
     geom_col() +
-    ylab(&quot;Total Complaints&quot;) +
-    xlab(&quot;Neighborhood&quot;) +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-    ggtitle(&quot;Manhattan Complaints by Neighborhood&quot;)</code></pre>
-<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
-<pre class="r"><code>nyc_plots %&gt;% 
-    filter(borough == &quot;QUEENS&quot;,
-           !is.na(area_name)) %&gt;% 
-    group_by(area_name) %&gt;% 
-    add_count(area_name, name = &quot;neighborhood_complaints&quot;) %&gt;% 
-    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
-    geom_col() +
-    ylab(&quot;Total Complaints&quot;) +
-    xlab(&quot;Neighborhood&quot;) +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-    ggtitle(&quot;Queens Complaints by Neighborhood&quot;)</code></pre>
-<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-5-3.png" width="672" /></p>
-<pre class="r"><code>nyc_plots %&gt;% 
-    filter(borough == &quot;BROOKLYN&quot;,
-           !is.na(area_name)) %&gt;% 
-    group_by(area_name) %&gt;% 
-    add_count(area_name, name = &quot;neighborhood_complaints&quot;) %&gt;% 
-    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
-    geom_col() +
-    ylab(&quot;Total Complaints&quot;) +
-    xlab(&quot;Neighborhood&quot;) +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-    ggtitle(&quot;Brooklyn Complaints by Neighborhood&quot;)</code></pre>
-<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-5-4.png" width="672" /></p>
-<pre class="r"><code>nyc_plots %&gt;% 
-    filter(borough == &quot;STATEN ISLAND&quot;,
-           !is.na(area_name)) %&gt;% 
-    group_by(area_name) %&gt;% 
-    add_count(area_name, name = &quot;neighborhood_complaints&quot;) %&gt;% 
-    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
-    geom_col() +
-    ylab(&quot;Total Complaints&quot;) +
-    xlab(&quot;Neighborhood&quot;) +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-    ggtitle(&quot;Staten Island Complaints by Neighborhood&quot;)</code></pre>
-<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-5-5.png" width="672" /></p>
+    facet_wrap(~borough)</code></pre>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 </div>
+</div>
+<div id="proportion-of-unsolved-cases-by-income-bracket" class="section level1">
+<h1>Proportion of unsolved cases by income bracket</h1>
+<pre class="r"><code>p &lt;- nyc_plots %&gt;% 
+    filter(!is.na(income_bracket)) %&gt;% 
+    group_by(income_bracket, borough, open_complaint) %&gt;% 
+    summarize(n = n()) %&gt;% 
+    pivot_wider(names_from = open_complaint, values_from = n) %&gt;% 
+    rename(closed = &#39;0&#39;,
+           open = &#39;1&#39;)
+
+p %&gt;% mutate(proportion = (open/closed)) %&gt;% 
+    ggplot(aes(x = income_bracket, y = proportion)) +
+    geom_col() +
+    facet_wrap(~borough, scales = &quot;free_x&quot;) +
+    ggtitle(&quot;Proportion of Open Cases Within Each Income Bracket&quot;)</code></pre>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<ul>
+<li>number unsolved (open) cases versus income bracket - look at health complaints.</li>
+<li>number of unsolved (open) cases within each neighborhood with color representing proportion black, hispanic</li>
+</ul>
 </div>
 
 
