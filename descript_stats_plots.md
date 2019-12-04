@@ -1,23 +1,49 @@
----
-title: "regression_analysis"
-author: "Ava Hamilton"
-date: "12/1/2019"
-output: html_document
----
+Descriptive stats plots
+================
+Molly Martorella
+12/3/2019
 
-```{r}
-#install.packages("RSocrata")
-#devtools::install_github("Chicago/RSocrata")
-library(RSocrata)
-library(tidyverse)
+# Data
 
-```
+## NYC 311
 
-```{r}
+Load and tidy the data. Data is 100k randomly sampled complaints from
+all neighborhoods across all NYC boroughs (600k total samples). Years
+sampled were 2014-2018.
+
+Data downloaded from:
+<https://wetransfer.com/downloads/f8c5d6c17483e279ff56018db9c44cc420191201000026/c5f48b>
+
+``` r
 nyc <- read_csv(file = "./p8105nyc_311_100k.csv") %>% 
     janitor::clean_names()
+```
 
+    ## Parsed with column specification:
+    ## cols(
+    ##   .default = col_character(),
+    ##   unique_key = col_double(),
+    ##   created_year = col_double(),
+    ##   created_time = col_time(format = ""),
+    ##   incident_zip = col_double(),
+    ##   landmark = col_logical(),
+    ##   bbl = col_double(),
+    ##   x_coordinate_state_plane = col_double(),
+    ##   y_coordinate_state_plane = col_double(),
+    ##   vehicle_type = col_logical(),
+    ##   taxi_company_borough = col_logical(),
+    ##   taxi_pick_up_location = col_logical(),
+    ##   bridge_highway_name = col_logical(),
+    ##   bridge_highway_direction = col_logical(),
+    ##   road_ramp = col_logical(),
+    ##   bridge_highway_segment = col_logical(),
+    ##   latitude = col_double(),
+    ##   longitude = col_double()
+    ## )
 
+    ## See spec(...) for full column specifications.
+
+``` r
 nyc_tidy <- nyc %>% 
     filter(borough != "Unspecified") %>% 
     separate(closed_date, 
@@ -36,8 +62,8 @@ nyc_tidy <- nyc %>%
         agency = as.factor(agency),
         complaint_type = as.factor(complaint_type),
         community_board = as.factor(community_board),
-        open_complaint = ifelse(status == "Closed", yes = 0, no = 1),
-        # open_complaint = ifelse(is.na(closed_year),  yes = 1, no = 0),
+       open_complaint = ifelse(status == "Closed", yes = 0, no = 1),
+      # open_complaint = ifelse(is.na(closed_year),  yes = 1, no = 0),
         complaint_simp = case_when(
             str_detect(complaint_type, 
                        regex("street", ignore_case = TRUE))
@@ -116,29 +142,43 @@ nyc_tidy <- nyc %>%
             open_complaint == 1 & health_complaint == 1 ~ 1,
             open_complaint == 0 | health_complaint == 0 ~ 0
         ),
-        # openCorr = ifelse(status == "Closed", yes = 0, no = 1),
+       # openCorr = ifelse(status == "Closed", yes = 0, no = 1),
         status = as.factor(status)
     )
-
-summary(nyc_tidy$status)
-
-####### THIS CODE IS LOOKING AT WHAT IS MISSING FROM OUR COMPLAIN AGGREGATION
-summary(nyc_tidy$complaint_simp)
-
-test = nyc_tidy %>% 
-    filter(is.na(complaint_simp))
-summary(test$complaint_type)
-
-
 ```
 
+Used skimr::skim, colnames, and levels(factor(nyc$complaint\_type)) to
+investigate and tidy the data. New variables were created to establish a
+binary status for closed (0) or open (1) complaints.
 
-```{r}
+Key variables include: `year`, `borough`, `community_board`,
+`complaint_type`, and `status`.
 
+Newly added variables include:
+
+1.  `complaint_simp` - based on key words, condenses complaint types
+    into the following categories:’
+
+2.  `health_complaint` - binary yes (1) or no (0), based on health
+    associated categories within `complaint_simp`.
+
+3.  `open_health_complaint` - binary categorization, either health
+    complaint that is open (1), or non-health related complaint or
+    closed health complaint (0).
+
+4.  `open_complaint` - binary categorization, closed `status` (0), open
+    (1)
+
+## Income and population characteristics data:
+
+The variable, `community_board`, will be used to left join NYC 311 data
+with income and population characteristics data sourced from American
+Community Survey by Community District.
+
+``` r
 inc_df = read_csv("./Med_income_2017.csv") %>% 
     janitor::clean_names() %>% 
     mutate(
-        pop_1000s = round(total_population/1000, 0),
         inc_1000s = round(median_income/1000, 1),
         income_bracket = case_when(
             median_income >= 20000 & median_income <= 30000 ~ "20k-30k",
@@ -154,90 +194,62 @@ inc_df = read_csv("./Med_income_2017.csv") %>%
         ),
         income_bracket = as.factor(income_bracket)
     )
-
-# adding income to data and removing any observations that do not have a specific community board to link to income
-add_inc = left_join(nyc_tidy, inc_df, by = "community_board") %>% 
-    filter(is.na(median_income) == FALSE) %>% 
-    mutate(
-        year_fac = as.factor(created_year)
-    )
-
-
 ```
 
+    ## Parsed with column specification:
+    ## cols(
+    ##   MapID = col_double(),
+    ##   `Area Name` = col_character(),
+    ##   Median_Income = col_double(),
+    ##   community_board = col_character(),
+    ##   per_blackNH = col_double(),
+    ##   per_whiteNH = col_double(),
+    ##   per_hisp = col_double(),
+    ##   per_other = col_double(),
+    ##   `Total Population` = col_double()
+    ## )
 
-Our question is: What neighborhood characteristics effect number and type of complaints? 
+``` r
+nyc_inc = left_join(nyc_tidy, inc_df, by = "community_board")
+```
 
+    ## Warning: Column `community_board` joining factor and character vector, coercing
+    ## into character vector
 
-# data to keep:
+`income_bracket` and `inc_1000s` (rounds income and divides by 1000)
+variables were added to the neighborhood population characteristics data
+to ease downstream plots and analyses. The data were left joined using
+the `community_board` variable.
 
-```{r}
+## Combined and tidied data for plotting
 
-# grouping by community district and year
-cb_group_year = add_inc %>% 
-    group_by(community_board, created_year) %>%
-    add_count(community_board, name = "number_complaints") %>% 
+``` r
+nyc_plots <- nyc_inc %>% 
+    group_by(area_name, created_year) %>%
+    add_count(area_name, name = "number_complaints") %>% 
     mutate(
         num_unsolved = sum(open_complaint),
         num_health_complaint = sum(health_complaint),
         num_open_health = sum(open_health_complaint)
     ) %>% 
-    select(number_complaints, num_unsolved, num_open_health, everything())
-
-
-
-########## including year
-cb_group_year_distinct = cb_group_year %>% 
-    select(community_board, number_complaints, inc_1000s, num_unsolved, num_health_complaint, borough, per_black_nh, per_hisp, per_white_nh, median_income, num_open_health, created_year, year_fac, pop_1000s) %>% 
-    distinct() %>% 
-    arrange(community_board) %>% 
-    mutate(
-        borough <- relevel(borough, ref = "MANHATTAN")
-        )
-
-cb_group_year_distinct <- within(cb_group_year_distinct, borough <- relevel(borough, ref = "MANHATTAN"))
-
+    select(-unique_key, -city, -park_borough, -agency, -agency_name, -descriptor, -incident_zip, -incident_address, -street_name, -cross_street_1, -cross_street_2, -intersection_street_1, -intersection_street_2, -landmark, -facility_type, -resolution_description, -resolution_action_updated_date, -bbl, -x_coordinate_state_plane, -y_coordinate_state_plane, -open_data_channel_type, -park_facility_name, -vehicle_type, -taxi_company_borough, -taxi_pick_up_location, -bridge_highway_name, -bridge_highway_direction, -bridge_highway_segment, -latitude, -longitude, -location, -road_ramp, -location_type, -address_type, -map_id)
 ```
 
+The newly combined dataframe was grouped according to `area_name`, a key
+variable from the population characteristics dataset that provides the
+local neighborhood name within the borough. Extraneous variables were
+removed to reduce the dataframe size and ease manipulation of the data.
 
-# Final Models:
+Newly added variables include:
 
-```{r}
+1.  `number_complaints` - total number of complaints within the given
+    neighborhood the complaint was filed.
 
+2.  `num_unsolved` - total number of open/unresolved complaints within
+    the neighborhood the complaint was filed.
 
-# number of complaints
-options(scipen = 5)
+3.  `num_health_complaint` - total number of health related complaints
+    within the neighborhood the complaint was filed.
 
-num_comp_model_year = lm(number_complaints ~ inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s + borough +created_year, data = cb_group_year_distinct)
-
-summary(num_comp_model_year)
-
-# number of health complaints
-
-
-num_health_model_year = lm(num_health_complaint ~  inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s + borough +created_year, data = cb_group_year_distinct)
-
-summary(num_health_model_year)
-
-# number of unresolved
-
-num_unsolved_model_year = lm(num_unsolved ~ inc_1000s + per_black_nh + per_hisp + pop_1000s + borough +created_year, data = cb_group_year_distinct)
-summary(num_unsolved_model_year)
-
-
-
-
-```
-
-
-We looked at number of complaints from 2014-2018 predicted by year, borough, community district (CD) level variables including median income (in the 1000s), total population (in the 1000s), percent non-hispanic black, percent hispanic, and number of unresolved complaints. 
-
-Number of complaints by NYC community district:
-The total number of complaints in significantly predicted by year, borough and CD number of unsolved complaints, percent Hispanic, and population total.
-
-Number of health-related complaints by NYC community district:
-Complaints were determined to be health related if they were about heat, hot water, sanitary conditions, poor air quality, or hazardous materials. The total number of health-related complaints in significantly predicted by borough and CD median income, percent non-Hispanic Black and Hispanic, and population total.
-
-Number of unresolved complaints by NYC community district:
-A complaint was labeled unresolved if its status was not labeled as "closed". The total number of unresolved complaints in significantly predicted by year of complaint, borough, and CD median income, number of unsolved complaints, percent non-Hispanic Black and Hispanic, and population total.
-
+4.  `num_open_health` - total number of open/unresolved health
+    complaints within the neighborhood the complaint was filed.

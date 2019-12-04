@@ -1,3 +1,11 @@
 ---
 title: "<span style='font-size: 25px'>Project Overview</style>"
 ---
+[DRAFT]
+
+Inspiration: We live in one of the most expensive, as well as one of the most diverse, cities in the world. As such, there is going to be a plethora of conflict. We thought it would be an interesting research endeavor to utilize the massive 311 complaint data to see how community needs are 
+
+
+
+
+

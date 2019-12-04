@@ -4,305 +4,610 @@
 
 <head>
 
-<meta charset="utf-8" />
+<meta charset="utf-8">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
-<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-
-<meta name="author" content="Molly Martorella" />
-
-
-<title>Descriptive stats plots</title>
-
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/sandstone.min.css" rel="stylesheet" />
-<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
-<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
-<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
-<script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
-<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-
-<style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
-<script type="text/javascript">
-if (window.hljs) {
-  hljs.configure({languages: []});
-  hljs.initHighlightingOnLoad();
-  if (document.readyState && document.readyState === "complete") {
-    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
-  }
+@font-face {
+font-family: octicons-link;
+src: url(data:font/woff;charset=utf-8;base64,d09GRgABAAAAAAZwABAAAAAACFQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEU0lHAAAGaAAAAAgAAAAIAAAAAUdTVUIAAAZcAAAACgAAAAoAAQAAT1MvMgAAAyQAAABJAAAAYFYEU3RjbWFwAAADcAAAAEUAAACAAJThvmN2dCAAAATkAAAABAAAAAQAAAAAZnBnbQAAA7gAAACyAAABCUM+8IhnYXNwAAAGTAAAABAAAAAQABoAI2dseWYAAAFsAAABPAAAAZwcEq9taGVhZAAAAsgAAAA0AAAANgh4a91oaGVhAAADCAAAABoAAAAkCA8DRGhtdHgAAAL8AAAADAAAAAwGAACfbG9jYQAAAsAAAAAIAAAACABiATBtYXhwAAACqAAAABgAAAAgAA8ASm5hbWUAAAToAAABQgAAAlXu73sOcG9zdAAABiwAAAAeAAAAME3QpOBwcmVwAAAEbAAAAHYAAAB/aFGpk3jaTY6xa8JAGMW/O62BDi0tJLYQincXEypYIiGJjSgHniQ6umTsUEyLm5BV6NDBP8Tpts6F0v+k/0an2i+itHDw3v2+9+DBKTzsJNnWJNTgHEy4BgG3EMI9DCEDOGEXzDADU5hBKMIgNPZqoD3SilVaXZCER3/I7AtxEJLtzzuZfI+VVkprxTlXShWKb3TBecG11rwoNlmmn1P2WYcJczl32etSpKnziC7lQyWe1smVPy/Lt7Kc+0vWY/gAgIIEqAN9we0pwKXreiMasxvabDQMM4riO+qxM2ogwDGOZTXxwxDiycQIcoYFBLj5K3EIaSctAq2kTYiw+ymhce7vwM9jSqO8JyVd5RH9gyTt2+J/yUmYlIR0s04n6+7Vm1ozezUeLEaUjhaDSuXHwVRgvLJn1tQ7xiuVv/ocTRF42mNgZGBgYGbwZOBiAAFGJBIMAAizAFoAAABiAGIAznjaY2BkYGAA4in8zwXi+W2+MjCzMIDApSwvXzC97Z4Ig8N/BxYGZgcgl52BCSQKAA3jCV8CAABfAAAAAAQAAEB42mNgZGBg4f3vACQZQABIMjKgAmYAKEgBXgAAeNpjYGY6wTiBgZWBg2kmUxoDA4MPhGZMYzBi1AHygVLYQUCaawqDA4PChxhmh/8ODDEsvAwHgMKMIDnGL0x7gJQCAwMAJd4MFwAAAHjaY2BgYGaA4DAGRgYQkAHyGMF8NgYrIM3JIAGVYYDT+AEjAwuDFpBmA9KMDEwMCh9i/v8H8sH0/4dQc1iAmAkALaUKLgAAAHjaTY9LDsIgEIbtgqHUPpDi3gPoBVyRTmTddOmqTXThEXqrob2gQ1FjwpDvfwCBdmdXC5AVKFu3e5MfNFJ29KTQT48Ob9/lqYwOGZxeUelN2U2R6+cArgtCJpauW7UQBqnFkUsjAY/kOU1cP+DAgvxwn1chZDwUbd6CFimGXwzwF6tPbFIcjEl+vvmM/byA48e6tWrKArm4ZJlCbdsrxksL1AwWn/yBSJKpYbq8AXaaTb8AAHja28jAwOC00ZrBeQNDQOWO//sdBBgYGRiYWYAEELEwMTE4uzo5Zzo5b2BxdnFOcALxNjA6b2ByTswC8jYwg0VlNuoCTWAMqNzMzsoK1rEhNqByEyerg5PMJlYuVueETKcd/89uBpnpvIEVomeHLoMsAAe1Id4AAAAAAAB42oWQT07CQBTGv0JBhagk7HQzKxca2sJCE1hDt4QF+9JOS0nbaaYDCQfwCJ7Au3AHj+LO13FMmm6cl7785vven0kBjHCBhfpYuNa5Ph1c0e2Xu3jEvWG7UdPDLZ4N92nOm+EBXuAbHmIMSRMs+4aUEd4Nd3CHD8NdvOLTsA2GL8M9PODbcL+hD7C1xoaHeLJSEao0FEW14ckxC+TU8TxvsY6X0eLPmRhry2WVioLpkrbp84LLQPGI7c6sOiUzpWIWS5GzlSgUzzLBSikOPFTOXqly7rqx0Z1Q5BAIoZBSFihQYQOOBEdkCOgXTOHA07HAGjGWiIjaPZNW13/+lm6S9FT7rLHFJ6fQbkATOG1j2OFMucKJJsxIVfQORl+9Jyda6Sl1dUYhSCm1dyClfoeDve4qMYdLEbfqHf3O/AdDumsjAAB42mNgYoAAZQYjBmyAGYQZmdhL8zLdDEydARfoAqIAAAABAAMABwAKABMAB///AA8AAQAAAAAAAAAAAAAAAAABAAAAAA==) format('woff');
 }
-</script>
-
-
-
-<style type="text/css">
+body {
+-webkit-text-size-adjust: 100%;
+text-size-adjust: 100%;
+color: #333;
+font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+font-size: 16px;
+line-height: 1.6;
+word-wrap: break-word;
+}
+a {
+background-color: transparent;
+}
+a:active,
+a:hover {
+outline: 0;
+}
+strong {
+font-weight: bold;
+}
 h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
-
-
-
-
-<style type = "text/css">
-.main-container {
-  max-width: 940px;
-  margin-left: auto;
-  margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
+font-size: 2em;
+margin: 0.67em 0;
 }
 img {
-  max-width:100%;
+border: 0;
 }
-.tabbed-pane {
-  padding-top: 12px;
+hr {
+box-sizing: content-box;
+height: 0;
 }
-.html-widget {
-  margin-bottom: 20px;
+pre {
+overflow: auto;
 }
-button.code-folding-btn:focus {
-  outline: none;
+code,
+kbd,
+pre {
+font-family: monospace, monospace;
+font-size: 1em;
 }
-summary {
-  display: list-item;
+input {
+color: inherit;
+font: inherit;
+margin: 0;
 }
+html input[disabled] {
+cursor: default;
+}
+input {
+line-height: normal;
+}
+input[type="checkbox"] {
+box-sizing: border-box;
+padding: 0;
+}
+table {
+border-collapse: collapse;
+border-spacing: 0;
+}
+td,
+th {
+padding: 0;
+}
+* {
+box-sizing: border-box;
+}
+input {
+font: 13px / 1.4 Helvetica, arial, nimbussansl, liberationsans, freesans, clean, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+a {
+color: #4078c0;
+text-decoration: none;
+}
+a:hover,
+a:active {
+text-decoration: underline;
+}
+hr {
+height: 0;
+margin: 15px 0;
+overflow: hidden;
+background: transparent;
+border: 0;
+border-bottom: 1px solid #ddd;
+}
+hr:before {
+display: table;
+content: "";
+}
+hr:after {
+display: table;
+clear: both;
+content: "";
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+margin-top: 15px;
+margin-bottom: 15px;
+line-height: 1.1;
+}
+h1 {
+font-size: 30px;
+}
+h2 {
+font-size: 21px;
+}
+h3 {
+font-size: 16px;
+}
+h4 {
+font-size: 14px;
+}
+h5 {
+font-size: 12px;
+}
+h6 {
+font-size: 11px;
+}
+blockquote {
+margin: 0;
+}
+ul,
+ol {
+padding: 0;
+margin-top: 0;
+margin-bottom: 0;
+}
+ol ol,
+ul ol {
+list-style-type: lower-roman;
+}
+ul ul ol,
+ul ol ol,
+ol ul ol,
+ol ol ol {
+list-style-type: lower-alpha;
+}
+dd {
+margin-left: 0;
+}
+code {
+font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+font-size: 12px;
+}
+pre {
+margin-top: 0;
+margin-bottom: 0;
+font: 12px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+.select::-ms-expand {
+opacity: 0;
+}
+.octicon {
+font: normal normal normal 16px/1 octicons-link;
+display: inline-block;
+text-decoration: none;
+text-rendering: auto;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+}
+.octicon-link:before {
+content: '\f05c';
+}
+.markdown-body:before {
+display: table;
+content: "";
+}
+.markdown-body:after {
+display: table;
+clear: both;
+content: "";
+}
+.markdown-body>*:first-child {
+margin-top: 0 !important;
+}
+.markdown-body>*:last-child {
+margin-bottom: 0 !important;
+}
+a:not([href]) {
+color: inherit;
+text-decoration: none;
+}
+.anchor {
+display: inline-block;
+padding-right: 2px;
+margin-left: -18px;
+}
+.anchor:focus {
+outline: none;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+margin-top: 1em;
+margin-bottom: 16px;
+font-weight: bold;
+line-height: 1.4;
+}
+h1 .octicon-link,
+h2 .octicon-link,
+h3 .octicon-link,
+h4 .octicon-link,
+h5 .octicon-link,
+h6 .octicon-link {
+color: #000;
+vertical-align: middle;
+visibility: hidden;
+}
+h1:hover .anchor,
+h2:hover .anchor,
+h3:hover .anchor,
+h4:hover .anchor,
+h5:hover .anchor,
+h6:hover .anchor {
+text-decoration: none;
+}
+h1:hover .anchor .octicon-link,
+h2:hover .anchor .octicon-link,
+h3:hover .anchor .octicon-link,
+h4:hover .anchor .octicon-link,
+h5:hover .anchor .octicon-link,
+h6:hover .anchor .octicon-link {
+visibility: visible;
+}
+h1 {
+padding-bottom: 0.3em;
+font-size: 2.25em;
+line-height: 1.2;
+border-bottom: 1px solid #eee;
+}
+h1 .anchor {
+line-height: 1;
+}
+h2 {
+padding-bottom: 0.3em;
+font-size: 1.75em;
+line-height: 1.225;
+border-bottom: 1px solid #eee;
+}
+h2 .anchor {
+line-height: 1;
+}
+h3 {
+font-size: 1.5em;
+line-height: 1.43;
+}
+h3 .anchor {
+line-height: 1.2;
+}
+h4 {
+font-size: 1.25em;
+}
+h4 .anchor {
+line-height: 1.2;
+}
+h5 {
+font-size: 1em;
+}
+h5 .anchor {
+line-height: 1.1;
+}
+h6 {
+font-size: 1em;
+color: #777;
+}
+h6 .anchor {
+line-height: 1.1;
+}
+p,
+blockquote,
+ul,
+ol,
+dl,
+table,
+pre {
+margin-top: 0;
+margin-bottom: 16px;
+}
+hr {
+height: 4px;
+padding: 0;
+margin: 16px 0;
+background-color: #e7e7e7;
+border: 0 none;
+}
+ul,
+ol {
+padding-left: 2em;
+}
+ul ul,
+ul ol,
+ol ol,
+ol ul {
+margin-top: 0;
+margin-bottom: 0;
+}
+li>p {
+margin-top: 16px;
+}
+dl {
+padding: 0;
+}
+dl dt {
+padding: 0;
+margin-top: 16px;
+font-size: 1em;
+font-style: italic;
+font-weight: bold;
+}
+dl dd {
+padding: 0 16px;
+margin-bottom: 16px;
+}
+blockquote {
+padding: 0 15px;
+color: #777;
+border-left: 4px solid #ddd;
+}
+blockquote>:first-child {
+margin-top: 0;
+}
+blockquote>:last-child {
+margin-bottom: 0;
+}
+table {
+display: block;
+width: 100%;
+overflow: auto;
+word-break: normal;
+word-break: keep-all;
+}
+table th {
+font-weight: bold;
+}
+table th,
+table td {
+padding: 6px 13px;
+border: 1px solid #ddd;
+}
+table tr {
+background-color: #fff;
+border-top: 1px solid #ccc;
+}
+table tr:nth-child(2n) {
+background-color: #f8f8f8;
+}
+img {
+max-width: 100%;
+box-sizing: content-box;
+background-color: #fff;
+}
+code {
+padding: 0;
+padding-top: 0.2em;
+padding-bottom: 0.2em;
+margin: 0;
+font-size: 85%;
+background-color: rgba(0,0,0,0.04);
+border-radius: 3px;
+}
+code:before,
+code:after {
+letter-spacing: -0.2em;
+content: "\00a0";
+}
+pre>code {
+padding: 0;
+margin: 0;
+font-size: 100%;
+word-break: normal;
+white-space: pre;
+background: transparent;
+border: 0;
+}
+.highlight {
+margin-bottom: 16px;
+}
+.highlight pre,
+pre {
+padding: 16px;
+overflow: auto;
+font-size: 85%;
+line-height: 1.45;
+background-color: #f7f7f7;
+border-radius: 3px;
+}
+.highlight pre {
+margin-bottom: 0;
+word-break: normal;
+}
+pre {
+word-wrap: normal;
+}
+pre code {
+display: inline;
+max-width: initial;
+padding: 0;
+margin: 0;
+overflow: initial;
+line-height: inherit;
+word-wrap: normal;
+background-color: transparent;
+border: 0;
+}
+pre code:before,
+pre code:after {
+content: normal;
+}
+kbd {
+display: inline-block;
+padding: 3px 5px;
+font-size: 11px;
+line-height: 10px;
+color: #555;
+vertical-align: middle;
+background-color: #fcfcfc;
+border: solid 1px #ccc;
+border-bottom-color: #bbb;
+border-radius: 3px;
+box-shadow: inset 0 -1px 0 #bbb;
+}
+.pl-c {
+color: #969896;
+}
+.pl-c1,
+.pl-s .pl-v {
+color: #0086b3;
+}
+.pl-e,
+.pl-en {
+color: #795da3;
+}
+.pl-s .pl-s1,
+.pl-smi {
+color: #333;
+}
+.pl-ent {
+color: #63a35c;
+}
+.pl-k {
+color: #a71d5d;
+}
+.pl-pds,
+.pl-s,
+.pl-s .pl-pse .pl-s1,
+.pl-sr,
+.pl-sr .pl-cce,
+.pl-sr .pl-sra,
+.pl-sr .pl-sre {
+color: #183691;
+}
+.pl-v {
+color: #ed6a43;
+}
+.pl-id {
+color: #b52a1d;
+}
+.pl-ii {
+background-color: #b52a1d;
+color: #f8f8f8;
+}
+.pl-sr .pl-cce {
+color: #63a35c;
+font-weight: bold;
+}
+.pl-ml {
+color: #693a17;
+}
+.pl-mh,
+.pl-mh .pl-en,
+.pl-ms {
+color: #1d3e81;
+font-weight: bold;
+}
+.pl-mq {
+color: #008080;
+}
+.pl-mi {
+color: #333;
+font-style: italic;
+}
+.pl-mb {
+color: #333;
+font-weight: bold;
+}
+.pl-md {
+background-color: #ffecec;
+color: #bd2c00;
+}
+.pl-mi1 {
+background-color: #eaffea;
+color: #55a532;
+}
+.pl-mdr {
+color: #795da3;
+font-weight: bold;
+}
+.pl-mo {
+color: #1d3e81;
+}
+kbd {
+display: inline-block;
+padding: 3px 5px;
+font: 11px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+line-height: 10px;
+color: #555;
+vertical-align: middle;
+background-color: #fcfcfc;
+border: solid 1px #ccc;
+border-bottom-color: #bbb;
+border-radius: 3px;
+box-shadow: inset 0 -1px 0 #bbb;
+}
+.task-list-item {
+list-style-type: none;
+}
+.task-list-item+.task-list-item {
+margin-top: 3px;
+}
+.task-list-item input {
+margin: 0 0.35em 0.25em -1.6em;
+vertical-align: middle;
+}
+:checked+.radio-label {
+z-index: 1;
+position: relative;
+border-color: #4078c0;
+}
+.sourceLine {
+display: inline-block;
+}
+code .kw { color: #000000; }
+code .dt { color: #ed6a43; }
+code .dv { color: #009999; }
+code .bn { color: #009999; }
+code .fl { color: #009999; }
+code .ch { color: #009999; }
+code .st { color: #183691; }
+code .co { color: #969896; }
+code .ot { color: #0086b3; }
+code .al { color: #a61717; }
+code .fu { color: #63a35c; }
+code .er { color: #a61717; background-color: #e3d2d2; }
+code .wa { color: #000000; }
+code .cn { color: #008080; }
+code .sc { color: #008080; }
+code .vs { color: #183691; }
+code .ss { color: #183691; }
+code .im { color: #000000; }
+code .va {color: #008080; }
+code .cf { color: #000000; }
+code .op { color: #000000; }
+code .bu { color: #000000; }
+code .ex { color: #000000; }
+code .pp { color: #999999; }
+code .at { color: #008080; }
+code .do { color: #969896; }
+code .an { color: #008080; }
+code .cv { color: #008080; }
+code .in { color: #008080; }
 </style>
-
-
-<style type="text/css">
-/* padding for bootstrap navbar */
+<style>
 body {
-  padding-top: 61px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 66px;
-  margin-top: -66px;
-}
-.section h2 {
-  padding-top: 66px;
-  margin-top: -66px;
-}
-.section h3 {
-  padding-top: 66px;
-  margin-top: -66px;
-}
-.section h4 {
-  padding-top: 66px;
-  margin-top: -66px;
-}
-.section h5 {
-  padding-top: 66px;
-  margin-top: -66px;
-}
-.section h6 {
-  padding-top: 66px;
-  margin-top: -66px;
-}
-.dropdown-submenu {
-  position: relative;
-}
-.dropdown-submenu>.dropdown-menu {
-  top: 0;
-  left: 100%;
-  margin-top: -6px;
-  margin-left: -1px;
-  border-radius: 0 6px 6px 6px;
-}
-.dropdown-submenu:hover>.dropdown-menu {
-  display: block;
-}
-.dropdown-submenu>a:after {
-  display: block;
-  content: " ";
-  float: right;
-  width: 0;
-  height: 0;
-  border-color: transparent;
-  border-style: solid;
-  border-width: 5px 0 5px 5px;
-  border-left-color: #cccccc;
-  margin-top: 5px;
-  margin-right: -10px;
-}
-.dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
-}
-.dropdown-submenu.pull-left {
-  float: none;
-}
-.dropdown-submenu.pull-left>.dropdown-menu {
-  left: -100%;
-  margin-left: 10px;
-  border-radius: 6px 0 6px 6px;
+  box-sizing: border-box;
+  min-width: 200px;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 45px;
+  padding-top: 0px;
 }
 </style>
-
-<script>
-// manage active state of menu based on current page
-$(document).ready(function () {
-  // active menu anchor
-  href = window.location.pathname
-  href = href.substr(href.lastIndexOf('/') + 1)
-  if (href === "")
-    href = "index.html";
-  var menuAnchor = $('a[href="' + href + '"]');
-
-  // mark it active
-  menuAnchor.parent().addClass('active');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
-});
-</script>
-
-<!-- tabsets -->
-
-<style type="text/css">
-.tabset-dropdown > .nav-tabs {
-  display: inline-table;
-  max-height: 500px;
-  min-height: 44px;
-  overflow-y: auto;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
-  font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
-  font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
-}
-
-.tabset-dropdown > .nav-tabs > li.active {
-  display: block;
-}
-
-.tabset-dropdown > .nav-tabs > li > a,
-.tabset-dropdown > .nav-tabs > li > a:focus,
-.tabset-dropdown > .nav-tabs > li > a:hover {
-  border: none;
-  display: inline-block;
-  border-radius: 4px;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
-  display: block;
-  float: none;
-}
-
-.tabset-dropdown > .nav-tabs > li {
-  display: none;
-}
-</style>
-
-<!-- code folding -->
-
-
-
 
 </head>
 
 <body>
 
-
-<div class="container-fluid main-container">
-
-
-
-
-<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="index.html">Team 4</a>
-    </div>
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-        <li class="dropdown-header">Home</li>
-<li class="dropdown-header">Statistics</li>
-<li class="dropdown-header">Plots</li>
-<li class="dropdown-header">Models</li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        
-      </ul>
-    </div><!--/.nav-collapse -->
-  </div><!--/.container -->
-</div><!--/.navbar -->
-
-<div class="fluid-row" id="header">
-
-
-
-<h1 class="title toc-ignore">Descriptive stats plots</h1>
-<h4 class="author">Molly Martorella</h4>
-<h4 class="date">12/3/2019</h4>
-
-</div>
-
-
-<div id="data" class="section level1">
-<h1>Data</h1>
-<div id="nyc-311" class="section level2">
-<h2>NYC 311</h2>
+<h1 id="descriptive-stats-plots">Descriptive stats plots</h1>
+<p>Molly Martorella 12/3/2019</p>
+<h1 id="data">Data</h1>
+<h2 id="nyc-311">NYC 311</h2>
 <p>Load and tidy the data. Data is 100k randomly sampled complaints from all neighborhoods across all NYC boroughs (600k total samples). Years sampled were 2014-2018.</p>
-<p>Data downloaded from: <a href="https://wetransfer.com/downloads/f8c5d6c17483e279ff56018db9c44cc420191201000026/c5f48b" class="uri">https://wetransfer.com/downloads/f8c5d6c17483e279ff56018db9c44cc420191201000026/c5f48b</a></p>
-<pre class="r"><code>nyc &lt;- read_csv(file = &quot;../p8105nyc_311_100k.csv&quot;) %&gt;% 
-    janitor::clean_names()</code></pre>
+<p>Data downloaded from: <a href="https://wetransfer.com/downloads/f8c5d6c17483e279ff56018db9c44cc420191201000026/c5f48b">https://wetransfer.com/downloads/f8c5d6c17483e279ff56018db9c44cc420191201000026/c5f48b</a></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>nyc &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="dt">file =</span> <span class="st">&quot;./p8105nyc_311_100k.csv&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="st">    </span>janitor<span class="op">::</span><span class="kw">clean_names</span>()</span></code></pre></div>
 <pre><code>## Parsed with column specification:
 ## cols(
 ##   .default = col_character(),
@@ -323,139 +628,140 @@ $(document).ready(function () {
 ##   bridge_highway_segment = col_logical(),
 ##   latitude = col_double(),
 ##   longitude = col_double()
-## )</code></pre>
-<pre><code>## See spec(...) for full column specifications.</code></pre>
-<pre class="r"><code>nyc_tidy &lt;- nyc %&gt;% 
-    filter(borough != &quot;Unspecified&quot;) %&gt;% 
-    separate(closed_date, 
-             into = c(&quot;closed_month&quot;,&quot;closed_day&quot;,&quot;closed_year&quot;), 
-             sep = &quot;\\/&quot; ) %&gt;%
-    separate(closed_year, 
-             into = c(&quot;closed_year&quot;,&quot;closed_time&quot;), 
-             sep = &quot; &quot;) %&gt;% 
-    mutate(
-        created_year = as.numeric(created_year),
-        created_month = as.numeric(created_month),
-        created_day = as.numeric(created_day),
-        city = as.factor(city),
-        status = as.factor(status),
-        borough = as.factor(borough),
-        agency = as.factor(agency),
-        complaint_type = as.factor(complaint_type),
-        community_board = as.factor(community_board),
-        open_complaint = ifelse(is.na(closed_year),  yes = 1, no = 0),
-        complaint_simp = case_when(
-            str_detect(complaint_type, 
-                       regex(&quot;street&quot;, ignore_case = TRUE))
-            |str_detect(complaint_type, 
-                        regex(&quot;sidewalk&quot;, ignore_case = TRUE))
-            |str_detect(complaint_type, 
-                        regex(&quot;curb&quot;, ignore_case = TRUE)) ~ &quot;Street Condition&quot;,
-            str_detect(complaint_type, 
-                       regex(&quot;noise&quot;, ignore_case = TRUE)) ~ &quot;Noise&quot;,
-            str_detect(complaint_type, 
-                       regex(&quot;heat&quot;, ignore_case = TRUE)) ~ &quot;Heat&quot;,
-            str_detect(complaint_type, 
-                       regex(&quot;water&quot;, ignore_case = TRUE))
-            |str_detect(complaint_type, 
-                        regex(&quot;leak&quot;, ignore_case = TRUE))
-            |str_detect(complaint_type, 
-                        regex(&quot;plumbing&quot;, ignore_case = TRUE))
-            |str_detect(complaint_type, 
-                        regex(&quot;boiler&quot;, ignore_case = TRUE)) ~ &quot;Water/plumbing&quot;,
-            str_detect(complaint_type, 
-                       regex(&quot;paint&quot;, ignore_case = TRUE)) ~ &quot;Paint/Plaster&quot;,
-            str_detect(complaint_type, 
-                       regex(&quot;asbestos&quot;, ignore_case = TRUE))
-            |str_detect(complaint_type, 
-                        regex(&quot;lead&quot;, ignore_case = TRUE))
-            |str_detect(complaint_type, 
-                        regex(&quot;hazard&quot;, ignore_case = TRUE))
-            |str_detect(complaint_type, 
-                        regex(&quot;mold&quot;, ignore_case = TRUE)) ~ &quot;Hazard Material&quot;,
-            str_detect(complaint_type, 
-                       regex(&quot;elevator&quot;, ignore_case = TRUE)) 
-            |str_detect(complaint_type, 
-                        regex(&quot;maintenance&quot;, ignore_case = TRUE))
-            |str_detect(complaint_type, 
-                        regex(&quot;electric&quot;, ignore_case = TRUE))
-            |str_detect(complaint_type, 
-                        regex(&quot;stairs&quot;, ignore_case = TRUE))
-            |str_detect(complaint_type, 
-                        regex(&quot;window&quot;, ignore_case = TRUE)) 
-            |str_detect(complaint_type, 
-                        regex(&quot;appliance&quot;, ignore_case = TRUE)) ~ &quot;Maintenance&quot;,
-            str_detect(complaint_type, 
-                       regex(&quot;sanita&quot;, ignore_case = TRUE))
-            |str_detect(complaint_type, 
-                        regex(&quot;rodent&quot;, ignore_case = TRUE))
-            |str_detect(complaint_type, 
-                        regex(&quot;dirty&quot;, ignore_case = TRUE))
-            |str_detect(complaint_type, 
-                        regex(&quot;sew&quot;, ignore_case = TRUE))
-            |str_detect(complaint_type, 
-                        regex(&quot;standing water&quot;, ignore_case = TRUE)) ~ &quot;Sanitation&quot;,
-            str_detect(complaint_type, 
-                       regex(&quot;tree&quot;, ignore_case = TRUE)) ~ &quot;Tree&quot;,
-            str_detect(complaint_type, 
-                       regex(&quot;parking&quot;, ignore_case = TRUE))
-            |str_detect(complaint_type, 
-                        regex(&quot;car&quot;, ignore_case = TRUE))
-            |str_detect(complaint_type, 
-                        regex(&quot;drive&quot;, ignore_case = TRUE))
-            |str_detect(complaint_type,  
-                        regex(&quot;vehicle&quot;, ignore_case = TRUE))
-            |str_detect(complaint_type,  
-                        regex(&quot;traffic&quot;, ignore_case = TRUE)) ~ &quot;Car/Traffic&quot;,
-            str_detect(complaint_type, 
-                       regex(&quot;air&quot;, ignore_case = TRUE)) ~ &quot;Air Quality&quot;,
-            str_detect(complaint_type, 
-                       regex(&quot;collection&quot;, ignore_case = TRUE)) ~ &quot;Collection&quot;,
-            str_detect(complaint_type, 
-                       regex(&quot;homeless&quot;, ignore_case = TRUE))
-            |str_detect(complaint_type, 
-                        regex(&quot;panhandling&quot;, ignore_case = TRUE)) ~ &quot;Homeless&quot;),
-        health_complaint = ifelse(
-            complaint_simp %in% c(&quot;Heat&quot;, &quot;Water/Plumbing&quot;, &quot;Hazard Material&quot;, &quot;Sanitation&quot;, &quot;Air Quality&quot;), yes = 1, no = 0),
-        complaint_simp = as.factor(complaint_simp),
-        open_health_complaint = case_when(
-            open_complaint == 1 &amp; health_complaint == 1 ~ 1,
-            open_complaint == 0 | health_complaint == 0 ~ 0
-        ),
-        openCorr = ifelse(status == &quot;Closed&quot;, yes = 0, no = 1),
-        status = as.factor(status)
-    )</code></pre>
+## )
+
+## See spec(...) for full column specifications.
+</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>nyc_tidy &lt;-<span class="st"> </span>nyc <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="st">    </span><span class="kw">filter</span>(borough <span class="op">!=</span><span class="st"> &quot;Unspecified&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="st">    </span><span class="kw">separate</span>(closed_date, </span>
+<span id="cb3-4"><a href="#cb3-4"></a>             <span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&quot;closed_month&quot;</span>,<span class="st">&quot;closed_day&quot;</span>,<span class="st">&quot;closed_year&quot;</span>), </span>
+<span id="cb3-5"><a href="#cb3-5"></a>             <span class="dt">sep =</span> <span class="st">&quot;</span><span class="ch">\\</span><span class="st">/&quot;</span> ) <span class="op">%&gt;%</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="st">    </span><span class="kw">separate</span>(closed_year, </span>
+<span id="cb3-7"><a href="#cb3-7"></a>             <span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&quot;closed_year&quot;</span>,<span class="st">&quot;closed_time&quot;</span>), </span>
+<span id="cb3-8"><a href="#cb3-8"></a>             <span class="dt">sep =</span> <span class="st">&quot; &quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="st">    </span><span class="kw">mutate</span>(</span>
+<span id="cb3-10"><a href="#cb3-10"></a>        <span class="dt">created_year =</span> <span class="kw">as.numeric</span>(created_year),</span>
+<span id="cb3-11"><a href="#cb3-11"></a>        <span class="dt">created_month =</span> <span class="kw">as.numeric</span>(created_month),</span>
+<span id="cb3-12"><a href="#cb3-12"></a>        <span class="dt">created_day =</span> <span class="kw">as.numeric</span>(created_day),</span>
+<span id="cb3-13"><a href="#cb3-13"></a>        <span class="dt">city =</span> <span class="kw">as.factor</span>(city),</span>
+<span id="cb3-14"><a href="#cb3-14"></a>        <span class="dt">status =</span> <span class="kw">as.factor</span>(status),</span>
+<span id="cb3-15"><a href="#cb3-15"></a>        <span class="dt">borough =</span> <span class="kw">as.factor</span>(borough),</span>
+<span id="cb3-16"><a href="#cb3-16"></a>        <span class="dt">agency =</span> <span class="kw">as.factor</span>(agency),</span>
+<span id="cb3-17"><a href="#cb3-17"></a>        <span class="dt">complaint_type =</span> <span class="kw">as.factor</span>(complaint_type),</span>
+<span id="cb3-18"><a href="#cb3-18"></a>        <span class="dt">community_board =</span> <span class="kw">as.factor</span>(community_board),</span>
+<span id="cb3-19"><a href="#cb3-19"></a>       <span class="dt">open_complaint =</span> <span class="kw">ifelse</span>(status <span class="op">==</span><span class="st"> &quot;Closed&quot;</span>, <span class="dt">yes =</span> <span class="dv">0</span>, <span class="dt">no =</span> <span class="dv">1</span>),</span>
+<span id="cb3-20"><a href="#cb3-20"></a>      <span class="co"># open_complaint = ifelse(is.na(closed_year),  yes = 1, no = 0),</span></span>
+<span id="cb3-21"><a href="#cb3-21"></a>        <span class="dt">complaint_simp =</span> <span class="kw">case_when</span>(</span>
+<span id="cb3-22"><a href="#cb3-22"></a>            <span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-23"><a href="#cb3-23"></a>                       <span class="kw">regex</span>(<span class="st">&quot;street&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb3-24"><a href="#cb3-24"></a>            <span class="op">|</span><span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-25"><a href="#cb3-25"></a>                        <span class="kw">regex</span>(<span class="st">&quot;sidewalk&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb3-26"><a href="#cb3-26"></a>            <span class="op">|</span><span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-27"><a href="#cb3-27"></a>                        <span class="kw">regex</span>(<span class="st">&quot;curb&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>)) <span class="op">~</span><span class="st"> &quot;Street Condition&quot;</span>,</span>
+<span id="cb3-28"><a href="#cb3-28"></a>            <span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-29"><a href="#cb3-29"></a>                       <span class="kw">regex</span>(<span class="st">&quot;noise&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>)) <span class="op">~</span><span class="st"> &quot;Noise&quot;</span>,</span>
+<span id="cb3-30"><a href="#cb3-30"></a>            <span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-31"><a href="#cb3-31"></a>                       <span class="kw">regex</span>(<span class="st">&quot;heat&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>)) <span class="op">~</span><span class="st"> &quot;Heat&quot;</span>,</span>
+<span id="cb3-32"><a href="#cb3-32"></a>            <span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-33"><a href="#cb3-33"></a>                       <span class="kw">regex</span>(<span class="st">&quot;water&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb3-34"><a href="#cb3-34"></a>            <span class="op">|</span><span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-35"><a href="#cb3-35"></a>                        <span class="kw">regex</span>(<span class="st">&quot;leak&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb3-36"><a href="#cb3-36"></a>            <span class="op">|</span><span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-37"><a href="#cb3-37"></a>                        <span class="kw">regex</span>(<span class="st">&quot;plumbing&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb3-38"><a href="#cb3-38"></a>            <span class="op">|</span><span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-39"><a href="#cb3-39"></a>                        <span class="kw">regex</span>(<span class="st">&quot;boiler&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>)) <span class="op">~</span><span class="st"> &quot;Water/plumbing&quot;</span>,</span>
+<span id="cb3-40"><a href="#cb3-40"></a>            <span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-41"><a href="#cb3-41"></a>                       <span class="kw">regex</span>(<span class="st">&quot;paint&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>)) <span class="op">~</span><span class="st"> &quot;Paint/Plaster&quot;</span>,</span>
+<span id="cb3-42"><a href="#cb3-42"></a>            <span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-43"><a href="#cb3-43"></a>                       <span class="kw">regex</span>(<span class="st">&quot;asbestos&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb3-44"><a href="#cb3-44"></a>            <span class="op">|</span><span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-45"><a href="#cb3-45"></a>                        <span class="kw">regex</span>(<span class="st">&quot;lead&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb3-46"><a href="#cb3-46"></a>            <span class="op">|</span><span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-47"><a href="#cb3-47"></a>                        <span class="kw">regex</span>(<span class="st">&quot;hazard&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb3-48"><a href="#cb3-48"></a>            <span class="op">|</span><span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-49"><a href="#cb3-49"></a>                        <span class="kw">regex</span>(<span class="st">&quot;mold&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>)) <span class="op">~</span><span class="st"> &quot;Hazard Material&quot;</span>,</span>
+<span id="cb3-50"><a href="#cb3-50"></a>            <span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-51"><a href="#cb3-51"></a>                       <span class="kw">regex</span>(<span class="st">&quot;elevator&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>)) </span>
+<span id="cb3-52"><a href="#cb3-52"></a>            <span class="op">|</span><span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-53"><a href="#cb3-53"></a>                        <span class="kw">regex</span>(<span class="st">&quot;maintenance&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb3-54"><a href="#cb3-54"></a>            <span class="op">|</span><span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-55"><a href="#cb3-55"></a>                        <span class="kw">regex</span>(<span class="st">&quot;electric&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb3-56"><a href="#cb3-56"></a>            <span class="op">|</span><span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-57"><a href="#cb3-57"></a>                        <span class="kw">regex</span>(<span class="st">&quot;stairs&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb3-58"><a href="#cb3-58"></a>            <span class="op">|</span><span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-59"><a href="#cb3-59"></a>                        <span class="kw">regex</span>(<span class="st">&quot;window&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>)) </span>
+<span id="cb3-60"><a href="#cb3-60"></a>            <span class="op">|</span><span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-61"><a href="#cb3-61"></a>                        <span class="kw">regex</span>(<span class="st">&quot;appliance&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>)) <span class="op">~</span><span class="st"> &quot;Maintenance&quot;</span>,</span>
+<span id="cb3-62"><a href="#cb3-62"></a>            <span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-63"><a href="#cb3-63"></a>                       <span class="kw">regex</span>(<span class="st">&quot;sanita&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb3-64"><a href="#cb3-64"></a>            <span class="op">|</span><span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-65"><a href="#cb3-65"></a>                        <span class="kw">regex</span>(<span class="st">&quot;rodent&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb3-66"><a href="#cb3-66"></a>            <span class="op">|</span><span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-67"><a href="#cb3-67"></a>                        <span class="kw">regex</span>(<span class="st">&quot;dirty&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb3-68"><a href="#cb3-68"></a>            <span class="op">|</span><span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-69"><a href="#cb3-69"></a>                        <span class="kw">regex</span>(<span class="st">&quot;sew&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb3-70"><a href="#cb3-70"></a>            <span class="op">|</span><span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-71"><a href="#cb3-71"></a>                        <span class="kw">regex</span>(<span class="st">&quot;standing water&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>)) <span class="op">~</span><span class="st"> &quot;Sanitation&quot;</span>,</span>
+<span id="cb3-72"><a href="#cb3-72"></a>            <span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-73"><a href="#cb3-73"></a>                       <span class="kw">regex</span>(<span class="st">&quot;tree&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>)) <span class="op">~</span><span class="st"> &quot;Tree&quot;</span>,</span>
+<span id="cb3-74"><a href="#cb3-74"></a>            <span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-75"><a href="#cb3-75"></a>                       <span class="kw">regex</span>(<span class="st">&quot;parking&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb3-76"><a href="#cb3-76"></a>            <span class="op">|</span><span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-77"><a href="#cb3-77"></a>                        <span class="kw">regex</span>(<span class="st">&quot;car&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb3-78"><a href="#cb3-78"></a>            <span class="op">|</span><span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-79"><a href="#cb3-79"></a>                        <span class="kw">regex</span>(<span class="st">&quot;drive&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb3-80"><a href="#cb3-80"></a>            <span class="op">|</span><span class="kw">str_detect</span>(complaint_type,  </span>
+<span id="cb3-81"><a href="#cb3-81"></a>                        <span class="kw">regex</span>(<span class="st">&quot;vehicle&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb3-82"><a href="#cb3-82"></a>            <span class="op">|</span><span class="kw">str_detect</span>(complaint_type,  </span>
+<span id="cb3-83"><a href="#cb3-83"></a>                        <span class="kw">regex</span>(<span class="st">&quot;traffic&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>)) <span class="op">~</span><span class="st"> &quot;Car/Traffic&quot;</span>,</span>
+<span id="cb3-84"><a href="#cb3-84"></a>            <span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-85"><a href="#cb3-85"></a>                       <span class="kw">regex</span>(<span class="st">&quot;air&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>)) <span class="op">~</span><span class="st"> &quot;Air Quality&quot;</span>,</span>
+<span id="cb3-86"><a href="#cb3-86"></a>            <span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-87"><a href="#cb3-87"></a>                       <span class="kw">regex</span>(<span class="st">&quot;collection&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>)) <span class="op">~</span><span class="st"> &quot;Collection&quot;</span>,</span>
+<span id="cb3-88"><a href="#cb3-88"></a>            <span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-89"><a href="#cb3-89"></a>                       <span class="kw">regex</span>(<span class="st">&quot;homeless&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>))</span>
+<span id="cb3-90"><a href="#cb3-90"></a>            <span class="op">|</span><span class="kw">str_detect</span>(complaint_type, </span>
+<span id="cb3-91"><a href="#cb3-91"></a>                        <span class="kw">regex</span>(<span class="st">&quot;panhandling&quot;</span>, <span class="dt">ignore_case =</span> <span class="ot">TRUE</span>)) <span class="op">~</span><span class="st"> &quot;Homeless&quot;</span>),</span>
+<span id="cb3-92"><a href="#cb3-92"></a>        <span class="dt">health_complaint =</span> <span class="kw">ifelse</span>(</span>
+<span id="cb3-93"><a href="#cb3-93"></a>            complaint_simp <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Heat&quot;</span>, <span class="st">&quot;Water/Plumbing&quot;</span>, <span class="st">&quot;Hazard Material&quot;</span>, <span class="st">&quot;Sanitation&quot;</span>, <span class="st">&quot;Air Quality&quot;</span>), <span class="dt">yes =</span> <span class="dv">1</span>, <span class="dt">no =</span> <span class="dv">0</span>),</span>
+<span id="cb3-94"><a href="#cb3-94"></a>        <span class="dt">complaint_simp =</span> <span class="kw">as.factor</span>(complaint_simp),</span>
+<span id="cb3-95"><a href="#cb3-95"></a>        <span class="dt">open_health_complaint =</span> <span class="kw">case_when</span>(</span>
+<span id="cb3-96"><a href="#cb3-96"></a>            open_complaint <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span>health_complaint <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">~</span><span class="st"> </span><span class="dv">1</span>,</span>
+<span id="cb3-97"><a href="#cb3-97"></a>            open_complaint <span class="op">==</span><span class="st"> </span><span class="dv">0</span> <span class="op">|</span><span class="st"> </span>health_complaint <span class="op">==</span><span class="st"> </span><span class="dv">0</span> <span class="op">~</span><span class="st"> </span><span class="dv">0</span></span>
+<span id="cb3-98"><a href="#cb3-98"></a>        ),</span>
+<span id="cb3-99"><a href="#cb3-99"></a>       <span class="co"># openCorr = ifelse(status == &quot;Closed&quot;, yes = 0, no = 1),</span></span>
+<span id="cb3-100"><a href="#cb3-100"></a>        <span class="dt">status =</span> <span class="kw">as.factor</span>(status)</span>
+<span id="cb3-101"><a href="#cb3-101"></a>    )</span></code></pre></div>
 <p>Used skimr::skim, colnames, and levels(factor(nyc$complaint_type)) to investigate and tidy the data. New variables were created to establish a binary status for closed (0) or open (1) complaints.</p>
 <p>Key variables include: <code>year</code>, <code>borough</code>, <code>community_board</code>, <code>complaint_type</code>, and <code>status</code>.</p>
 <p>Newly added variables include:</p>
-<ol style="list-style-type: decimal">
+<ol>
 <li><p><code>complaint_simp</code> - based on key words, condenses complaint types into the following categories:’</p></li>
 <li><p><code>health_complaint</code> - binary yes (1) or no (0), based on health associated categories within <code>complaint_simp</code>.</p></li>
 <li><p><code>open_health_complaint</code> - binary categorization, either health complaint that is open (1), or non-health related complaint or closed health complaint (0).</p></li>
-<li><p><code>openCorr</code> - binary categorization, closed <code>status</code> (0), open (1)</p></li>
+<li><p><code>open_complaint</code> - binary categorization, closed <code>status</code> (0), open (1)</p></li>
 </ol>
-</div>
-<div id="income-and-population-characteristics-data" class="section level2">
-<h2>Income and population characteristics data:</h2>
+<h2 id="income-and-population-characteristics-data">Income and population characteristics data:</h2>
 <p>The variable, <code>community_board</code>, will be used to left join NYC 311 data with income and population characteristics data sourced from American Community Survey by Community District.</p>
-<pre class="r"><code>inc_df = read_csv(&quot;./Med_income_2017.csv&quot;) %&gt;% 
-    janitor::clean_names() %&gt;% 
-    mutate(
-        inc_1000s = round(median_income/1000, 1),
-        income_bracket = case_when(
-            median_income &gt;= 20000 &amp; median_income &lt;= 30000 ~ &quot;20k-30k&quot;,
-            median_income &gt; 30000 &amp; median_income &lt;= 40000 ~ &quot;30-40k&quot;,
-            median_income &gt; 40000 &amp; median_income &lt;= 50000 ~ &quot;40-50k&quot;,
-            median_income &gt; 50000 &amp; median_income &lt;= 60000 ~ &quot;50-60k&quot;,
-            median_income &gt; 60000 &amp; median_income &lt;= 70000 ~ &quot;60-70k&quot;,
-            median_income &gt; 70000 &amp; median_income &lt;= 80000 ~ &quot;70-80k&quot;,
-            median_income &gt; 80000 &amp; median_income &lt;= 90000 ~ &quot;80-90k&quot;,
-            median_income &gt; 90000 &amp; median_income &lt;= 100000 ~ &quot;90-100k&quot;,
-            median_income &gt; 100000 &amp; median_income &lt;= 125000 ~ &quot;100-125k&quot;,
-            median_income &gt; 125000 &amp; median_income &lt;= 150000 ~ &quot;125k+&quot;,
-        ),
-        income_bracket = as.factor(income_bracket)
-    )</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>inc_df =<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&quot;./Med_income_2017.csv&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="st">    </span>janitor<span class="op">::</span><span class="kw">clean_names</span>() <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="st">    </span><span class="kw">mutate</span>(</span>
+<span id="cb4-4"><a href="#cb4-4"></a>        <span class="dt">inc_1000s =</span> <span class="kw">round</span>(median_income<span class="op">/</span><span class="dv">1000</span>, <span class="dv">1</span>),</span>
+<span id="cb4-5"><a href="#cb4-5"></a>        <span class="dt">income_bracket =</span> <span class="kw">case_when</span>(</span>
+<span id="cb4-6"><a href="#cb4-6"></a>            median_income <span class="op">&gt;=</span><span class="st"> </span><span class="dv">20000</span> <span class="op">&amp;</span><span class="st"> </span>median_income <span class="op">&lt;=</span><span class="st"> </span><span class="dv">30000</span> <span class="op">~</span><span class="st"> &quot;20k-30k&quot;</span>,</span>
+<span id="cb4-7"><a href="#cb4-7"></a>            median_income <span class="op">&gt;</span><span class="st"> </span><span class="dv">30000</span> <span class="op">&amp;</span><span class="st"> </span>median_income <span class="op">&lt;=</span><span class="st"> </span><span class="dv">40000</span> <span class="op">~</span><span class="st"> &quot;30-40k&quot;</span>,</span>
+<span id="cb4-8"><a href="#cb4-8"></a>            median_income <span class="op">&gt;</span><span class="st"> </span><span class="dv">40000</span> <span class="op">&amp;</span><span class="st"> </span>median_income <span class="op">&lt;=</span><span class="st"> </span><span class="dv">50000</span> <span class="op">~</span><span class="st"> &quot;40-50k&quot;</span>,</span>
+<span id="cb4-9"><a href="#cb4-9"></a>            median_income <span class="op">&gt;</span><span class="st"> </span><span class="dv">50000</span> <span class="op">&amp;</span><span class="st"> </span>median_income <span class="op">&lt;=</span><span class="st"> </span><span class="dv">60000</span> <span class="op">~</span><span class="st"> &quot;50-60k&quot;</span>,</span>
+<span id="cb4-10"><a href="#cb4-10"></a>            median_income <span class="op">&gt;</span><span class="st"> </span><span class="dv">60000</span> <span class="op">&amp;</span><span class="st"> </span>median_income <span class="op">&lt;=</span><span class="st"> </span><span class="dv">70000</span> <span class="op">~</span><span class="st"> &quot;60-70k&quot;</span>,</span>
+<span id="cb4-11"><a href="#cb4-11"></a>            median_income <span class="op">&gt;</span><span class="st"> </span><span class="dv">70000</span> <span class="op">&amp;</span><span class="st"> </span>median_income <span class="op">&lt;=</span><span class="st"> </span><span class="dv">80000</span> <span class="op">~</span><span class="st"> &quot;70-80k&quot;</span>,</span>
+<span id="cb4-12"><a href="#cb4-12"></a>            median_income <span class="op">&gt;</span><span class="st"> </span><span class="dv">80000</span> <span class="op">&amp;</span><span class="st"> </span>median_income <span class="op">&lt;=</span><span class="st"> </span><span class="dv">90000</span> <span class="op">~</span><span class="st"> &quot;80-90k&quot;</span>,</span>
+<span id="cb4-13"><a href="#cb4-13"></a>            median_income <span class="op">&gt;</span><span class="st"> </span><span class="dv">90000</span> <span class="op">&amp;</span><span class="st"> </span>median_income <span class="op">&lt;=</span><span class="st"> </span><span class="dv">100000</span> <span class="op">~</span><span class="st"> &quot;90-100k&quot;</span>,</span>
+<span id="cb4-14"><a href="#cb4-14"></a>            median_income <span class="op">&gt;</span><span class="st"> </span><span class="dv">100000</span> <span class="op">&amp;</span><span class="st"> </span>median_income <span class="op">&lt;=</span><span class="st"> </span><span class="dv">125000</span> <span class="op">~</span><span class="st"> &quot;100-125k&quot;</span>,</span>
+<span id="cb4-15"><a href="#cb4-15"></a>            median_income <span class="op">&gt;</span><span class="st"> </span><span class="dv">125000</span> <span class="op">&amp;</span><span class="st"> </span>median_income <span class="op">&lt;=</span><span class="st"> </span><span class="dv">150000</span> <span class="op">~</span><span class="st"> &quot;125k+&quot;</span>,</span>
+<span id="cb4-16"><a href="#cb4-16"></a>        ),</span>
+<span id="cb4-17"><a href="#cb4-17"></a>        <span class="dt">income_bracket =</span> <span class="kw">as.factor</span>(income_bracket)</span>
+<span id="cb4-18"><a href="#cb4-18"></a>    )</span></code></pre></div>
 <pre><code>## Parsed with column specification:
 ## cols(
 ##   MapID = col_double(),
@@ -465,79 +771,33 @@ $(document).ready(function () {
 ##   per_blackNH = col_double(),
 ##   per_whiteNH = col_double(),
 ##   per_hisp = col_double(),
-##   per_other = col_double()
-## )</code></pre>
-<pre class="r"><code>nyc_inc = left_join(nyc_tidy, inc_df, by = &quot;community_board&quot;)</code></pre>
-<pre><code>## Warning: Column `community_board` joining factor and character vector,
-## coercing into character vector</code></pre>
+##   per_other = col_double(),
+##   `Total Population` = col_double()
+## )
+</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>nyc_inc =<span class="st"> </span><span class="kw">left_join</span>(nyc_tidy, inc_df, <span class="dt">by =</span> <span class="st">&quot;community_board&quot;</span>)</span></code></pre></div>
+<pre><code>## Warning: Column `community_board` joining factor and character vector, coercing
+## into character vector
+</code></pre>
 <p><code>income_bracket</code> and <code>inc_1000s</code> (rounds income and divides by 1000) variables were added to the neighborhood population characteristics data to ease downstream plots and analyses. The data were left joined using the <code>community_board</code> variable.</p>
-</div>
-<div id="combined-and-tidied-data-for-plotting" class="section level2">
-<h2>Combined and tidied data for plotting</h2>
-<pre class="r"><code>nyc_plots &lt;- nyc_inc %&gt;% 
-    group_by(area_name, created_year) %&gt;%
-    add_count(area_name, name = &quot;number_complaints&quot;) %&gt;% 
-    mutate(
-        num_unsolved = sum(open_complaint),
-        num_health_complaint = sum(health_complaint),
-        num_open_health = sum(open_health_complaint)
-    ) %&gt;% 
-    select(-unique_key, -city, -park_borough, -agency, -agency_name, -descriptor, -incident_zip, -incident_address, -street_name, -cross_street_1, -cross_street_2, -intersection_street_1, -intersection_street_2, -landmark, -facility_type, -resolution_description, -resolution_action_updated_date, -bbl, -x_coordinate_state_plane, -y_coordinate_state_plane, -open_data_channel_type, -park_facility_name, -vehicle_type, -taxi_company_borough, -taxi_pick_up_location, -bridge_highway_name, -bridge_highway_direction, -bridge_highway_segment, -latitude, -longitude, -location, -road_ramp, -location_type, -address_type, -map_id)</code></pre>
+<h2 id="combined-and-tidied-data-for-plotting">Combined and tidied data for plotting</h2>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>nyc_plots &lt;-<span class="st"> </span>nyc_inc <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="st">    </span><span class="kw">group_by</span>(area_name, created_year) <span class="op">%&gt;%</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="st">    </span><span class="kw">add_count</span>(area_name, <span class="dt">name =</span> <span class="st">&quot;number_complaints&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="st">    </span><span class="kw">mutate</span>(</span>
+<span id="cb8-5"><a href="#cb8-5"></a>        <span class="dt">num_unsolved =</span> <span class="kw">sum</span>(open_complaint),</span>
+<span id="cb8-6"><a href="#cb8-6"></a>        <span class="dt">num_health_complaint =</span> <span class="kw">sum</span>(health_complaint),</span>
+<span id="cb8-7"><a href="#cb8-7"></a>        <span class="dt">num_open_health =</span> <span class="kw">sum</span>(open_health_complaint)</span>
+<span id="cb8-8"><a href="#cb8-8"></a>    ) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb8-9"><a href="#cb8-9"></a><span class="st">    </span><span class="kw">select</span>(<span class="op">-</span>unique_key, <span class="op">-</span>city, <span class="op">-</span>park_borough, <span class="op">-</span>agency, <span class="op">-</span>agency_name, <span class="op">-</span>descriptor, <span class="op">-</span>incident_zip, <span class="op">-</span>incident_address, <span class="op">-</span>street_name, <span class="op">-</span>cross_street_<span class="dv">1</span>, <span class="op">-</span>cross_street_<span class="dv">2</span>, <span class="op">-</span>intersection_street_<span class="dv">1</span>, <span class="op">-</span>intersection_street_<span class="dv">2</span>, <span class="op">-</span>landmark, <span class="op">-</span>facility_type, <span class="op">-</span>resolution_description, <span class="op">-</span>resolution_action_updated_date, <span class="op">-</span>bbl, <span class="op">-</span>x_coordinate_state_plane, <span class="op">-</span>y_coordinate_state_plane, <span class="op">-</span>open_data_channel_type, <span class="op">-</span>park_facility_name, <span class="op">-</span>vehicle_type, <span class="op">-</span>taxi_company_borough, <span class="op">-</span>taxi_pick_up_location, <span class="op">-</span>bridge_highway_name, <span class="op">-</span>bridge_highway_direction, <span class="op">-</span>bridge_highway_segment, <span class="op">-</span>latitude, <span class="op">-</span>longitude, <span class="op">-</span>location, <span class="op">-</span>road_ramp, <span class="op">-</span>location_type, <span class="op">-</span>address_type, <span class="op">-</span>map_id)</span></code></pre></div>
 <p>The newly combined dataframe was grouped according to <code>area_name</code>, a key variable from the population characteristics dataset that provides the local neighborhood name within the borough. Extraneous variables were removed to reduce the dataframe size and ease manipulation of the data.</p>
 <p>Newly added variables include:</p>
-<ol style="list-style-type: decimal">
+<ol>
 <li><p><code>number_complaints</code> - total number of complaints within the given neighborhood the complaint was filed.</p></li>
 <li><p><code>num_unsolved</code> - total number of open/unresolved complaints within the neighborhood the complaint was filed.</p></li>
 <li><p><code>num_health_complaint</code> - total number of health related complaints within the neighborhood the complaint was filed.</p></li>
 <li><p><code>num_open_health</code> - total number of open/unresolved health complaints within the neighborhood the complaint was filed.</p></li>
 </ol>
-</div>
-</div>
-
-
-
-
-</div>
-
-<script>
-
-// add bootstrap table styles to pandoc tables
-function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
-}
-$(document).ready(function () {
-  bootstrapStylePandocTables();
-});
-
-
-</script>
-
-<!-- tabsets -->
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
-<!-- code folding -->
-
-
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
 
 </body>
 </html>
