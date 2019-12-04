@@ -168,7 +168,8 @@ inc_df = read_csv("./Med_income_2017.csv") %>%
             median_income > 100000 & median_income <= 125000 ~ "100-125k",
             median_income > 125000 & median_income <= 150000 ~ "125k+",
         ),
-        income_bracket = as.factor(income_bracket)
+        income_bracket = as.factor(income_bracket),
+        income_bracket = fct_relevel(income_bracket, c("20k-30k", "30-40k", "40-50k", "50-60k", "60-70k", "70-80k", "80-90k", "90-100k", "100-125k", "125k+"))
     )
 
 
@@ -206,6 +207,94 @@ Newly added variables include:
 
 4. `num_open_health` - total number of open/unresolved health complaints within the neighborhood the complaint was filed.
 
+# Function for calculating days until complaint resolution
+
+NEED THIS???
+
+
+# Plots
+
+## Total number of complaints
+
+Complaints broken down by income bracket:
+
+```{r}
+
+nyc_plots %>% 
+    filter(!is.na(income_bracket)) %>% 
+    group_by(borough, created_year) %>% 
+    add_count(borough, name = "borough_complaints") %>% 
+    ggplot(aes(x = income_bracket, y = borough_complaints)) +
+    geom_col() +
+    ylab("Total Complaints")
+
+```
+
+Total complaints within each neighborhood of each borough:
+
+```{r}
+
+nyc_plots %>% 
+    filter(borough == "BRONX",
+           !is.na(area_name)) %>% 
+    group_by(area_name) %>% 
+    add_count(area_name, name = "neighborhood_complaints") %>% 
+    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
+    geom_col() +
+    ylab("Total Complaints") +
+    xlab("Neighborhood") +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    ggtitle("Bronx Complaints by Neighborhood")
+
+nyc_plots %>% 
+    filter(borough == "MANHATTAN",
+           !is.na(area_name)) %>% 
+    group_by(area_name) %>% 
+    add_count(area_name, name = "neighborhood_complaints") %>% 
+    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
+    geom_col() +
+    ylab("Total Complaints") +
+    xlab("Neighborhood") +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    ggtitle("Manhattan Complaints by Neighborhood")
+
+nyc_plots %>% 
+    filter(borough == "QUEENS",
+           !is.na(area_name)) %>% 
+    group_by(area_name) %>% 
+    add_count(area_name, name = "neighborhood_complaints") %>% 
+    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
+    geom_col() +
+    ylab("Total Complaints") +
+    xlab("Neighborhood") +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    ggtitle("Queens Complaints by Neighborhood")
+
+nyc_plots %>% 
+    filter(borough == "BROOKLYN",
+           !is.na(area_name)) %>% 
+    group_by(area_name) %>% 
+    add_count(area_name, name = "neighborhood_complaints") %>% 
+    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
+    geom_col() +
+    ylab("Total Complaints") +
+    xlab("Neighborhood") +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    ggtitle("Brooklyn Complaints by Neighborhood")
+
+nyc_plots %>% 
+    filter(borough == "STATEN ISLAND",
+           !is.na(area_name)) %>% 
+    group_by(area_name) %>% 
+    add_count(area_name, name = "neighborhood_complaints") %>% 
+    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
+    geom_col() +
+    ylab("Total Complaints") +
+    xlab("Neighborhood") +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    ggtitle("Staten Island Complaints by Neighborhood")
+
+```
 
 
 

@@ -272,10 +272,18 @@ $(document).ready(function () {
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-        <li class="dropdown-header">Home</li>
-<li class="dropdown-header">Statistics</li>
-<li class="dropdown-header">Plots</li>
-<li class="dropdown-header">Models</li>
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="statistics.html">Statistics</a>
+</li>
+<li>
+  <a href="plots.html">Plots</a>
+</li>
+<li>
+  <a href="models.html">Models</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         
@@ -343,7 +351,8 @@ $(document).ready(function () {
         agency = as.factor(agency),
         complaint_type = as.factor(complaint_type),
         community_board = as.factor(community_board),
-        open_complaint = ifelse(is.na(closed_year),  yes = 1, no = 0),
+       open_complaint = ifelse(status == &quot;Closed&quot;, yes = 0, no = 1),
+      # open_complaint = ifelse(is.na(closed_year),  yes = 1, no = 0),
         complaint_simp = case_when(
             str_detect(complaint_type, 
                        regex(&quot;street&quot;, ignore_case = TRUE))
@@ -422,7 +431,7 @@ $(document).ready(function () {
             open_complaint == 1 &amp; health_complaint == 1 ~ 1,
             open_complaint == 0 | health_complaint == 0 ~ 0
         ),
-        openCorr = ifelse(status == &quot;Closed&quot;, yes = 0, no = 1),
+       # openCorr = ifelse(status == &quot;Closed&quot;, yes = 0, no = 1),
         status = as.factor(status)
     )</code></pre>
 <p>Used skimr::skim, colnames, and levels(factor(nyc$complaint_type)) to investigate and tidy the data. New variables were created to establish a binary status for closed (0) or open (1) complaints.</p>
@@ -432,7 +441,7 @@ $(document).ready(function () {
 <li><p><code>complaint_simp</code> - based on key words, condenses complaint types into the following categories:’</p></li>
 <li><p><code>health_complaint</code> - binary yes (1) or no (0), based on health associated categories within <code>complaint_simp</code>.</p></li>
 <li><p><code>open_health_complaint</code> - binary categorization, either health complaint that is open (1), or non-health related complaint or closed health complaint (0).</p></li>
-<li><p><code>openCorr</code> - binary categorization, closed <code>status</code> (0), open (1)</p></li>
+<li><p><code>open_complaint</code> - binary categorization, closed <code>status</code> (0), open (1)</p></li>
 </ol>
 </div>
 <div id="income-and-population-characteristics-data" class="section level2">
@@ -454,7 +463,8 @@ $(document).ready(function () {
             median_income &gt; 100000 &amp; median_income &lt;= 125000 ~ &quot;100-125k&quot;,
             median_income &gt; 125000 &amp; median_income &lt;= 150000 ~ &quot;125k+&quot;,
         ),
-        income_bracket = as.factor(income_bracket)
+        income_bracket = as.factor(income_bracket),
+        income_bracket = fct_relevel(income_bracket, c(&quot;20k-30k&quot;, &quot;30-40k&quot;, &quot;40-50k&quot;, &quot;50-60k&quot;, &quot;60-70k&quot;, &quot;70-80k&quot;, &quot;80-90k&quot;, &quot;90-100k&quot;, &quot;100-125k&quot;, &quot;125k+&quot;))
     )</code></pre>
 <pre><code>## Parsed with column specification:
 ## cols(
@@ -465,7 +475,8 @@ $(document).ready(function () {
 ##   per_blackNH = col_double(),
 ##   per_whiteNH = col_double(),
 ##   per_hisp = col_double(),
-##   per_other = col_double()
+##   per_other = col_double(),
+##   `Total Population` = col_double()
 ## )</code></pre>
 <pre class="r"><code>nyc_inc = left_join(nyc_tidy, inc_df, by = &quot;community_board&quot;)</code></pre>
 <pre><code>## Warning: Column `community_board` joining factor and character vector,
@@ -491,6 +502,86 @@ $(document).ready(function () {
 <li><p><code>num_health_complaint</code> - total number of health related complaints within the neighborhood the complaint was filed.</p></li>
 <li><p><code>num_open_health</code> - total number of open/unresolved health complaints within the neighborhood the complaint was filed.</p></li>
 </ol>
+</div>
+</div>
+<div id="function-for-calculating-days-until-complaint-resolution" class="section level1">
+<h1>Function for calculating days until complaint resolution</h1>
+<p>NEED THIS???</p>
+</div>
+<div id="plots" class="section level1">
+<h1>Plots</h1>
+<div id="total-number-of-complaints" class="section level2">
+<h2>Total number of complaints</h2>
+<p>Complaints broken down by income bracket:</p>
+<pre class="r"><code>nyc_plots %&gt;% 
+    filter(!is.na(income_bracket)) %&gt;% 
+    group_by(borough, created_year) %&gt;% 
+    add_count(borough, name = &quot;borough_complaints&quot;) %&gt;% 
+    ggplot(aes(x = income_bracket, y = borough_complaints)) +
+    geom_col() +
+    ylab(&quot;Total Complaints&quot;)</code></pre>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Total complaints within each neighborhood of each borough:</p>
+<pre class="r"><code>nyc_plots %&gt;% 
+    filter(borough == &quot;BRONX&quot;,
+           !is.na(area_name)) %&gt;% 
+    group_by(area_name) %&gt;% 
+    add_count(area_name, name = &quot;neighborhood_complaints&quot;) %&gt;% 
+    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
+    geom_col() +
+    ylab(&quot;Total Complaints&quot;) +
+    xlab(&quot;Neighborhood&quot;) +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    ggtitle(&quot;Bronx Complaints by Neighborhood&quot;)</code></pre>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>nyc_plots %&gt;% 
+    filter(borough == &quot;MANHATTAN&quot;,
+           !is.na(area_name)) %&gt;% 
+    group_by(area_name) %&gt;% 
+    add_count(area_name, name = &quot;neighborhood_complaints&quot;) %&gt;% 
+    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
+    geom_col() +
+    ylab(&quot;Total Complaints&quot;) +
+    xlab(&quot;Neighborhood&quot;) +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    ggtitle(&quot;Manhattan Complaints by Neighborhood&quot;)</code></pre>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
+<pre class="r"><code>nyc_plots %&gt;% 
+    filter(borough == &quot;QUEENS&quot;,
+           !is.na(area_name)) %&gt;% 
+    group_by(area_name) %&gt;% 
+    add_count(area_name, name = &quot;neighborhood_complaints&quot;) %&gt;% 
+    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
+    geom_col() +
+    ylab(&quot;Total Complaints&quot;) +
+    xlab(&quot;Neighborhood&quot;) +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    ggtitle(&quot;Queens Complaints by Neighborhood&quot;)</code></pre>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-5-3.png" width="672" /></p>
+<pre class="r"><code>nyc_plots %&gt;% 
+    filter(borough == &quot;BROOKLYN&quot;,
+           !is.na(area_name)) %&gt;% 
+    group_by(area_name) %&gt;% 
+    add_count(area_name, name = &quot;neighborhood_complaints&quot;) %&gt;% 
+    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
+    geom_col() +
+    ylab(&quot;Total Complaints&quot;) +
+    xlab(&quot;Neighborhood&quot;) +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    ggtitle(&quot;Brooklyn Complaints by Neighborhood&quot;)</code></pre>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-5-4.png" width="672" /></p>
+<pre class="r"><code>nyc_plots %&gt;% 
+    filter(borough == &quot;STATEN ISLAND&quot;,
+           !is.na(area_name)) %&gt;% 
+    group_by(area_name) %&gt;% 
+    add_count(area_name, name = &quot;neighborhood_complaints&quot;) %&gt;% 
+    ggplot(aes(x = area_name, y = neighborhood_complaints)) +
+    geom_col() +
+    ylab(&quot;Total Complaints&quot;) +
+    xlab(&quot;Neighborhood&quot;) +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    ggtitle(&quot;Staten Island Complaints by Neighborhood&quot;)</code></pre>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-5-5.png" width="672" /></p>
 </div>
 </div>
 
