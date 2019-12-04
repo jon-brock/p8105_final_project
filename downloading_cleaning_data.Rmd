@@ -1,0 +1,234 @@
+---
+title: "downloading_cleaning_data"
+author: "Ava Hamilton"
+date: "12/3/2019"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#library(RSocrata)
+library(tidyverse)
+
+```
+
+This token is to beable to acces data from the socrata repository.  
+```{r,eval=F}
+token <- "QsuUJQpyjGciXV5KibPhY64hO"
+```
+Here is an example to pull data from the API.  the `url` includes the endpoint for the dataset ending with a `?`. Subsequently, using the variable names a query functions to organize the data ie: `$limit` and `borough=BROOKLYN`. However this did not work as I planned so I described how I collected the data below. 
+```{r,eval=F}
+brooklyn<-RSocrata::read.socrata(
+    url="https://data.cityofnewyork.us/resource/erm2-nwe9.csv?borough=BROOKLYN&$created_date between `2014/04/23 12:00:00 and 2018/03/05 12:00:00`&$limit=100", 
+    app_token = token) 
+
+write_csv(brooklyn, "brooklyn_311_100k.csv")
+
+brooklyn_csv <- read_csv("brooklyn_311_100k.csv")
+
+dim(brooklyn)
+
+head(brooklyn_csv)
+
+```
+
+#Importing and merging data
+
+I downloaded the data from the NYC Open data website filtering for each boorough and time frame 2014 - 2018.  Then I sampled from each dataset, containing 700k - 3 million rows, 100k data points in r, cleaned the `created_date` variable, and checked for equal sampling across the years. 
+
+Brooklyn
+
+```{r,eval=F}
+
+
+read_csv("311_brooklyn.csv") %>%
+    sample_n(100000, replace = F) %>%
+     separate(`Created Date`, into = c("month","day","year"), sep = "\\/" ) %>%
+    separate(year, into = c("year","time"), sep = " ") %>%
+    write_csv(., "brooklyn_311_100k.csv")
+
+brooklyn<- read_csv("brooklyn_311_100k.csv")
+
+table(brooklyn100k$year)
+
+
+
+
+```
+
+Manhattan
+```{r,eval=F}
+
+read_csv("311_manhattan.csv") %>%
+    sample_n(100000, replace = F) %>%
+     separate(`Created Date`, into = c("month","day","year"), sep = "\\/" ) %>%
+    separate(year, into = c("year","time"), sep = " ") %>%
+    write_csv(., "manhattan_311_100k.csv")
+
+manhattan<- read_csv("manhattan_311_100k.csv")
+
+table(manhattan$year)
+
+
+
+```
+
+Queens
+```{r,eval=F}
+
+
+read_csv("311_queens.csv")%>%
+    sample_n(100000, replace = F) %>%
+     separate(`Created Date`, into = c("month","day","year"), sep = "\\/" ) %>%
+    separate(year, into = c("year","time"), sep = " ") %>%
+    write_csv(., "queens_311_100k")
+
+queens<- read_csv("queens_311_100k")
+
+table(queens$year)
+
+
+
+```
+Bronx
+```{r,eval=F}
+
+read_csv("311_bronx.csv")%>%
+    sample_n(100000, replace = F) %>%
+     separate(`Created Date`, into = c("month","day","year"), sep = "\\/" ) %>%
+    separate(year, into = c("year","time"), sep = " ") %>%
+    write_csv(., "bronx_311_100k.csv")
+
+bronx<- read_csv("bronx_311_100k.csv")
+
+table(bronx$year)
+
+
+
+```
+Staten Island
+
+```{r,eval=F}
+ 
+
+read_csv("311_statenisland.csv")  %>%
+    sample_n(100000, replace = F) %>%
+     separate(`Created Date`, into = c("month","day","year"), sep = "\\/" ) %>%
+    separate(year, into = c("year","time"), sep = " ") %>%
+    write_csv(., "statenisland_311_100k.csv")
+
+statenisland <- read_csv("statenisland_311_100k.csv")
+
+table(statenisland$year)
+
+
+```
+Unspecified
+```{r,eval=F}
+
+
+read_csv("311_unspecified.csv")  %>%
+    sample_n(100000, replace = F) %>%
+     separate(`Created Date`, into = c("month","day","year"), sep = "\\/" ) %>%
+    separate(year, into = c("year","time"), sep = " ") %>%
+    write_csv(.,"unspecified_311_100k")
+
+unspec <- read_csv("unspecified_311_100k")
+
+head(unspec)
+
+table(unspec$year)
+
+
+```
+
+Combinging all the datasets of 100k data points.
+```{r, eval=F}
+rbind(brooklyn, manhattan, queens, bronx, statenisland, unspec) %>%
+    rename(created_year = "year" , created_day = "day",created_month = "month",created_time = "time") %>%
+    janitor::clean_names() %>%
+   # write_csv(., "p8105nyc_311_100k.csv")
+```
+
+```{r}
+nyc_311<-read_csv("p8105nyc_311_100k.csv") 
+
+nyc_311 %>% 
+head()
+```
+
+
+## Ava cleaning
+```{r}
+
+nyc311 = read_csv("/Users/avahamilton/Dropbox/Biostat MS/Data Science I/final/p8105nyc_311_100k.csv") %>% 
+    janitor::clean_names()
+
+
+nycedit = nyc311 %>% 
+    filter(borough != "Unspecified") %>% 
+    mutate(
+        year = as.numeric(created_year),
+        month = as.numeric(created_month),
+        day = as.numeric(created_day),
+        city = as.factor(city),
+        borough = as.factor(park_borough),
+        agency = as.factor(agency),
+        complaint_type = as.factor(complaint_type),
+        community_board = as.factor(community_board),
+        open_complaint = ifelse(is.na(closed_date),  1, 0),
+        complaint_simp = case_when(
+            str_detect(complaint_type,  regex("street", ignore_case = TRUE))|str_detect(complaint_type,  regex("sidewalk", ignore_case = TRUE))|str_detect(complaint_type,  regex("curb", ignore_case = TRUE)) ~ "Street Condition",
+            str_detect(complaint_type,  regex("noise", ignore_case = TRUE)) ~ "Noise",
+            str_detect(complaint_type, regex("heat", ignore_case = TRUE)) ~ "Heat",
+            str_detect(complaint_type, regex("water", ignore_case = TRUE))| str_detect(complaint_type, regex("leak", ignore_case = TRUE))|str_detect(complaint_type, regex("plumbing", ignore_case = TRUE))|str_detect(complaint_type, regex("boiler", ignore_case = TRUE)) ~ "Water/plumbing",
+            str_detect(complaint_type, regex("paint", ignore_case = TRUE)) ~ "Paint/Plaster",
+            str_detect(complaint_type, regex("asbestos", ignore_case = TRUE))|str_detect(complaint_type, regex("lead", ignore_case = TRUE))|str_detect(complaint_type, regex("hazard", ignore_case = TRUE))|str_detect(complaint_type, regex("mold", ignore_case = TRUE)) ~ "Hazard Material",
+            str_detect(complaint_type, regex("elevator", ignore_case = TRUE)) |str_detect(complaint_type, regex("maintenance", ignore_case = TRUE))|str_detect(complaint_type, regex("electric", ignore_case = TRUE))|str_detect(complaint_type, regex("stairs", ignore_case = TRUE))|str_detect(complaint_type, regex("window", ignore_case = TRUE)) |str_detect(complaint_type, regex("appliance", ignore_case = TRUE)) ~ "Maintenance",
+            str_detect(complaint_type, regex("sanita", ignore_case = TRUE))|str_detect(complaint_type, regex("rodent", ignore_case = TRUE))|str_detect(complaint_type, regex("dirty", ignore_case = TRUE))|str_detect(complaint_type, regex("sew", ignore_case = TRUE))|str_detect(complaint_type, regex("standing water", ignore_case = TRUE)) ~ "Sanitation",
+            str_detect(complaint_type, regex("tree", ignore_case = TRUE)) ~ "Tree",
+            str_detect(complaint_type, regex("parking", ignore_case = TRUE))|str_detect(complaint_type, regex("car", ignore_case = TRUE))|str_detect(complaint_type, regex("drive", ignore_case = TRUE))|str_detect(complaint_type,  regex("vehicle", ignore_case = TRUE))|str_detect(complaint_type,  regex("traffic", ignore_case = TRUE)) ~ "Car/Traffic",
+            str_detect(complaint_type, regex("air quality", ignore_case = TRUE)) ~ "Air Quality",
+            str_detect(complaint_type, regex("collection", ignore_case = TRUE)) ~ "Collection",
+            str_detect(complaint_type, regex("homeless", ignore_case = TRUE))|str_detect(complaint_type, regex("panhandling", ignore_case = TRUE)) ~ "Homeless"
+        ),
+        health_complaint = ifelse(
+            complaint_simp %in% c("Heat", "Water/Plumbing", "Hazard Material", "Sanitation", "Air Quality"), 1,0),
+        complaint_simp = as.factor(complaint_simp),
+        open_health = case_when(
+            open_complaint == 1 & health_complaint == 1 ~ 1,
+            open_complaint == 0 | health_complaint == 0 ~ 0
+        ),
+        openCorr = ifelse(status == "Closed", 0, 1),
+        status = as.factor(status)
+    )
+
+summary(nycedit$complaint_simp)
+
+```
+
+### Income and percent hisp/black variables from American Community Survey by Community District
+```{r}
+
+nycedit_cb = nycedit %>% 
+    group_by(community_board, year) %>%
+    add_count(community_board, name = "number_complaints") %>% 
+    mutate(
+        num_unsolved = sum(open_complaint),
+        num_health_complaint = sum(health_complaint)
+    ) %>% 
+    select(number_complaints, num_unsolved, everything())
+
+
+
+inc_df = read_csv("./Med_income_2017.csv") %>% janitor::clean_names()
+
+add_inc = left_join(nycedit_cb, inc_df, by = "community_board")
+
+```
+
+

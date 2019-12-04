@@ -4,6 +4,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
+<<<<<<< HEAD:DaysToClose.Rmd
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -21,6 +22,23 @@ filter(borough != "Unspecified")
 
 
 nyc_tidy <- new_311 %>% 
+=======
+#install.packages("RSocrata")
+#devtools::install_github("Chicago/RSocrata")
+library(RSocrata)
+library(tidyverse)
+library(viridis)
+library(modelr)
+library(mgcv)
+
+```
+## read in data
+```{r message = FALSE}
+nyc <- read_csv(file = "../p8105nyc_311_100k.csv") %>% 
+    janitor::clean_names()
+
+nyc_tidy <- nyc %>%   
+>>>>>>> 64e3fcb461e02ae6f2e87be3fbbc2bd641b209c7:regression_analysis.Rmd
     filter(borough != "Unspecified") %>% 
     separate(closed_date, 
              into = c("closed_month","closed_day","closed_year"), 
@@ -122,20 +140,11 @@ nyc_tidy <- new_311 %>%
         status = as.factor(status)
     )
 
-summary(nyc_tidy$status)
-
-####### THIS CODE IS LOOKING AT WHAT IS MISSING FROM OUR COMPLAIN AGGREGATION
-summary(nyc_tidy$complaint_simp)
-
-test = nyc_tidy %>% 
-    filter(is.na(complaint_simp))
-summary(test$complaint_type)
-
 
 ```
 
-
-```{r}
+Adding community district data
+```{r message = FALSE}
 
 inc_df = read_csv("./Med_income_2017.csv") %>% 
     janitor::clean_names() %>% 
@@ -162,6 +171,7 @@ add_inc = left_join(nyc_tidy, inc_df, by = "community_board") %>%
 
 ```
 
+<<<<<<< HEAD:DaysToClose.Rmd
 We looked at number of complaints from 2014-2018 predicted by year, borough, community district (CD) level variables including median income (in the 1000s), total population (in the 1000s), percent non-hispanic black, percent hispanic, and number of unresolved complaints. 
 
 Number of complaints by NYC community district:
@@ -176,6 +186,19 @@ A complaint was labeled unresolved if its status was not labeled as "closed". Th
 ```{r}
 add_inc %>%
     filter(status == "Closed") %>% 
+=======
+### Aggregating data to community district and year level
+
+To examine the effect of community district level variables on total number of complaints we must first aggregate to the community district level. We are also interested in how year effects the number of complaints in each district so we group by year as well to produce complaint totals for each year and community district.
+
+Once we have complaint totals, we do not want individual complaint information anymore. We select distinct year * community district observations. 
+```{r message = FALSE}
+
+# grouping by community district and year
+cb_group_year = add_inc %>% 
+    group_by(community_board, created_year) %>%
+    add_count(community_board, name = "number_complaints") %>% 
+>>>>>>> 64e3fcb461e02ae6f2e87be3fbbc2bd641b209c7:regression_analysis.Rmd
     mutate(
         closed_year = as.numeric(closed_year),
         closed_month = as.numeric(closed_month),
@@ -206,6 +229,7 @@ add_inc %>%
   
   summary()
 
+<<<<<<< HEAD:DaysToClose.Rmd
 
     
   #  filter(
@@ -213,10 +237,23 @@ add_inc %>%
   #  ) %>% 
     ggplot(aes(x= diff_dayt, fill = income_bracket))+ geom_density(alpha = 0.5)+scale_fill_viridis_d()
 
+=======
+########## including year
+cb_group_year_distinct = cb_group_year %>% 
+    select(community_board, number_complaints, inc_1000s, num_unsolved, num_health_complaint, borough, per_black_nh, per_hisp, per_white_nh, median_income, num_open_health, created_year, year_fac, pop_1000s) %>% 
+    distinct() %>% 
+    arrange(community_board) %>% 
+    mutate(
+        borough = relevel(borough, ref = "MANHATTAN")
+        )
+
+cb_group_year_distinct = within(cb_group_year_distinct, borough <- relevel(borough, ref = "MANHATTAN"))
+>>>>>>> 64e3fcb461e02ae6f2e87be3fbbc2bd641b209c7:regression_analysis.Rmd
 
 #figure out why is there values greater than 1300 days
 ```
 
+<<<<<<< HEAD:DaysToClose.Rmd
 ```{r}
 
 add_inc %>%
@@ -250,3 +287,97 @@ add_inc %>%
     summary()
 ```
 
+=======
+## What neighborhood characteristics effect number and type of complaints in each community district? 
+
+We conducted linear models to examine predictors of number of complaints from 2014-2018 per community district. Our three outcomes were:
+
+1) Total number of complaints
+2) Number of health complaints
+3) Number of unresolved complaints.
+
+We looked at these categories of complaints from 2014-2018 predicted by year, borough, and community district level variables including median income (in the 1000s), total population (in the 1000s), percent non-hispanic black and percent Hispanic. For outcomes 1 and 2 we included number of unresolved complaints as a predictor as well. 
+
+
+#### 1) Number of complaints by NYC community district:
+```{r message = FALSE}
+
+# number of complaints
+options(scipen = 5)
+
+num_comp_model_year = lm(number_complaints ~ inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s + borough +created_year, data = cb_group_year_distinct)
+
+summary(num_comp_model_year)  %>% broom::tidy() %>% knitr::kable()
+summary(num_comp_model_year) %>% broom::glance() %>% knitr::kable()
+
+par(mfrow = c(2,2))
+plot(num_comp_model_year)
+```
+
+*Comments:*
+
+The total number of complaints is significantly predicted by year, borough and CD number of unsolved complaints, percent Hispanic, and population total. 
+
+On average, for each additional year we see `r round(pull((summary(num_comp_model_year)  %>% broom::tidy()) %>% filter(term == "created_year"),estimate),0)` more complaints in each community district, for each additional 1000 people in a CD we see `r round(pull((summary(num_comp_model_year)  %>% broom::tidy()) %>% filter(term == "pop_1000s"),estimate),0)` more complaints, with Staten Island CDs having `r round(pull((summary(num_comp_model_year)  %>% broom::tidy()) %>% filter(term == "boroughSTATEN ISLAND"),estimate),0)` more complaints than manhattan CDs.
+
+Based on the adjusted R-squared value, number of complaints in a CD are `r 100*round(pull((summary(num_comp_model_year) %>% broom::glance()),adj.r.squared),4)`% predicted by this combination of variables. Residuals appear to follow a normal distribution.
+
+
+
+#### 2) Number of health-related complaints by NYC community district:
+```{r}
+
+# number of health complaints
+
+num_health_model_year = lm(num_health_complaint ~  inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s + borough + created_year, data = cb_group_year_distinct)
+
+summary(num_health_model_year)  %>% broom::tidy() %>% knitr::kable()
+summary(num_health_model_year) %>% broom::glance() %>% knitr::kable()
+
+par(mfrow = c(2,2))
+plot(num_health_model_year)
+```
+
+
+*Comments:*
+
+Complaints were determined to be health related if they were about heat, hot water, sanitary conditions, poor air quality, or hazardous materials. The total number of health-related complaints is significantly predicted by borough and CD median income, percent non-Hispanic Black and Hispanic, and population total.
+
+On average, for each $1000 increase in median income we see `r -1 * round(pull((summary(num_health_model_year)  %>% broom::tidy()) %>% filter(term == "inc_1000s"),estimate),0)` *_fewer_* health related complaints in each community district; for each additional percent of a CD that is black or hispanic we see `r round(pull((summary(num_health_model_year)  %>% broom::tidy()) %>% filter(term == "per_black_nh"),estimate),0)` and `r round(pull((summary(num_health_model_year)  %>% broom::tidy()) %>% filter(term == "per_hisp"),estimate),0)` more health-related complaints.
+
+Based on the adjusted R-squared value, number of health-related complaints in a CD is `r 100*round(pull((summary(num_health_model_year) %>% broom::glance()),adj.r.squared),4)`% predicted by this combination of variables. Residuals appear to follow a mostly normal distribution, but there is still room for improvement in model fit, in a later analysis. 
+
+
+#### 3) Number of unresolved complaints by NYC community district:
+```{r}
+
+
+# number of unresolved
+
+num_unsolved_model_year = lm(num_unsolved ~ inc_1000s + per_black_nh + per_hisp + pop_1000s + borough +created_year, data = cb_group_year_distinct)
+
+summary(num_unsolved_model_year)  %>% broom::tidy() %>% knitr::kable()
+summary(num_unsolved_model_year) %>% broom::glance() %>% knitr::kable()
+
+
+par(mfrow = c(2,2))
+plot(num_unsolved_model_year)
+
+
+
+
+```
+
+
+
+*Comments:*
+
+A complaint was labeled unresolved if its status was not labeled as "closed". The total number of unresolved complaints is significantly predicted by year of complaint, borough, and CD median income, percent non-Hispanic Black and Hispanic, and population total. 
+
+On average, for each additional year we see `r round(pull((summary(num_unsolved_model_year)  %>% broom::tidy()) %>% filter(term == "created_year"),estimate),0)` more unresolved complaints in each community district. The Bronx, Queens, and Staten Island CDs had `r round(pull((summary(num_unsolved_model_year)  %>% broom::tidy()) %>% filter(term == "boroughBRONX"),estimate),0)`, `r round(pull((summary(num_unsolved_model_year)  %>% broom::tidy()) %>% filter(term == "boroughQUEENS"),estimate),0)`, and `r round(pull((summary(num_unsolved_model_year)  %>% broom::tidy()) %>% filter(term == "boroughSTATEN ISLAND"),estimate),0)`, more unresolved complaints than manhattan CDs on average, respectively.
+
+Based on the adjusted R-squared value,  number of unresolved complaints in a CD are `r 100*round(pull((summary(num_unsolved_model_year) %>% broom::glance()),adj.r.squared),4)`% predicted by this combination of variables. Residuals appear to follow a normal distribution.
+
+
+
+>>>>>>> 64e3fcb461e02ae6f2e87be3fbbc2bd641b209c7:regression_analysis.Rmd
