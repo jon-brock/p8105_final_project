@@ -4,13 +4,13 @@ navbar:
   title: "Team 4"
   left:
     - text: "Home"
-      href: 
+      href: index.html
     - text: "Statistics"
-      href: 
+      href: statistics.html
     - text: "Plots"
-      href: 
+      href: plots.html
     - text: "Models"
-      href: 
+      href: models.html
 output:
   html_document:
     theme: sandstone
