@@ -120,19 +120,10 @@ nyc_tidy <- nyc %>%
         status = as.factor(status)
     )
 
-summary(nyc_tidy$status)
-
-####### THIS CODE IS LOOKING AT WHAT IS MISSING FROM OUR COMPLAIN AGGREGATION
-summary(nyc_tidy$complaint_simp)
-
-test = nyc_tidy %>% 
-    filter(is.na(complaint_simp))
-summary(test$complaint_type)
-
 
 ```
 
-
+Adding income data 
 ```{r}
 
 inc_df = read_csv("./Med_income_2017.csv") %>% 
@@ -166,10 +157,10 @@ add_inc = left_join(nyc_tidy, inc_df, by = "community_board") %>%
 ```
 
 
-Our question is: What neighborhood characteristics effect number and type of complaints? 
+## Our question is: What neighborhood characteristics effect number and type of complaints? 
 
 
-# data to keep:
+### data to keep:
 
 ```{r}
 
@@ -183,7 +174,6 @@ cb_group_year = add_inc %>%
         num_open_health = sum(open_health_complaint)
     ) %>% 
     select(number_complaints, num_unsolved, num_open_health, everything())
-
 
 
 ########## including year
@@ -200,7 +190,7 @@ cb_group_year_distinct <- within(cb_group_year_distinct, borough <- relevel(boro
 ```
 
 
-# Final Models:
+### Final Models:
 
 ```{r}
 
