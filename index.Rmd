@@ -1,7 +1,7 @@
 ---
 title: "<span style='font-size: 25px'>Project Overview</style>"
 ---
-<<<<<<< HEAD
+
 [DRAFT]
 
 Inspiration: We live in one of the most expensive, as well as one of the most diverse, cities in the world. As such, there is going to be a plethora of conflict. We thought it would be an interesting research endeavor to utilize the massive 311 complaint data to see how community needs are 
@@ -48,4 +48,3 @@ We conducted linear models to examine predictors of number of complaints from 20
 
 __Discussion:__ What were your findings? Are they what you expect? What insights into the data can you make?
 XXX
->>>>>>> 063d6f02e10bbe86c4ae7e08e9d0810435d71ebe
