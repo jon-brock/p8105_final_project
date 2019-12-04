@@ -452,6 +452,8 @@ add_inc = left_join(nyc_tidy, inc_df, by = &quot;community_board&quot;) %&gt;%
 ## coercing into character vector</code></pre>
 <div id="aggregating-data-to-community-district-and-year-level" class="section level3">
 <h3>Aggregating data to community district and year level</h3>
+<p>To examine the effect of community district level variables on total number of complaints we must first aggregate to the community district level. We are also interested in how year effects the number of complaints in each district so we group by year as well to produce complaint totals for each year and community district.</p>
+<p>Once we have complaint totals, we do not want individual complaint information anymore. We select distinct year * community district observations.</p>
 <pre class="r"><code># grouping by community district and year
 cb_group_year = add_inc %&gt;% 
     group_by(community_board, created_year) %&gt;%
@@ -476,16 +478,21 @@ cb_group_year_distinct = cb_group_year %&gt;%
 cb_group_year_distinct = within(cb_group_year_distinct, borough &lt;- relevel(borough, ref = &quot;MANHATTAN&quot;))</code></pre>
 </div>
 </div>
-<div id="what-neighborhood-characteristics-effect-number-and-type-of-complaints" class="section level2">
-<h2>What neighborhood characteristics effect number and type of complaints?</h2>
-<p>We looked at number of complaints from 2014-2018 predicted by year, borough, community district (CD) level variables including median income (in the 1000s), total population (in the 1000s), percent non-hispanic black, percent hispanic, and number of unresolved complaints.</p>
+<div id="what-neighborhood-characteristics-effect-number-and-type-of-complaints-in-each-community-district" class="section level2">
+<h2>What neighborhood characteristics effect number and type of complaints in each community district?</h2>
+<p>We conducted linear models to examine predictors of number of complaints from 2014-2018 per community district. Our three outcomes were:</p>
+<ol style="list-style-type: decimal">
+<li>Total number of complaints</li>
+<li>Number of health complaints</li>
+<li>Number of unresolved complaints.</li>
+</ol>
+<p>We looked at these categories of complaints from 2014-2018 predicted by year, borough, and community district level variables including median income (in the 1000s), total population (in the 1000s), percent non-hispanic black and percent Hispanic. For outcomes 1 and 2 we included number of unresolved complaints as a predictor as well.</p>
 <div id="number-of-complaints-by-nyc-community-district" class="section level4">
-<h4>Number of complaints by NYC community district:</h4>
+<h4>1) Number of complaints by NYC community district:</h4>
 <pre class="r"><code># number of complaints
 options(scipen = 5)
 
 num_comp_model_year = lm(number_complaints ~ inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s + borough +created_year, data = cb_group_year_distinct)
-
 
 summary(num_comp_model_year)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre>
 <table>
@@ -605,13 +612,15 @@ summary(num_comp_model_year)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code><
 plot(num_comp_model_year)</code></pre>
 <p><img src="regression_analysis_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p><em>Comments:</em></p>
-<p>The total number of complaints in significantly predicted by year, borough and CD number of unsolved complaints, percent Hispanic, and population total.</p>
+<p>The total number of complaints is significantly predicted by year, borough and CD number of unsolved complaints, percent Hispanic, and population total.</p>
+<p>On average, for each additional year we see 81 more complaints in each community district, for each additional 1000 people in a CD we see 6 more complaints, with Staten Island CDs having 3029 more complaints than manhattan CDs.</p>
+<p>Based on the adjusted R-squared value, number of complaints in a CD are 89.14% predicted by this combination of variables. Residuals appear to follow a normal distribution.</p>
 </div>
 <div id="number-of-health-related-complaints-by-nyc-community-district" class="section level4">
-<h4>Number of health-related complaints by NYC community district:</h4>
+<h4>2) Number of health-related complaints by NYC community district:</h4>
 <pre class="r"><code># number of health complaints
 
-num_health_model_year = lm(num_health_complaint ~  inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s + borough +created_year, data = cb_group_year_distinct)
+num_health_model_year = lm(num_health_complaint ~  inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s + borough + created_year, data = cb_group_year_distinct)
 
 summary(num_health_model_year)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre>
 <table>
@@ -731,10 +740,12 @@ summary(num_health_model_year)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code
 plot(num_health_model_year)</code></pre>
 <p><img src="regression_analysis_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p><em>Comments:</em></p>
-<p>Complaints were determined to be health related if they were about heat, hot water, sanitary conditions, poor air quality, or hazardous materials. The total number of health-related complaints in significantly predicted by borough and CD median income, percent non-Hispanic Black and Hispanic, and population total.</p>
+<p>Complaints were determined to be health related if they were about heat, hot water, sanitary conditions, poor air quality, or hazardous materials. The total number of health-related complaints is significantly predicted by borough and CD median income, percent non-Hispanic Black and Hispanic, and population total.</p>
+<p>On average, for each $1000 increase in median income we see 1 <em><em>fewer</em></em> health related complaints in each community district; for each additional percent of a CD that is black or hispanic we see 2 and 3 more health-related complaints.</p>
+<p>Based on the adjusted R-squared value, number of health-related complaints in a CD is 75.49% predicted by this combination of variables. Residuals appear to follow a mostly normal distribution, but there is still room for improvement in model fit, in a later analysis.</p>
 </div>
 <div id="number-of-unresolved-complaints-by-nyc-community-district" class="section level4">
-<h4>Number of unresolved complaints by NYC community district:</h4>
+<h4>3) Number of unresolved complaints by NYC community district:</h4>
 <pre class="r"><code># number of unresolved
 
 num_unsolved_model_year = lm(num_unsolved ~ inc_1000s + per_black_nh + per_hisp + pop_1000s + borough +created_year, data = cb_group_year_distinct)
@@ -850,7 +861,9 @@ summary(num_unsolved_model_year)  %&gt;% broom::tidy() %&gt;% knitr::kable()</co
 plot(num_unsolved_model_year)</code></pre>
 <p><img src="regression_analysis_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p><em>Comments:</em></p>
-<p>A complaint was labeled unresolved if its status was not labeled as “closed”. The total number of unresolved complaints in significantly predicted by year of complaint, borough, and CD median income, number of unsolved complaints, percent non-Hispanic Black and Hispanic, and population total.</p>
+<p>A complaint was labeled unresolved if its status was not labeled as “closed”. The total number of unresolved complaints is significantly predicted by year of complaint, borough, and CD median income, percent non-Hispanic Black and Hispanic, and population total.</p>
+<p>On average, for each additional year we see 5 more unresolved complaints in each community district. for each additional 1000 people in a CD we see 0 more complaints, with The Bronx, Queens, and Staten Island CDs having 22, 18, and 283, more unresolved complaints than manhattan CDs on average, respectively.</p>
+<p>Based on the adjusted R-squared value, number of unresolved complaints in a CD are 91.2% predicted by this combination of variables. Residuals appear to follow a normal distribution.</p>
 </div>
 </div>
 

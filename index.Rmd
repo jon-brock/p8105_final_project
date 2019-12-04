@@ -7,11 +7,6 @@ title: "<span style='font-size: 25px'>Project Overview</style>"
 Inspiration: We live in one of the most expensive, as well as one of the most diverse, cities in the world. As such, there is going to be a plethora of conflict. We thought it would be an interesting research endeavor to utilize the massive 311 complaint data to see how community needs are 
 
 
-
-
-
-=======
-
 __Motivation:__ Provide an overview of the project goals and motivation.
 
 Gentrification is a growing problem across NYC and the US, leading to rent increases, the displacement of communities, and community conflict. We want to examine the differences in complaint type across the city based on demographics of community district. To do this we used NYC 311 complaint data and American Community Survey (ACS) data from 2013-2017 for community district level information.
