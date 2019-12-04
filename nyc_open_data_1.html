@@ -12,7 +12,7 @@
 
 
 
-<title>models.utf8</title>
+<title>Data Scraping Using RSocrata</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -297,13 +297,26 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore"><span style='font-size: 25px'>Models
-</style></h1>
+<h1 class="title toc-ignore">Data Scraping Using RSocrata</h1>
 
 </div>
 
 
-
+<pre class="r"><code>#install.packages(&quot;RSocrata&quot;)
+#devtools::install_github(&quot;Chicago/RSocrata&quot;)
+library(RSocrata)
+library(tidyverse)</code></pre>
+<pre class="r"><code>token &lt;- &quot;QsuUJQpyjGciXV5KibPhY64hO&quot;</code></pre>
+<pre class="r"><code>brooklyn &lt;- RSocrata::read.socrata(
+    url = &quot;https://data.cityofnewyork.us/resource/erm2-nwe9.csv?city=Brooklyn&quot;, app_token = token) 
+brooklyn %&gt;% pull(borough) %&gt;% head()
+dim(brooklyn)</code></pre>
+<pre class="r"><code>manhattan &lt;- RSocrata::read.socrata(
+    url = &quot;https://data.cityofnewyork.us/resource/erm2-nwe9.csv?city=Queens&quot;, app_token = token) 
+dim(manhattan)</code></pre>
+<pre class="r"><code>nyc_311_data &lt;- RSocrata::read.socrata(
+    url = &quot;https://data.cityofnewyork.us/resource/erm2-nwe9.csv?&quot;, app_token = token) 
+dim(manhattan)</code></pre>
 
 
 
