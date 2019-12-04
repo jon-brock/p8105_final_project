@@ -1,3 +1,30 @@
 ---
 title: "<span style='font-size: 25px'>Project Overview</style>"
 ---
+
+__Motivation:__ Provide an overview of the project goals and motivation.
+
+Gentrification is a growing problem across NYC and the US, leading to rent increases, the displacement of communities, and community conflict. We want to examine the differences in complaint type across the city based on demographics of community district. To do this we used NYC 311 complaint data and American Community Survey (ACS) data from 2013-2017 for community district level information.
+
+
+__Related Work:__ Anything that inspired you, such as a paper, a web site, or something we discussed in class.
+New York City has a lot of open source data. We were inspired by the idea of looking at the distribution of health complaints specifically related to NYC Housing Authority (NYCHA), as a large proportion of New Yorkers (1 in 15) live in public housing. However, looking at complaints of just public housing does not give an overview of the whole city, so we expanded our analysis to include the entire city. [https://www1.nyc.gov/assets/nycha/downloads/pdf/NYCHA-Fact-Sheet_2019_08-01.pdf]
+
+
+__Initial questions:__ What questions are you trying to answer? How did these questions evolve over the course of the project? What new questions did you consider in the course of your analysis?
+Our initial questions included: what is the distribution of 311 complaints in NYCHA public housing, and what proportion of them are health related compared to the rest of NYC complaints.
+As we shifted gears and decided to look at NYC by community district instead, our questions became: What neighborhood characteristics predict the volume of complaints, health-related complaints, and unresolved complaints.
+
+__Data:__ Source, scraping method, cleaning, etc.
+Steven L. Source/scraping method: XXX
+
+
+
+__Exploratory analysis:__ Visualizations, summaries, and exploratory statistical analyses. Justify the steps you took, and show any major changes to your ideas.
+XXX
+
+__Additional analysis:__  If you undertake formal statistical analyses, describe these in detail
+
+
+__Discussion:__ What were your findings? Are they what you expect? What insights into the data can you make?
+XXX
