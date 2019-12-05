@@ -1,5 +1,5 @@
 ---
-title: "<span style='font-size: 25px'>Visualizations</style>"
+title: "<span style='font-size: 25px'>Visualization</style>"
 output: 
   html_document:
     code_folding: hide

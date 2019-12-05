@@ -286,7 +286,7 @@ $(document).ready(function () {
   <a href="DiscriptiveTables.html">Tables</a>
 </li>
 <li>
-  <a href="map_visual.html">Visualizations</a>
+  <a href="map_visual.html">Visualization</a>
 </li>
 <li>
   <a href="regression_analysis.html">Regression</a>
@@ -412,8 +412,6 @@ table(unspec$year)</code></pre>
 <h2>NYC 311</h2>
 <p>Load and tidy the data. Data is 100k randomly sampled complaints from all neighborhoods across all NYC boroughs (600k total samples). Years sampled were 2014-2018.</p>
 <p>Data downloaded from: <a href="https://wetransfer.com/downloads/f8c5d6c17483e279ff56018db9c44cc420191201000026/c5f48b" class="uri">https://wetransfer.com/downloads/f8c5d6c17483e279ff56018db9c44cc420191201000026/c5f48b</a></p>
-<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</p>
-<p>======= &gt;&gt;&gt;&gt;&gt;&gt;&gt; ddd63902552adb81ecfe91bcbcdcabe8dc21479c</p>
 <pre class="r"><code>nyc &lt;- read_csv(file = &quot;./p8105nyc_311_100k.csv&quot;) %&gt;% 
     janitor::clean_names()</code></pre>
 <pre><code>## Warning: 13949 parsing failures.
@@ -528,8 +526,8 @@ table(unspec$year)</code></pre>
     )</code></pre>
 <pre><code>## Warning: Expected 2 pieces. Additional pieces discarded in 489924 rows [1, 2, 3,
 ## 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, ...].</code></pre>
-<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</p>
-<p>======= &gt;&gt;&gt;&gt;&gt;&gt;&gt; ddd63902552adb81ecfe91bcbcdcabe8dc21479c #### Reading in and tidying second dataset with community district data</p>
+<div id="reading-in-and-tidying-second-dataset-with-community-district-data" class="section level4">
+<h4>Reading in and tidying second dataset with community district data</h4>
 <p>Used skimr::skim, colnames, and levels(factor(nyc$complaint_type)) to investigate and tidy the data. New variables were created to establish a binary status for closed (0) or open (1) complaints.</p>
 <p>Key variables include: <code>year</code>, <code>borough</code>, <code>community_board</code>, <code>complaint_type</code>, and <code>status</code>.</p>
 <p>Newly added variables include:</p>
@@ -539,6 +537,7 @@ table(unspec$year)</code></pre>
 <li><p><code>open_health_complaint</code> - binary categorization, either health complaint that is open (1), or non-health related complaint or closed health complaint (0).</p></li>
 <li><p><code>open_complaint</code> - binary categorization, closed <code>status</code> (0), open (1)</p></li>
 </ol>
+</div>
 </div>
 <div id="american-commmunity-survey-income-and-population-characteristics" class="section level2">
 <h2>American Commmunity Survey, income and population characteristics:</h2>
@@ -2685,16 +2684,12 @@ plot(nom_comp_h_queens, which = 1, main = &quot;Queens
 plot(nom_comp_h_SI, which = 1, main = &quot;Staten Island
 &quot;)</code></pre>
 <p><img src="compiled_files/figure-html/unnamed-chunk-36-1.png" width="672" /></p>
-</div>
-</div>
-</div>
-</div>
-<div id="head" class="section level1">
-<h1>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</h1>
 <p><em>Comments:</em></p>
 <p>Complaints were determined to be health related if they were about heat, hot water, sanitary conditions, poor air quality, or hazardous materials.</p>
 <p>In Manhattan and Queens we see a significant effect on total number of health related complaints by median income of the CD. On average, for each $1000 increase in median income we see -2 more health-related complaints in Manhattan 3 <em><em>fewer</em></em> health-related complaints in Queens.</p>
 <p>Based on the adjusted R-squared values, number of health related complaints in a CD range from 56.84% in Brooklyn to 97.01% in Staten Island predicted by this combination of variables. The plots of the residuals indicate that future analyses should increase or adjust the predictors to better fit the data.</p>
+</div>
+</div>
 <div id="number-of-unresolved-complaints-by-nyc-community-district" class="section level4">
 <h4>3) Number of unresolved complaints by NYC community district:</h4>
 <div id="a-bronx-2" class="section level5">
@@ -3124,6 +3119,7 @@ plot(nom_unres_SI, which = 1, main = &quot;Staten Island
 <p>A complaint was labeled unresolved if its status was not labeled as “closed”. For all boroughs but Staten Island, year is, on average, a significant predictor if number of unresolved complaints for each CD.</p>
 <p>In Brooklyn and Queens we see significant effect on total number of unresolved complaints by the percent non-Hispanic Black population. On average, we see 0 and 0 more unresolved complaints for each additonal 5% increase in non-Hispanic Black population in Brooklyn and Queens respectively.</p>
 <p>Based on the adjusted R-squared values, number of unresolved complaints in a CD range from 16.48% in Staten Island to 67.58% in The Bronx predicted by this combination of variables. The plots of the residuals indicate that future analyses should increase or adjust the predictors to better fit the data.</p>
+</div>
 </div>
 </div>
 <div id="discussion" class="section level2">

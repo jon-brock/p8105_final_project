@@ -37,10 +37,6 @@ __Additional analysis:__
 
 We observe cases with complaints that have something to do with tree, paint/plaster, and maintanance take the longest to close 11 - 12 days compared to the other compalaint cases that close with the said interquartile range of 0-9 days.  Taking a look at the incomme bracket we observe that higher income brackest mostly complain about the homeless (17.2%) while the lowest income clase mostly complain about heat (20.3%) and maintanance(20.9%) comparing accross all income brackets. Furthermore we can also see that Manhattan has most of its complaints related to air quality (38.8%), hazardous material (30.3%), homeless (77.4%), and noise (30.5%) comparing across all boroughs.  
 
-__Additional analysis:__  If you undertake formal statistical analyses, describe these in detail
-
-We observe cases with complaints that have something to do with tree, paint/plaster, and maintanance take the longest to close 11 - 12 days compared to the other compalaint cases that close with the said interquartile range of 0-9 days. Taking a look at the income bracket we observe that higher income brackest mostly complain about the homeless (17.2%) while the lowest income clase mostly complain about heat (20.3%) and maintanance(20.9%) comparing accross all income brackets. Furthermore we can also see that Manhattan has most of its complaints related to air quality (38.8%), hazardous material (30.3%), homeless (77.4%), and noise (30.5%) comparing across all boroughs.  
-
 We conducted linear models to examine predictors of number of complaints from 2014-2018 per community district. Our three outcomes were total number of complaints, number of health complaints, and number of unresolved complaints. We looked at these categories of complaints from 2014-2018 predicted by year, and community district level variables including median income (in the 1000s), total population (in the 1000s), percent non-hispanic black and percent Hispanic. For total number of complaints and health complaints we included number of unresolved complaints as a predictor as well.  
 
 __Discussion:__  

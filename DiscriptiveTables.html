@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
 
 <meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
 
-<title>DiscriptiveTables</title>
+<title>DiscriptiveTables.utf8</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -237,7 +238,6 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
-  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -269,6 +269,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -350,22 +356,25 @@ div.tocify {
         <li>
   <a href="index.html">Overview</a>
 </li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li>
+<li>
   <a href="screencast.html">Screencast</a>
 </li>
 <li>
-  <a href="descript_stats_plots.html">Descriptive Statistics Plots</a>
+  <a href="descript_stats_plots.html">Plots</a>
 </li>
 <li>
-  <a href="DiscriptiveTabels.html">Descriptive Tables</a>
+  <a href="DiscriptiveTables.html">Tables</a>
 </li>
 <li>
-  <a href="regression_analysis.html">Regression Analysis</a>
+  <a href="map_visual.html">Visualization</a>
 </li>
 <li>
-  <a href="map_visual.html">Visualizations</a>
+  <a href="regression_analysis.html">Regression</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="compiled.html">Full Report</a>
 </li>
 <li>
   <a href="mailto:&lt;jpb2210@cumc.columbia.edu&gt;">
@@ -396,13 +405,14 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">DiscriptiveTables</h1>
+<h1 class="title toc-ignore"><span style='font-size: 25px'>Descriptive Tables
+</style></h1>
 
 </div>
 
 
 <pre class="r"><code>#data previously combined in the nyc_open_data.Rmd file
-nyc &lt;- read_csv(file = &quot;../p8105nyc_311_100k.csv&quot;) %&gt;% 
+nyc &lt;- read_csv(file = &quot;./p8105nyc_311_100k.csv&quot;) %&gt;% 
     janitor::clean_names()
 
 #creating variables that aggragate similiar complaints. 
