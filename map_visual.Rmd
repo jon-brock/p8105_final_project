@@ -6,7 +6,8 @@ output: github_document
 ---
 
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(viridis)
 library(rgdal)
@@ -16,6 +17,7 @@ library(ggplot2)
 # setting factors to false
 options(stringsAsFactors = FALSE)
 ```
+
 
 ```{r, warning=FALSE}
 nyc <- read_csv(file = "./p8105nyc_311_100k.csv") %>% 
@@ -124,6 +126,30 @@ nyc_tidy <- nyc %>%
     )
 ```
 
+
+```{r}
+inc_df = read_csv("./Med_income_2017.csv") %>% 
+    janitor::clean_names() %>% 
+    mutate(
+        inc_1000s = round(median_income/1000, 1),
+        income_bracket = case_when(
+            median_income >= 20000 & median_income <= 30000 ~ "20k-30k",
+            median_income > 30000 & median_income <= 40000 ~ "30-40k",
+            median_income > 40000 & median_income <= 50000 ~ "40-50k",
+            median_income > 50000 & median_income <= 60000 ~ "50-60k",
+            median_income > 60000 & median_income <= 70000 ~ "60-70k",
+            median_income > 70000 & median_income <= 80000 ~ "70-80k",
+            median_income > 80000 & median_income <= 90000 ~ "80-90k",
+            median_income > 90000 & median_income <= 100000 ~ "90-100k",
+            median_income > 100000 & median_income <= 125000 ~ "100-125k",
+            median_income > 125000 & median_income <= 150000 ~ "125k+",
+        ),
+        income_bracket = as.factor(income_bracket),
+        income_bracket = fct_relevel(income_bracket, c("20k-30k", "30-40k", "40-50k", "50-60k", "60-70k", "70-80k", "80-90k", "90-100k", "100-125k", "125k+"))
+    )
+nyc_inc = left_join(nyc_tidy, inc_df, by = "community_board")
+```
+
 #### Creating map visual with n = 10000 
 
 ```{r}
@@ -131,12 +157,15 @@ pal <- colorFactor(
   palette = "viridis",
   domain = unique(nyc_tidy$complaint_simp))
 
-nyc_tidy %>% 
+nyc_inc %>% 
+  filter(created_year == "2018") %>%
+  drop_na(complaint_simp) %>% 
   sample_n(10000) %>% 
-    mutate(click_label = str_c(complaint_simp, "")) %>%
+  mutate(click_label = str_c("<br>Complaint type: ", complaint_simp, "<br>Neighborhood: ", area_name, "<br>Income: $", median_income, "<br>Status: ", status)) %>%
   leaflet() %>% 
   addProviderTiles(providers$CartoDB.Positron) %>% 
-  addCircleMarkers(lat = ~latitude, lng = ~longitude, radius = .5, color = ~pal(complaint_simp), popup = ~click_label)
+  addCircleMarkers(lat = ~latitude, lng = ~longitude, radius = .1, color = ~pal(complaint_simp), popup = ~click_label) %>% 
+  addLegend("bottomright", pal = pal, values = ~complaint_simp,
+    title = "Type of Complaints in NYC in 2018",
+    opacity = 1)
 ```
-
-
