@@ -23,6 +23,8 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -267,17 +269,27 @@ $(document).ready(function () {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">Team 4</a>
+      <a class="navbar-brand" href="index.html">Team 4 - Final Project</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-        <li class="dropdown-header">Home</li>
-<li class="dropdown-header">Statistics</li>
-<li class="dropdown-header">Plots</li>
-<li class="dropdown-header">Models</li>
+        <li>
+  <a href="index.html">Overview</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="mailto:&lt;jpb2210@cumc.columbia.edu&gt;">
+    <span class="fa fa-envelope fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://github.com/jpb2210/p8105_final_project">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -293,7 +305,25 @@ $(document).ready(function () {
 </div>
 
 
-
+<p>We live in one of the most expensive, as well as one of the most diverse, cities in the world. As such, there is going to be a plethora of conflict. We thought it would be an interesting research endeavor to utilize the massive 311 complaint data to see how community needs are</p>
+<p>Gentrification is a growing problem across NYC and the US, leading to rent increases, the displacement of communities, and community conflict. We want to examine the differences in complaint type across the city based on demographics of community district. To do this we used NYC 311 complaint data and American Community Survey (ACS) data from 2013-2017 for community district level information.</p>
+<p><strong>Related Work:</strong> Anything that inspired you, such as a paper, a web site, or something we discussed in class.</p>
+<p>New York City has a lot of open source data. We were inspired by the idea of looking at the distribution of health complaints specifically related to NYC Housing Authority (NYCHA), as a large proportion of New Yorkers (1 in 15) live in public housing. However, looking at complaints of just public housing does not give an overview of the whole city, so we expanded our analysis to include the entire city. [<a href="https://www1.nyc.gov/assets/nycha/downloads/pdf/NYCHA-Fact-Sheet_2019_08-01.pdf" class="uri">https://www1.nyc.gov/assets/nycha/downloads/pdf/NYCHA-Fact-Sheet_2019_08-01.pdf</a>]</p>
+<p>In class we have looked at restaurant reviews and airBnB rentals in the borough of Manhattan by neighborhood, and we find nieghborhood level analyses to be interesting. As Manhattan is one only one part of New York City, and not even the most populated borough, we decided to look across all five boroughs and compare across the 59 community districts (twelve in Manhattan, twelve in the Bronx, eighteen in Brooklyn, fourteen in Queens, and three in Staten Island).</p>
+<p><strong>Initial questions:</strong> What questions are you trying to answer? How did these questions evolve over the course of the project? What new questions did you consider in the course of your analysis?</p>
+<p>Our initial questions included: what is the distribution of 311 complaints in NYCHA public housing, and what proportion of them are health related compared to the rest of NYC complaints. As we shifted gears and decided to look at NYC by community district instead, our questions became: What neighborhood characteristics predict the volume of complaints, health-related complaints, and unresolved complaints.</p>
+<p><strong>Data:</strong> Source, scraping method, cleaning, etc.</p>
+<p>Steven L. Source/scraping method for 311: XXX</p>
+<p>Cleaning 311 adding variables: XXX</p>
+<p>American Commmunity Survey data: We also included aggregated American Commmunity Survey (ACS) data in our analysis. The American Community Survey is conducted annually across the United States by the US Census Bureau to 3.5 million households. ACS provides annual and 5-year estimates of information by graphical region, including NYC Community Districts. We pulled population 5-year estimates (2013-2017) of total population, percent non-Hispanic White, percent non-Hispanic Black, percent Hispanic, and median income of each community district.</p>
+<p><strong>Exploratory analysis:</strong> Visualizations, summaries, and exploratory statistical analyses. Justify the steps you took, and show any major changes to your ideas.</p>
+<p>Steven and Molly: XXX</p>
+<p><strong>Additional analysis:</strong> If you undertake formal statistical analyses, describe these in detail</p>
+<p>We conducted linear models to examine predictors of number of complaints from 2014-2018 per community district. Our three outcomes were total number of complaints, number of health complaints, and number of unresolved complaints. We looked at these categories of complaints from 2014-2018 predicted by year, borough, and community district level variables including median income (in the 1000s), total population (in the 1000s), percent non-hispanic black and percent Hispanic. For total number of complaints and health complaints we included number of unresolved complaints as a predictor as well.</p>
+<p><strong>Discussion:</strong> What were your findings? Are they what you expect? What insights into the data can you make?</p>
+<p>Steven and Molly: XXX</p>
+<p>Ava:</p>
+<p>=======</p>
 
 
 
