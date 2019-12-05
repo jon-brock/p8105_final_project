@@ -1,8 +1,5 @@
 ---
-title: "Descriptive stats plots"
-author: "Molly Martorella"
-date: "12/3/2019"
-output: github_document
+title: "<span style='font-size: 25px'>Descriptive Statistics Plots</style>"
 ---
 
 ```{r setup, include=FALSE}
@@ -24,7 +21,7 @@ Load and tidy the data. Data is 100k randomly sampled complaints from all neighb
 Data downloaded from:
 https://wetransfer.com/downloads/f8c5d6c17483e279ff56018db9c44cc420191201000026/c5f48b
 
-```{r, warning=FALSE}
+```{r, warning = FALSE, message = FALSE}
 
 nyc <- read_csv(file = "./p8105nyc_311_100k.csv") %>% 
     janitor::clean_names()
