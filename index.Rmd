@@ -21,10 +21,8 @@ Our initial questions included: what is the distribution of 311 complaints in NY
 
 __Data:__  
 
-Steven L. Source/scraping method for 311: XXX
-
 Data Management
-The data used in this project was collected from the [NYC Open Data website](https://data.cityofnewyork.us/Social-Services/311-Service-Requests-from-2010-to-Present/erm2-nwe9).  Web based collection of 311 complaints was made public on 10/18/ 2011, contains information from 2010 to present, and is updated daily.  This data set contains 22M rows and counting with 41 columns that allow us to know the nature, the location, and time of the complaint, as well as which department responded to the complaint.  Given the size of the data set we used the filtering option on the website to better manage in three ways.  First, the data was filter between the years of 2014 and 2018 for each borough individually.  Subsequently, each data set was imported into R where a sample of 100k was taken from each borrow and binded into one data set for further analysis.  
+The data used in this project was collected from the [NYC Open Data website](https://data.cityofnewyork.us/Social-Services/311-Service-Requests-from-2010-to-Present/erm2-nwe9).  Web based collection of 311 complaints were made public on 10/18/2011, and contains information from 2010 to present, updated daily.  This data set contains over 22M rows 41 columns that allow us to know the nature, location, and time of the complaint, as well as which department responded to the complaint. Given the size of the data set we used the filtering option on the website to better manage in a couple of ways ways.  First, the data was filter between the years of 2014 and 2018 for each of the five boroughs individually. A sample of 100k from each of these five datasets were imported into R and combined for further analysis.  
 
 American Commmunity Survey data:
 We also included aggregated American Commmunity Survey (ACS) data in our analysis. The American Community Survey is conducted annually across the United States by the US Census Bureau to 3.5 million households. ACS provides annual and 5-year estimates of information by graphical region, including NYC Community Districts. We pulled population 5-year estimates (2013-2017) of total population, percent non-Hispanic White, percent non-Hispanic Black, percent Hispanic, and median income of each community district.
@@ -38,14 +36,19 @@ We created an interactive map visual inspired from P8105 in-class map visualizat
 
 __Additional analysis:__  If you undertake formal statistical analyses, describe these in detail
 
-We conducted linear models to examine predictors of number of complaints from 2014-2018 per community district. Our three outcomes were total number of complaints, number of health complaints, and number of unresolved complaints. We looked at these categories of complaints from 2014-2018 predicted by year, borough, and community district level variables including median income (in the 1000s), total population (in the 1000s), percent non-hispanic black and percent Hispanic. For total number of complaints and health complaints we included number of unresolved complaints as a predictor as well. 
+We conducted linear models to examine predictors of number of complaints from 2014-2018 per community district. Our three outcomes were total number of complaints, number of health complaints, and number of unresolved complaints. We looked at these categories of complaints from 2014-2018 predicted by year, and community district level variables including median income (in the 1000s), total population (in the 1000s), percent non-hispanic black and percent Hispanic. For total number of complaints and health complaints we included number of unresolved complaints as a predictor as well. 
 
 
 __Discussion:__ What were your findings? Are they what you expect? What insights into the data can you make?
 
-Steven and Molly: XXX
 
-Ava: 
+Between 2014 and 2018, approximately 22 million 311 complaints were made across the 5 boroughs in NYC. We were interested in how complaints differ by borough and community district. Based on our descriptive figures, mapped data, and linear models of NYC 311 complaint data, we see that there are a few key factors that play into how types of complaints are dispersed across the city.
+
+With approximately 5000 311 complaints made everyday, a majority of which close within the week (66%), it is interesting to look into where the open complaints remain. We see that in four out of the five boroughs, race has an impact on number of unresolved complaints, where an increase in non-Hispanic Black population predicts an increase in number of unresolved complaints. In Manhattan we see the opposite effect, where an increase in non-Hispanic Black population predicts a decrease in number of unresolved complaints.
+
+As the income disparity in New York City is one of the greatest in the nation, we wanted to see how median household income of a neighborhood also effected complaints. [https://dailygazette.com/article/2018/07/19/study-finds-n-y-income-disparity-greatest-in-nation]. We found that community districts with higher incomes had different types of complaints than those with lower incomes. By borough we see that in The Bronx, Brooklyn, and Queens, an increase in median income of a community district resulted in a decrease in total health-realted complaints. These areas are less likely to have calls related to water issues, rodents, and hazardous materials including asbestos and lead. What we do see, however, is that areas with higher incomes produce more 311 complaints about the homeless population. It is safe to assume that wealthier areas do not necessarily have more homeless residents, but that a panhandler is seen as more problematic in areas that have a greater density of wealth.
+
+Ultimately we see that 311 complaints come from all over the city, regardless of community district economic or racial background, and the data is a minefield for answering niche questions about New York City life.
 
 
 
