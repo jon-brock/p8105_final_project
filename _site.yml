@@ -10,6 +10,8 @@ navbar:
       href: screencast.html
     - text: "Descriptive Statistics Plots"
       href: descript_stats_plots.html
+    - text: "Descriptive Tables"
+      href: DiscriptiveTabels.html
     - text: "Regression Analysis"
       href: regression_analysis.html
     - text: "Visualizations"

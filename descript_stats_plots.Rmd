@@ -142,7 +142,7 @@ Newly added variables include:
 
 3. `open_health_complaint` - binary categorization, either health complaint that is open (1), or non-health related complaint or closed health complaint (0).
 
-4. `open_complaint` - binary categorization, closed `status` (0), open (1).
+4. `open_complaint` - binary categorization, closed `status` (0), open (1)
 
 ## Income and population characteristics data:
 
@@ -177,16 +177,18 @@ nyc_inc = left_join(nyc_tidy, inc_df, by = "community_board")
 
 `income_bracket` and `inc_1000s` (rounds income and divides by 1000) variables were added to the neighborhood population characteristics data to ease downstream plots and analyses. The data were left joined using the `community_board` variable.
 
-
-<<< STOP DATA TIDYING COPYING HERE >>>
-
-
-
 ## Combined and tidied data for plotting
 
 ```{r}
 
 nyc_plots <- nyc_inc %>% 
+    group_by(area_name, created_year) %>%
+    add_count(area_name, name = "number_complaints") %>% 
+    mutate(
+        num_unsolved = sum(open_complaint),
+        num_health_complaint = sum(health_complaint),
+        num_open_health = sum(open_health_complaint)
+    ) %>% 
     select(-unique_key, -city, -park_borough, -agency, -agency_name, -descriptor, -incident_zip, -incident_address, -street_name, -cross_street_1, -cross_street_2, -intersection_street_1, -intersection_street_2, -landmark, -facility_type, -resolution_description, -resolution_action_updated_date, -bbl, -x_coordinate_state_plane, -y_coordinate_state_plane, -open_data_channel_type, -park_facility_name, -vehicle_type, -taxi_company_borough, -taxi_pick_up_location, -bridge_highway_name, -bridge_highway_direction, -bridge_highway_segment, -latitude, -longitude, -location, -road_ramp, -location_type, -address_type, -map_id)
 
 
@@ -204,8 +206,6 @@ nyc_plots %>%
         diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day))
 
 ```
-
-THIS IS NOT TRUE DO NOT INCLUDE:
 
 The newly combined dataframe was grouped according to `area_name`, a key variable from the population characteristics dataset that provides the local neighborhood name within the borough. Extraneous variables were removed to reduce the dataframe size and ease manipulation of the data.
 
@@ -698,7 +698,7 @@ r %>% mutate(proportion = (open/(open + closed))) %>%
     ylab("Proportion Open") +
     ggtitle("Unresolved Complaints as a Function of Neighborhood Population") +
     scale_color_viridis(name = "Race", labels = c("Black", "Hispanic", "Other", "White"), discrete = TRUE)
-
+    
 ```
 
 The only trend we were able to discern is a decrease is the proportion of open cases as the percent hispanic population increases.
@@ -706,41 +706,6 @@ The only trend we were able to discern is a decrease is the proportion of open c
 #### Days to close given income level
 
 We were also curious whether the income bracket of a neighborhood affected the number of days until a complaint was closed.
-
-```{r}
-nyc_plots %>%
-    filter(status == "Closed") %>% 
-    mutate(closed_year = as.numeric(closed_year),
-        closed_month = as.numeric(closed_month),
-        closed_day = as.numeric(closed_day)) %>% 
-    filter(closed_year != 2047) %>% 
-    mutate(diff_year = abs(closed_year - created_year),
-        diff_month = abs(closed_month - created_month),
-        diff_day = abs(closed_day - created_day),
-        diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day)) %>% 
-    select(income_bracket,
-           median_income,
-           borough, 
-           diff_dayt,
-           diff_year,
-           diff_month,
-           diff_day) %>% 
-    filter(diff_dayt <= 7,
-           !is.na(income_bracket)) %>% 
-    group_by(borough, income_bracket, diff_dayt) %>% 
-    summarize(n = n()) %>% 
-    ggplot(aes(x = diff_dayt, y = n, group = income_bracket, color = income_bracket)) + 
-    geom_line() +
-    facet_wrap(~borough, scales = "free_x") +
-    scale_x_continuous(breaks = scales::pretty_breaks(n = 7)) +
-    scale_color_viridis(discrete = TRUE) +
-    xlab("Days until Complaint Closed") +
-    ylab("Total Complaints Closed") +
-    ggtitle("Number of Complaints Closed Since Complaint Filed") +
-    labs(color = "Income Bracket")
-```
-
-Looking at the total number of complaints largely reflects a difference in the total number of complaints filed by each group. We then looked at the proportion of complaints closed per day within an income bracket.
 
 ```{r}
 
@@ -794,6 +759,43 @@ d %>%
     ggtitle("Proportion of Complaints Closed Since Complaint Filed") +
     labs(color = "Income Bracket")
 
+
+```
+
+Looking at the total number of complaints largely reflects a difference in the total number of complaints filed by each group. We then looked at the proportion of complaints closed per day within an income bracket.
+
+```{r}
+nyc_plots %>%
+    filter(status == "Closed") %>% 
+    mutate(closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)) %>% 
+    filter(closed_year != 2047) %>% 
+    mutate(diff_year = abs(closed_year - created_year),
+        diff_month = abs(closed_month - created_month),
+        diff_day = abs(closed_day - created_day),
+        diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day)) %>% 
+    select(income_bracket,
+           median_income,
+           borough, 
+           diff_dayt,
+           diff_year,
+           diff_month,
+           diff_day) %>% 
+    filter(diff_dayt <= 7,
+           !is.na(income_bracket)) %>% 
+    group_by(borough, income_bracket, diff_dayt) %>% 
+    summarize(n = n()) %>% 
+    ggplot(aes(x = diff_dayt, y = n, group = income_bracket, color = income_bracket)) + 
+    geom_line() +
+    facet_wrap(~borough, scales = "free_x") +
+    scale_x_continuous(breaks = scales::pretty_breaks(n = 7)) +
+    scale_color_viridis(discrete = TRUE) +
+    xlab("Days until Complaint Closed") +
+    ylab("Total Complaints Closed") +
+    ggtitle("Number of Complaints Closed Since Complaint Filed") +
+    labs(color = "Income Bracket")
+    
 ```
 
 This revealed no difference in the number of days to close a complaint given the income bracket of a neighborhood.

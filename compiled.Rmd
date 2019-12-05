@@ -1,8 +1,5 @@
 ---
 title: "compiled"
-author: "Ava Hamilton"
-date: "12/4/2019"
-output: github_document
 ---
 
 ```{r setup, include=FALSE}
@@ -17,6 +14,9 @@ library(mgcv)
 
 ```
 
+<<<<<<< HEAD
+#### Reading in and tidying first dataset with NYC 311 complaint data 
+=======
 
 
 
@@ -152,6 +152,7 @@ Load and tidy the data. Data is 100k randomly sampled complaints from all neighb
 Data downloaded from:
 https://wetransfer.com/downloads/f8c5d6c17483e279ff56018db9c44cc420191201000026/c5f48b
 
+>>>>>>> acba6a69c020baeb3813ce12b274633923c9fa5f
 ```{r message = FALSE}
 nyc <- read_csv(file = "../p8105nyc_311_100k.csv") %>% 
     janitor::clean_names()
@@ -261,6 +262,9 @@ nyc_tidy <- nyc %>%
 
 ```
 
+<<<<<<< HEAD
+#### Reading in and tidying second dataset with community district data
+=======
 
 Used skimr::skim, colnames, and levels(factor(nyc$complaint_type)) to investigate and tidy the data. New variables were created to establish a binary status for closed (0) or open (1) complaints.
 
@@ -281,6 +285,7 @@ We also included aggregated American Commmunity Survey (ACS) data in our analysi
 
 The variable, `community_board`, will be used to left join NYC 311 data with income and population characteristics data sourced from American Community Survey by Community District.
 
+>>>>>>> acba6a69c020baeb3813ce12b274633923c9fa5f
 ```{r message = FALSE}
 
 inc_df = read_csv("./Med_income_2017.csv") %>% 
@@ -543,6 +548,8 @@ plot(nom_comp_h_SI, which = 1, main = "Staten Island
 ```
 
 
+<<<<<<< HEAD
+=======
 
 *Comments:*
 
@@ -652,3 +659,4 @@ As the income disparity in New York City is one of the greatest in the nation, w
 Ultimately we see that 311 complaints come from all over the city, regardless of community district economic or racial background, and the data is a minefield for answering niche questions about New York City life.
 
 
+>>>>>>> acba6a69c020baeb3813ce12b274633923c9fa5f

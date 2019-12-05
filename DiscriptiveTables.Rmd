@@ -1,28 +1,31 @@
-compiled
-================
-Ava Hamilton
-12/4/2019
+---
+title: "DiscriptiveTables"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float: true
+---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Libraries used
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+#install.packages("arsenal")
+library(arsenal)
+```
 ## read in data
+```{r message = FALSE}
 
-``` r
+#data previously combined in the nyc_open_data.Rmd file
 nyc <- read_csv(file = "./p8105nyc_311_100k.csv") %>% 
     janitor::clean_names()
-```
 
-    ## Warning: 13949 parsing failures.
-    ##    row                   col           expected                        actual                      file
-    ## 100085 taxi_pick_up_location 1/0/T/F/TRUE/FALSE WEST   50 STREET AND BROADWAY './p8105nyc_311_100k.csv'
-    ## 100150 taxi_pick_up_location 1/0/T/F/TRUE/FALSE JFK Airport                   './p8105nyc_311_100k.csv'
-    ## 100172 taxi_pick_up_location 1/0/T/F/TRUE/FALSE 625 EAST 14 STREET MANHATTAN  './p8105nyc_311_100k.csv'
-    ## 100215 taxi_pick_up_location 1/0/T/F/TRUE/FALSE Other                         './p8105nyc_311_100k.csv'
-    ## 100268 taxi_pick_up_location 1/0/T/F/TRUE/FALSE Other                         './p8105nyc_311_100k.csv'
-    ## ...... ..................... .................. ............................. .........................
-    ## See problems(...) for more details.
-
-``` r
+#creating variables that aggragate similiar complaints. 
 nyc_tidy <- nyc %>%   
-    filter(borough != "Unspecified") %>% 
+    filter(borough != "Unspecified") %>%  
     separate(closed_date, 
              into = c("closed_month","closed_day","closed_year"), 
              sep = "\\/" ) %>%
@@ -122,21 +125,20 @@ nyc_tidy <- nyc %>%
         # openCorr = ifelse(status == "Closed", yes = 0, no = 1),
         status = as.factor(status)
     )
+
+
 ```
 
-    ## Warning: Expected 2 pieces. Additional pieces discarded in 489924 rows [1, 2, 3,
-    ## 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, ...].
+# Adding community district data
+```{r message = FALSE}
 
-Adding community district data
-
-``` r
 inc_df = read_csv("./Med_income_2017.csv") %>% 
     janitor::clean_names() %>% 
     mutate(
         pop_1000s = round(total_population/1000, 0),
         inc_1000s = round(median_income/1000, 1),
         income_bracket = case_when(
-            median_income >= 20000 & median_income <= 30000 ~ "20k-30k",
+            median_income >= 20000 & median_income <= 30000 ~ "20-30k",
             median_income > 30000 & median_income <= 40000 ~ "30-40k",
             median_income > 40000 & median_income <= 50000 ~ "40-50k",
             median_income > 50000 & median_income <= 60000 ~ "50-60k",
@@ -156,7 +158,78 @@ add_inc = left_join(nyc_tidy, inc_df, by = "community_board") %>%
     mutate(
         year_fac = as.factor(created_year)
     )
+
+
 ```
 
-    ## Warning: Column `community_board` joining factor and character vector, coercing
-    ## into character vector
+
+# Calculate days to close
+```{r}
+
+#data with days to close information
+nyc_data <- add_inc %>% 
+ filter(status == "Closed" & closed_year <= 2018) %>% 
+    mutate(
+        closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)
+    ) %>% 
+    mutate(
+        diff_year = closed_year - created_year,
+        diff_month = closed_month - created_month,
+        diff_day = closed_day - created_day,
+        diff_dayt =  diff_year*365 + diff_month*30 + diff_day
+       # diff_dayt = as.factor(diff_dayt)
+  ) %>% 
+  mutate(
+    status = as.character(status)
+  ) %>% 
+  mutate(
+    income_bracket = forcats::fct_relevel(income_bracket, "125k+", "100-125k", "90-100k", "80-90k", "70-80k", "60-70k", "50-60k", "40-50k", "30-40k", "20-30k")
+  ) %>% 
+  drop_na(closed_year)
+  
+```
+# Tables
+```{r, results="asis" }
+
+mycontrols  <- tableby.control(test=F, total=T,
+                               cat.simplify = F,
+                               numeric.stats=c("N", "median", "q1q3"),
+                               cat.stats=c("countpct"),
+                               stats.labels=list(N='Count', median='Median', q1q3='Q1,Q3'),
+                               digits = 1)
+
+tab_clo<- tableby(created_year ~ diff_dayt + status  + borough, data = nyc_data, control = mycontrols)
+
+tab_inc<- tableby(created_year ~ income_bracket, data = nyc_data, control = mycontrols)
+
+tab_comp <- tableby(created_year ~ complaint_simp, data = nyc_data, control = mycontrols)
+
+tab_com_clo_inc <- tableby(complaint_simp ~ diff_dayt +income_bracket + borough , data = nyc_data, control = mycontrols)
+
+```
+
+In this table I calculated the median and interquartile range of how many days it took for cases to close.  Given the data is skewed right I reported the median values being `1` to `2` days and largest interqutile range being `0 - 9` and smallest being `0 - 6` acroos years `2014 - 2018`. 
+
+Most complaints are closed within a week with a high density of them being closed within a day or two. Additionally, we observe even distribution across all boroughs and closed cases. 
+```{r}
+summary(tab_clo, title = "NYC 311 Complaints Demographics ")
+
+#In this table we see that individuals in the income bracket 40 - 50k (25.4%) made the most complaints through out all the years in this study while individuals in the 90 - 100k (2.6%)made the least comlaints consistently. 
+
+summary(tab_inc, title = "NYC 311 Complaints Demographics ")
+
+
+summary(tab_comp, title = "NYC 311 Complaints Demographics ")
+
+#In this table I observe that cases with complaints that have something to do with tree, paint/plaster, and maintanance take the longest to close 11 - 12 days compared to the other compalaint cases that close with the said interquartile range of 0-9 days.  Taking a look at the incomme bracket we observe that higher income brackest mostly complain about the homeless (17.2%) while the lowest income clase mostly complain about heat (20.3%) and maintanance(20.9%) comparing accross all income brackets. Furthermore we can also see that Manhattan has most of its complaints related to air quality (38.8%), hazardous material (30.3%), homeless (77.4%), and noise (30.5%) comparing across all boroughs.  
+
+summary(tab_com_clo_inc , title = "NYC 311 Complaints Demographics ")
+
+```
+
+```{r}
+
+```
+
