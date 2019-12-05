@@ -186,7 +186,7 @@ nyc_plots %>%
 
 We first wanted to consider if there were differences in the number, type, or status of complaints across each neighborhood.
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 nyc_plots %>%
     select(area_name, borough, complaint_simp, open_complaint) %>% 
     group_by(area_name, borough, complaint_simp, open_complaint) %>%
@@ -213,7 +213,7 @@ Looking at the total and type of complaint shows Inwood/Washington Heights to ha
 
 We next considered how many of the total complaints in each neighborhood have been closed.
 
-```{r, warning = FALSE}
+```{r, warning = FALSE, message=FALSE}
 
 nyc_plots %>%
     select(area_name, borough, complaint_simp, open_complaint) %>% 
@@ -243,7 +243,7 @@ The above plot demonstrates that the highest proportion of open cases are compla
 
 Because we saw a difference in the number of complaints and open complaints across each neighborhood, we wanted to understand how complaints are distributed based on `income_bracket`.
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 
 p <- nyc_plots %>% 
     filter(!is.na(income_bracket)) %>% 
@@ -274,7 +274,7 @@ We found the total number of cases per income bracket reflected the economic dis
 
 Even though total complaint number was uninformative, we wanted to understand if a type of complaint was more prevalent within an income bracket. The following is a plot of the proportion of health related complaints (which includes: Air Quality, Heat, Hazard Material, Sanitation, and Water/Plumbing) out of all complaints filed.
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 
 h <- nyc_plots %>% 
     filter(!is.na(income_bracket)) %>% 
@@ -303,7 +303,7 @@ It is apparent that health related complaints are proportionally higher in lower
 
 Given the difference in the proportion of health complaints across income brackets, we wanted to further investigate what incomes are associated with a given complaint.
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 
 nyc_plots %>% 
     filter(!is.na(median_income),
@@ -333,7 +333,7 @@ One initial question we wanted to address was whether or not the status of compl
 
 The following is a plot of the proportion of cases that are open given the racial percentage of a community district.
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 r <- nyc_plots %>% 
     pivot_longer(cols = per_black_nh:per_other, names_to = "race", values_to = "percent_pop") %>% 
     filter(!is.na(race),
@@ -361,7 +361,7 @@ The only trend we were able to discern is a decrease is the proportion of open c
 
 We were also curious whether the income bracket of a neighborhood affected the number of days until a complaint was closed.
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 
 d <- nyc_plots %>%
     filter(status == "Closed") %>% 
@@ -418,7 +418,7 @@ d %>%
 
 Looking at the total number of complaints largely reflects a difference in the total number of complaints filed by each group. We then looked at the proportion of complaints closed per day within an income bracket.
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 nyc_plots %>%
     filter(status == "Closed") %>% 
     mutate(closed_year = as.numeric(closed_year),
