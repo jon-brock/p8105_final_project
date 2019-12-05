@@ -1,5 +1,5 @@
 ---
-title: "compiled"
+title: "<span style='font-size: 25px'>Full Report</style>"
 ---
 
 ```{r setup, include=FALSE}

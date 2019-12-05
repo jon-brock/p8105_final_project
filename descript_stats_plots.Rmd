@@ -1,5 +1,5 @@
 ---
-title: "Discriptive Statistics Plots"
+title: "<span style='font-size: 25px'>Descriptive Statistics Plots</style>"
 output: 
   html_document:
     code_folding: hide

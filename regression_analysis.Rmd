@@ -15,7 +15,7 @@ library(tidyverse)
 ```{r message = FALSE, warning = FALSE}
 
 ## Read in data
-nyc <- read_csv(file = "../p8105nyc_311_100k.csv") %>% 
+nyc <- read_csv(file = "./p8105nyc_311_100k.csv") %>% 
     janitor::clean_names()
 
 nyc_tidy <- nyc %>%   
