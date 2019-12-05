@@ -25,7 +25,7 @@ https://wetransfer.com/downloads/f8c5d6c17483e279ff56018db9c44cc420191201000026/
 
 ```{r, warning=FALSE}
 
-nyc <- read_csv(file = "../p8105nyc_311_100k.csv") %>% 
+nyc <- read_csv(file = "./p8105nyc_311_100k.csv") %>% 
     janitor::clean_names()
 
 nyc_tidy <- nyc %>% 
@@ -507,8 +507,7 @@ p %>% mutate(proportion = (open/(open + closed))) %>%
     ggtitle("Proportion of Open Cases Within Each Income Bracket") +
     xlab("Income Bracket") +
     ylab("Proportion Open") +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1),
-          legend.title = element_text(legend.title))
+    theme(axis.text.x = element_text(angle = 60, hjust = 1))
 
 ```
 
