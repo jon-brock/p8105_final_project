@@ -186,7 +186,7 @@ nyc_plots %>%
 
 We first wanted to consider if there were differences in the number, type, or status of complaints across each neighborhood.
 
-```{r, warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE, fig.width = 8, fig.height = 8, dpi = 200, fig.align = 'center'}
 nyc_plots %>%
     select(area_name, borough, complaint_simp, open_complaint) %>% 
     group_by(area_name, borough, complaint_simp, open_complaint) %>%
@@ -213,7 +213,7 @@ Looking at the total and type of complaint shows Inwood/Washington Heights to ha
 
 We next considered how many of the total complaints in each neighborhood have been closed.
 
-```{r, warning = FALSE, message=FALSE}
+```{r, warning = FALSE, message=FALSE, fig.width = 8, fig.height = 8, dpi = 200, fig.align = 'center'}
 
 nyc_plots %>%
     select(area_name, borough, complaint_simp, open_complaint) %>% 
