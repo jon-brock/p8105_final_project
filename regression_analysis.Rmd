@@ -5,113 +5,13 @@ date: "12/1/2019"
 output: html_document
 ---
 
-<<<<<<< HEAD
-```{r}
-=======
 ```{r setup, include=FALSE}
-<<<<<<< HEAD
-#install.packages("miceadds")
-=======
->>>>>>> f473c7cadadc647b9a2591f97293cecc9afbe492
-#install.packages("RSocrata")
->>>>>>> eff2e393ec0971be58554b808159d2f6ffc68d1a
 #devtools::install_github("Chicago/RSocrata")
 library(RSocrata)
 library(tidyverse)
-<<<<<<< HEAD
 
 ```
 
-```{r}
-nyc311 = read_csv("/Users/avahamilton/Dropbox/Biostat MS/Data Science I/final/p8105nyc_311_100k.csv") %>% 
-    janitor::clean_names()
-
-summary(nyc311$city)
-
-nycedit = nyc311 %>% 
-    filter(borough != "Unspecified") %>% 
-    mutate(
-        year = as.numeric(created_year),
-        month = as.numeric(created_month),
-        day = as.numeric(created_day),
-        city = as.factor(city),
-        borough = as.factor(park_borough),
-        agency = as.factor(agency),
-        complaint_type = as.factor(complaint_type),
-        community_board = as.factor(community_board),
-        open_complaint = ifelse(is.na(closed_date),  1, 0),
-        complaint_simp = case_when(
-            str_detect(complaint_type,  regex("street", ignore_case = TRUE))|str_detect(complaint_type,  regex("sidewalk", ignore_case = TRUE))|str_detect(complaint_type,  regex("curb", ignore_case = TRUE))|str_detect(complaint_type,  regex("vehicle", ignore_case = TRUE)) ~ "Street Condition",
-            str_detect(complaint_type,  regex("noise", ignore_case = TRUE)) ~ "Noise",
-            str_detect(complaint_type, regex("heat", ignore_case = TRUE)) ~ "Heat",
-            str_detect(complaint_type, regex("water", ignore_case = TRUE))|str_detect(complaint_type, regex("plumbing", ignore_case = TRUE))|str_detect(complaint_type, regex("boiler", ignore_case = TRUE)) ~ "Water/plumbing",
-            str_detect(complaint_type, regex("paint", ignore_case = TRUE)) ~ "Paint/Plaster",
-            str_detect(complaint_type, regex("asbestos", ignore_case = TRUE))|str_detect(complaint_type, regex("lead", ignore_case = TRUE))|str_detect(complaint_type, regex("hazard", ignore_case = TRUE)) ~ "Hazard Material",
-            str_detect(complaint_type, regex("elevator", ignore_case = TRUE)) ~ "Elevator",
-            str_detect(complaint_type, regex("sanita", ignore_case = TRUE))|str_detect(complaint_type, regex("rodent", ignore_case = TRUE))|str_detect(complaint_type, regex("dirty", ignore_case = TRUE)) ~ "Sanitation",
-            str_detect(complaint_type, regex("tree", ignore_case = TRUE)) ~ "Tree",
-            str_detect(complaint_type, regex("parking", ignore_case = TRUE))|str_detect(complaint_type, regex("car", ignore_case = TRUE))|str_detect(complaint_type, regex("drive", ignore_case = TRUE)) ~ "Car"
-        ),
-        health_complaint = ifelse(
-            complaint_simp %in% c("Heat", "Water/Plumbing", "Hazard Material", "Sanitation"), 1,0),
-        complaint_simp = as.factor(complaint_simp)
-    )
-
-summary(nycedit$complaint_simp)
-
-nycedit_cb = nycedit %>% 
-    group_by(community_board, year) %>%
-    add_count(community_board, name = "number_complaints") %>% 
-    mutate(
-        num_unsolved = sum(open_complaint),
-        num_health_complaint = sum(health_complaint)
-    ) %>% 
-    select(number_complaints, num_unsolved, everything())
-
-
-
-nycedit %>% 
-    ggplot(aes(x = health_complaint)) +
-    geom_bar()
-
-```
-
-
-
-```{r}
-
-inc_df = read_csv("./Med_income_2017.csv") %>% janitor::clean_names()
-
-add_inc = left_join(nycedit_cb, inc_df, by = "community_board")
-
-
-nycedit_cb2 = add_inc %>% 
-    filter(is.na(median_income) == FALSE) %>% 
-    select(community_board, number_complaints, median_income, num_unsolved, num_health_complaint, year, borough, per_black_nh, per_hisp, per_white_nh) %>% 
-    distinct() %>% 
-    arrange(community_board)
-
-nyc_cb2 = glm(number_complaints ~ median_income + num_unsolved + year + borough + per_black_nh + per_hisp, data = nycedit_cb2)
-summary(nyc_cb2)
-
-health_cb = glm(num_health_complaint ~ median_income + num_unsolved + year + borough + per_black_nh + per_hisp, data = nycedit_cb2)
-summary(health_cb)
-
-
-
-nyc_model = glm(open_complaint ~ median_income + year + health_complaint + borough + per_black_nh + per_hisp + complaint_simp, data = add_inc)
-
-summary(nyc_model)
-=======
-library(viridis)
-library(modelr)
-library(mgcv)
-
-
-
-#library(miceadds)
-
-```
 ## read in data
 ```{r message = FALSE}
 nyc <- read_csv(file = "../p8105nyc_311_100k.csv") %>% 
@@ -393,12 +293,11 @@ plot(nom_comp_SI, which = 1, main = "Staten Island
 
 
 
-
 *Comments:*
 
-The total number of complaints in each borough significantly predicted by year, borough and CD number of unsolved complaints, percent Hispanic, and population total. 
-
 In the Bronx, on average, for each additional year we see `r round(pull((summary(nom_comp_bronx)%>% broom::tidy()) %>% filter(term == "created_year"),estimate),0)` more complaints in each community district, for each additional 1000 people in a CD we see `r round(pull((summary(nom_comp_bronx)  %>% broom::tidy()) %>% filter(term == "pop_1000s"),estimate),0)` more complaints, and for each $1000 increase in median income we see `r -1*round(pull((summary(nom_comp_bronx)  %>% broom::tidy()) %>% filter(term == "inc_1000s"),estimate),0)` *_fewer_* complaints.
+
+In Manhattan and Queens we see an effect on total number of complaints by number of unresolved complaints. On average, for each additional unresolved complaint people in Manhattan and Queens will have `r round(pull((summary(nom_comp_manhattan)  %>% broom::tidy()) %>% filter(term == "num_unsolved"),estimate),0)` and `r round(pull((summary(nom_comp_queens) %>% broom::tidy()) %>% filter(term == "num_unsolved"),estimate),0)` more complaints respectively.
 
 Based on the adjusted R-squared values, number of complaints in a CD range from  `r 100*round(pull((summary(nom_comp_manhattan) %>% broom::glance()),adj.r.squared),4)`% in Manhattan to `r 100*round(pull((summary(nom_comp_SI) %>% broom::glance()),adj.r.squared),4)`% in Staten Island predicted by this combination of variables. Residuals appear to follow normal distributions.
 
@@ -482,75 +381,105 @@ plot(nom_comp_h_SI, which = 1, main = "Staten Island
 
 
 
-
-
-```{r }
-
-# number of health complaints
-
-num_health_model_year = lm(num_health_complaint ~  inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s + borough + created_year, data = cb_group_year_distinct)
-
-summary(num_health_model_year)  %>% broom::tidy() %>% knitr::kable()
-summary(num_health_model_year) %>% broom::glance() %>% knitr::kable()
-
-par(mfrow = c(2,2))
-plot(num_health_model_year)
-```
-
-
 *Comments:*
 
-Complaints were determined to be health related if they were about heat, hot water, sanitary conditions, poor air quality, or hazardous materials. The total number of health-related complaints is significantly predicted by borough and CD median income, percent non-Hispanic Black and Hispanic, and population total.
+Complaints were determined to be health related if they were about heat, hot water, sanitary conditions, poor air quality, or hazardous materials.
 
-On average, for each $1000 increase in median income we see `r -1 * round(pull((summary(num_health_model_year)  %>% broom::tidy()) %>% filter(term == "inc_1000s"),estimate),0)` *_fewer_* health related complaints in each community district; for each additional percent of a CD that is black or hispanic we see `r round(pull((summary(num_health_model_year)  %>% broom::tidy()) %>% filter(term == "per_black_nh"),estimate),0)` and `r round(pull((summary(num_health_model_year)  %>% broom::tidy()) %>% filter(term == "per_hisp"),estimate),0)` more health-related complaints.
+In Manhattan and Queens we see a significant effect on total number of health related complaints by median income of the CD. On average, for each $1000 increase in median income we see `r -1*round(pull((summary(nom_comp_h_manhattan)  %>% broom::tidy()) %>% filter(term == "inc_1000s"),estimate),0)` more health-related complaints in Manhattan `r -1*round(pull((summary(nom_comp_h_queens)  %>% broom::tidy()) %>% filter(term == "inc_1000s"),estimate),0)` *_fewer_* health-related complaints in Queens.
 
-Based on the adjusted R-squared value, number of health-related complaints in a CD is `r 100*round(pull((summary(num_health_model_year) %>% broom::glance()),adj.r.squared),4)`% predicted by this combination of variables. Residuals appear to follow a mostly normal distribution, but there is still room for improvement in model fit, in a later analysis. 
+Based on the adjusted R-squared values, number of health related complaints in a CD range from  `r 100*round(pull((summary(nom_comp_h_brook) %>% broom::glance()),adj.r.squared),4)`% in Brooklyn to `r 100*round(pull((summary(nom_comp_h_SI) %>% broom::glance()),adj.r.squared),4)`% in Staten Island predicted by this combination of variables. The plots of the residuals indicate that future analyses should increase or adjust the predictors to better fit the data.
 
 
 #### 3) Number of unresolved complaints by NYC community district:
+
+##### **A) Bronx**
+
+```{r message = FALSE}
+
+# number of complaints
+options(scipen = 5)
+
+nom_unres_bronx = lm(num_unsolved ~ inc_1000s + per_black_nh + per_hisp + pop_1000s +created_year, data = bronx_distinct)
+summary(nom_unres_bronx)  %>% broom::tidy() %>% knitr::kable()
+summary(nom_unres_bronx) %>% broom::glance() %>% knitr::kable()
+
+```
+
+##### **B) Brooklyn**
+
+```{r message = FALSE}
+# Brooklyn
+nom_unres_brook = lm(num_unsolved ~ inc_1000s + per_black_nh + per_hisp + pop_1000s +created_year, data = brooklyn_distinct)
+summary(nom_unres_brook)  %>% broom::tidy() %>% knitr::kable()
+summary(nom_unres_brook) %>% broom::glance() %>% knitr::kable()
+
+```
+
+##### **C) Manhattan**
+
+```{r message = FALSE}
+# Manhattan
+
+nom_unres_manhattan = lm(num_unsolved ~ inc_1000s + per_black_nh + per_hisp + pop_1000s +created_year, data = manhanttan_distinct)
+summary(nom_unres_manhattan)  %>% broom::tidy() %>% knitr::kable()
+summary(nom_unres_manhattan) %>% broom::glance() %>% knitr::kable()
+
+```
+
+##### **D) Queens**
+
+```{r message = FALSE}
+# Queens
+nom_unres_queens = lm(num_unsolved ~ inc_1000s + per_black_nh + per_hisp + pop_1000s +created_year, data = queens_distinct)
+summary(nom_unres_queens)  %>% broom::tidy() %>% knitr::kable()
+summary(nom_unres_queens) %>% broom::glance() %>% knitr::kable()
+
+```
+
+##### **E) Staten Island**
+
+```{r message = FALSE}
+# SI
+nom_unres_SI = lm(num_unsolved ~ inc_1000s + per_black_nh +created_year, data = SI_distinct)
+summary(nom_unres_SI)  %>% broom::tidy() %>% knitr::kable()
+summary(nom_unres_SI) %>% broom::glance() %>% knitr::kable()
+
+```
+
+##### **Residuals**
+
+
 ```{r}
 
-
-# number of unresolved
-
-
-num_unsolved_model_year = lm(num_unsolved ~ inc_1000s + per_black_nh + per_hisp + pop_1000s*borough +created_year, data = cb_group_year_distinct)
-
-
-
-num_unsolved_model_year = lm(num_unsolved ~ inc_1000s + per_black_nh + per_hisp + pop_1000s*borough +created_year, data = cb_group_year_distinct)
-
-summary(num_unsolved_model_year)  %>% broom::tidy() %>% knitr::kable()
-summary(num_unsolved_model_year) %>% broom::glance() %>% knitr::kable()
-
-
-par(mfrow = c(2,2))
-plot(num_unsolved_model_year)
-
-
->>>>>>> f473c7cadadc647b9a2591f97293cecc9afbe492
+par(mfrow = c(2,3))
+plot(nom_unres_bronx, which = 1, main = "Bronx
+")
+plot(nom_unres_brook, which = 1, main = "Brooklyn
+")
+plot(nom_unres_manhattan, which = 1, main = "Manhattan
+")
+plot(nom_unres_queens, which = 1, main = "Queens
+")
+plot(nom_unres_SI, which = 1, main = "Staten Island
+")
 
 
 ```
 
 
 
-<<<<<<< HEAD
-=======
 *Comments:*
 
-A complaint was labeled unresolved if its status was not labeled as "closed". The total number of unresolved complaints is significantly predicted by year of complaint, borough, and CD median income, percent non-Hispanic Black and Hispanic, and population total. 
 
-On average, for each additional year we see `r round(pull((summary(num_unsolved_model_year)  %>% broom::tidy()) %>% filter(term == "created_year"),estimate),0)` more unresolved complaints in each community district. The Bronx, Queens, and Staten Island CDs had `r round(pull((summary(num_unsolved_model_year)  %>% broom::tidy()) %>% filter(term == "boroughBRONX"),estimate),0)`, `r round(pull((summary(num_unsolved_model_year)  %>% broom::tidy()) %>% filter(term == "boroughQUEENS"),estimate),0)`, and `r round(pull((summary(num_unsolved_model_year)  %>% broom::tidy()) %>% filter(term == "boroughSTATEN ISLAND"),estimate),0)`, more unresolved complaints than manhattan CDs on average, respectively.
+A complaint was labeled unresolved if its status was not labeled as "closed". For all boroughs but Staten Island, year is, on average, a significant predictor if number of unresolved complaints for each CD. 
 
-Based on the adjusted R-squared value,  number of unresolved complaints in a CD are `r 100*round(pull((summary(num_unsolved_model_year) %>% broom::glance()),adj.r.squared),4)`% predicted by this combination of variables. Residuals appear to follow a normal distribution.
->>>>>>> f473c7cadadc647b9a2591f97293cecc9afbe492
+In Brooklyn and Queens we see significant effect on total number of unresolved complaints by the percent non-Hispanic Black population. On average, we see `r 5*round(pull((summary(nom_unres_brook)  %>% broom::tidy()) %>% filter(term == "per_black_nh"),estimate),0)` and `r 5*round(pull((summary(nom_unres_queens)  %>% broom::tidy()) %>% filter(term == "per_black_nh"),estimate),0)` more unresolved complaints for each additonal 5% increase in non-Hispanic Black population in Brooklyn and Queens respectively.
+
+Based on the adjusted R-squared values, number of unresolved complaints in a CD range from  `r 100*round(pull((summary(nom_unres_SI) %>% broom::glance()),adj.r.squared),4)`% in Staten Island to `r 100*round(pull((summary(nom_unres_brook) %>% broom::glance()),adj.r.squared),4)`% in The Bronx predicted by this combination of variables. The plots of the residuals indicate that future analyses should increase or adjust the predictors to better fit the data.
 
 
 ## Discussion
 
-NYC takes in 
+Between 2014 and 2018, approximately 22 million 311 complaints were made across the 5 boroughs in NYC. We were interested in how complaints differ by borough and community district. Based on our descriptive figures, mapped data, and linear models of NYC 311 complaint data, we see that there are a few key factors that play into how types of complaints are dispersed across the city.
 
-Based on our descriptive figures, mapped data, and linear models of NYC 311 complaint data, we see that there are a few key factors that play into how types of complaints are dispersed across the city. XX complaints a year,
-
-With XX 311 complaints coming in everyday, a majority of which are closed same day, and 66.5% closed within the week, it is interesting to look into where the open complaints remain.
+With approximately 5000 311 complaints made everyday, a majority of which close within the week (66%), it is interesting to look into where the open complaints remain.

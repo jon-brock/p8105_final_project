@@ -966,8 +966,8 @@ plot(nom_comp_SI, which = 1, main = &quot;Staten Island
 &quot;)</code></pre>
 <p><img src="regression_analysis_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <p><em>Comments:</em></p>
-<p>The total number of complaints in each borough significantly predicted by year, borough and CD number of unsolved complaints, percent Hispanic, and population total.</p>
 <p>In the Bronx, on average, for each additional year we see 102 more complaints in each community district, for each additional 1000 people in a CD we see 16 more complaints, and for each $1000 increase in median income we see 29 <em><em>fewer</em></em> complaints.</p>
+<p>In Manhattan and Queens we see an effect on total number of complaints by number of unresolved complaints. On average, for each additional unresolved complaint people in Manhattan and Queens will have 17 and 8 more complaints respectively.</p>
 <p>Based on the adjusted R-squared values, number of complaints in a CD range from 67.14% in Manhattan to 95.25% in Staten Island predicted by this combination of variables. Residuals appear to follow normal distributions.</p>
 </div>
 </div>
@@ -1431,145 +1431,21 @@ plot(nom_comp_h_queens, which = 1, main = &quot;Queens
 plot(nom_comp_h_SI, which = 1, main = &quot;Staten Island
 &quot;)</code></pre>
 <p><img src="regression_analysis_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
-<pre class="r"><code># number of health complaints
-
-num_health_model_year = lm(num_health_complaint ~  inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s + borough + created_year, data = cb_group_year_distinct)
-
-summary(num_health_model_year)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">std.error</th>
-<th align="right">statistic</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">-8271.9050711</td>
-<td align="right">9388.3494974</td>
-<td align="right">-0.8810819</td>
-<td align="right">0.3790056</td>
-</tr>
-<tr class="even">
-<td align="left">inc_1000s</td>
-<td align="right">-0.9020550</td>
-<td align="right">0.3818616</td>
-<td align="right">-2.3622563</td>
-<td align="right">0.0188269</td>
-</tr>
-<tr class="odd">
-<td align="left">num_unsolved</td>
-<td align="right">0.1332789</td>
-<td align="right">0.3175134</td>
-<td align="right">0.4197585</td>
-<td align="right">0.6749738</td>
-</tr>
-<tr class="even">
-<td align="left">per_black_nh</td>
-<td align="right">1.8322552</td>
-<td align="right">0.3596117</td>
-<td align="right">5.0950935</td>
-<td align="right">0.0000006</td>
-</tr>
-<tr class="odd">
-<td align="left">per_hisp</td>
-<td align="right">2.8509972</td>
-<td align="right">0.5521609</td>
-<td align="right">5.1633451</td>
-<td align="right">0.0000005</td>
-</tr>
-<tr class="even">
-<td align="left">pop_1000s</td>
-<td align="right">1.6639840</td>
-<td align="right">0.1776130</td>
-<td align="right">9.3685937</td>
-<td align="right">0.0000000</td>
-</tr>
-<tr class="odd">
-<td align="left">boroughBRONX</td>
-<td align="right">-18.7226172</td>
-<td align="right">25.6646202</td>
-<td align="right">-0.7295108</td>
-<td align="right">0.4662801</td>
-</tr>
-<tr class="even">
-<td align="left">boroughBROOKLYN</td>
-<td align="right">-164.5605905</td>
-<td align="right">20.7537174</td>
-<td align="right">-7.9292103</td>
-<td align="right">0.0000000</td>
-</tr>
-<tr class="odd">
-<td align="left">boroughQUEENS</td>
-<td align="right">-194.1062164</td>
-<td align="right">20.7785616</td>
-<td align="right">-9.3416580</td>
-<td align="right">0.0000000</td>
-</tr>
-<tr class="even">
-<td align="left">boroughSTATEN ISLAND</td>
-<td align="right">523.7213728</td>
-<td align="right">95.2839543</td>
-<td align="right">5.4964278</td>
-<td align="right">0.0000001</td>
-</tr>
-<tr class="odd">
-<td align="left">created_year</td>
-<td align="right">4.1343889</td>
-<td align="right">4.6559157</td>
-<td align="right">0.8879862</td>
-<td align="right">0.3752866</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>summary(num_health_model_year) %&gt;% broom::glance() %&gt;% knitr::kable()</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="right">r.squared</th>
-<th align="right">adj.r.squared</th>
-<th align="right">sigma</th>
-<th align="right">statistic</th>
-<th align="right">p.value</th>
-<th align="right">df</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">0.7631084</td>
-<td align="right">0.7549115</td>
-<td align="right">106.907</td>
-<td align="right">93.09673</td>
-<td align="right">0</td>
-<td align="right">11</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>par(mfrow = c(2,2))
-plot(num_health_model_year)</code></pre>
-<p><img src="regression_analysis_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
 <p><em>Comments:</em></p>
-<p>Complaints were determined to be health related if they were about heat, hot water, sanitary conditions, poor air quality, or hazardous materials. The total number of health-related complaints is significantly predicted by borough and CD median income, percent non-Hispanic Black and Hispanic, and population total.</p>
-<p>On average, for each $1000 increase in median income we see 1 <em><em>fewer</em></em> health related complaints in each community district; for each additional percent of a CD that is black or hispanic we see 2 and 3 more health-related complaints.</p>
-<p>Based on the adjusted R-squared value, number of health-related complaints in a CD is 75.49% predicted by this combination of variables. Residuals appear to follow a mostly normal distribution, but there is still room for improvement in model fit, in a later analysis.</p>
+<p>Complaints were determined to be health related if they were about heat, hot water, sanitary conditions, poor air quality, or hazardous materials.</p>
+<p>In Manhattan and Queens we see significant effecte on total number of health related complaints by median income of the CD. On average, or each $1000 increase in median income we see -2 more health-related complaints in Manhattan 3 <em><em>fewer</em></em> health-related complaints in Queens.</p>
+<p>Based on the adjusted R-squared values, number of health related complaints in a CD range from 56.84% in Brooklyn to 97.01% in Staten Island predicted by this combination of variables. The plots of the residuals indicate that future analyses should increase or adjust the predictors to better fit the data.</p>
 </div>
 </div>
 <div id="number-of-unresolved-complaints-by-nyc-community-district" class="section level4">
 <h4>3) Number of unresolved complaints by NYC community district:</h4>
-<pre class="r"><code># number of unresolved
+<div id="a-bronx-2" class="section level5">
+<h5><strong>A) Bronx</strong></h5>
+<pre class="r"><code># number of complaints
+options(scipen = 5)
 
-
-num_unsolved_model_year = lm(num_unsolved ~ inc_1000s + per_black_nh + per_hisp + pop_1000s*borough +created_year, data = cb_group_year_distinct)
-
-
-
-num_unsolved_model_year = lm(num_unsolved ~ inc_1000s + per_black_nh + per_hisp + pop_1000s*borough +created_year, data = cb_group_year_distinct)
-
-summary(num_unsolved_model_year)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre>
+nom_unres_bronx = lm(num_unsolved ~ inc_1000s + per_black_nh + per_hisp + pop_1000s +created_year, data = bronx_distinct)
+summary(nom_unres_bronx)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre>
 <table>
 <thead>
 <tr class="header">
@@ -1583,105 +1459,49 @@ summary(num_unsolved_model_year)  %&gt;% broom::tidy() %&gt;% knitr::kable()</co
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">-10283.6939516</td>
-<td align="right">1484.6300047</td>
-<td align="right">-6.9267723</td>
-<td align="right">0.0000000</td>
+<td align="right">-8464.2587902</td>
+<td align="right">2521.6476362</td>
+<td align="right">-3.3566382</td>
+<td align="right">0.0014506</td>
 </tr>
 <tr class="even">
 <td align="left">inc_1000s</td>
-<td align="right">0.1630031</td>
-<td align="right">0.0639210</td>
-<td align="right">2.5500695</td>
-<td align="right">0.0112917</td>
+<td align="right">0.7539570</td>
+<td align="right">0.6976440</td>
+<td align="right">1.0807189</td>
+<td align="right">0.2846252</td>
 </tr>
 <tr class="odd">
 <td align="left">per_black_nh</td>
-<td align="right">0.3082454</td>
-<td align="right">0.0594401</td>
-<td align="right">5.1858124</td>
-<td align="right">0.0000004</td>
+<td align="right">0.9066669</td>
+<td align="right">0.5350553</td>
+<td align="right">1.6945293</td>
+<td align="right">0.0959252</td>
 </tr>
 <tr class="even">
 <td align="left">per_hisp</td>
-<td align="right">-0.1722722</td>
-<td align="right">0.0945901</td>
-<td align="right">-1.8212501</td>
-<td align="right">0.0696135</td>
+<td align="right">-0.0757988</td>
+<td align="right">0.7701058</td>
+<td align="right">-0.0984265</td>
+<td align="right">0.9219581</td>
 </tr>
 <tr class="odd">
 <td align="left">pop_1000s</td>
-<td align="right">0.0780098</td>
-<td align="right">0.0438890</td>
-<td align="right">1.7774359</td>
-<td align="right">0.0765592</td>
-</tr>
-<tr class="even">
-<td align="left">boroughBRONX</td>
-<td align="right">-10.2686331</td>
-<td align="right">11.5842384</td>
-<td align="right">-0.8864314</td>
-<td align="right">0.3761298</td>
-</tr>
-<tr class="odd">
-<td align="left">boroughBROOKLYN</td>
-<td align="right">-49.2582559</td>
-<td align="right">10.1453795</td>
-<td align="right">-4.8552403</td>
-<td align="right">0.0000020</td>
-</tr>
-<tr class="even">
-<td align="left">boroughQUEENS</td>
-<td align="right">-27.9350943</td>
-<td align="right">11.0275582</td>
-<td align="right">-2.5332076</td>
-<td align="right">0.0118369</td>
-</tr>
-<tr class="odd">
-<td align="left">boroughSTATEN ISLAND</td>
-<td align="right">16.5121861</td>
-<td align="right">48.3313031</td>
-<td align="right">0.3416458</td>
-<td align="right">0.7328684</td>
+<td align="right">0.1986616</td>
+<td align="right">0.0556984</td>
+<td align="right">3.5667380</td>
+<td align="right">0.0007668</td>
 </tr>
 <tr class="even">
 <td align="left">created_year</td>
-<td align="right">5.1066667</td>
-<td align="right">0.7364082</td>
-<td align="right">6.9345599</td>
-<td align="right">0.0000000</td>
-</tr>
-<tr class="odd">
-<td align="left">pop_1000s:boroughBRONX</td>
-<td align="right">0.2247090</td>
-<td align="right">0.0820453</td>
-<td align="right">2.7388414</td>
-<td align="right">0.0065527</td>
-</tr>
-<tr class="even">
-<td align="left">pop_1000s:boroughBROOKLYN</td>
-<td align="right">0.3708497</td>
-<td align="right">0.0675953</td>
-<td align="right">5.4863279</td>
-<td align="right">0.0000001</td>
-</tr>
-<tr class="odd">
-<td align="left">pop_1000s:boroughQUEENS</td>
-<td align="right">0.3130365</td>
-<td align="right">0.0680092</td>
-<td align="right">4.6028517</td>
-<td align="right">0.0000063</td>
-</tr>
-<tr class="even">
-<td align="left">pop_1000s:boroughSTATEN ISLAND</td>
-<td align="right">1.7140967</td>
-<td align="right">0.3030061</td>
-<td align="right">5.6569709</td>
-<td align="right">0.0000000</td>
+<td align="right">4.1833333</td>
+<td align="right">1.2501239</td>
+<td align="right">3.3463351</td>
+<td align="right">0.0014959</td>
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>summary(num_unsolved_model_year) %&gt;% broom::glance() %&gt;% knitr::kable()</code></pre>
+<pre class="r"><code>summary(nom_unres_bronx) %&gt;% broom::glance() %&gt;% knitr::kable()</code></pre>
 <table>
 <thead>
 <tr class="header">
@@ -1695,22 +1515,355 @@ summary(num_unsolved_model_year)  %&gt;% broom::tidy() %&gt;% knitr::kable()</co
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">0.9299737</td>
-<td align="right">0.9267907</td>
-<td align="right">18.03824</td>
-<td align="right">292.1678</td>
+<td align="right">0.7071103</td>
+<td align="right">0.6799909</td>
+<td align="right">13.69442</td>
+<td align="right">26.07395</td>
 <td align="right">0</td>
-<td align="right">14</td>
+<td align="right">6</td>
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>par(mfrow = c(2,2))
-plot(num_unsolved_model_year)</code></pre>
-<p><img src="regression_analysis_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+</div>
+<div id="b-brooklyn-2" class="section level5">
+<h5><strong>B) Brooklyn</strong></h5>
+<pre class="r"><code># Brooklyn
+nom_unres_brook = lm(num_unsolved ~ inc_1000s + per_black_nh + per_hisp + pop_1000s +created_year, data = brooklyn_distinct)
+summary(nom_unres_brook)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">-10928.0495784</td>
+<td align="right">2085.1502142</td>
+<td align="right">-5.240893</td>
+<td align="right">0.0000012</td>
+</tr>
+<tr class="even">
+<td align="left">inc_1000s</td>
+<td align="right">0.2852217</td>
+<td align="right">0.0839158</td>
+<td align="right">3.398904</td>
+<td align="right">0.0010368</td>
+</tr>
+<tr class="odd">
+<td align="left">per_black_nh</td>
+<td align="right">0.3263226</td>
+<td align="right">0.0571163</td>
+<td align="right">5.713300</td>
+<td align="right">0.0000002</td>
+</tr>
+<tr class="even">
+<td align="left">per_hisp</td>
+<td align="right">0.1305054</td>
+<td align="right">0.1251846</td>
+<td align="right">1.042504</td>
+<td align="right">0.3001692</td>
+</tr>
+<tr class="odd">
+<td align="left">pop_1000s</td>
+<td align="right">0.4615274</td>
+<td align="right">0.0395884</td>
+<td align="right">11.658147</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="even">
+<td align="left">created_year</td>
+<td align="right">5.3944444</td>
+<td align="right">1.0342900</td>
+<td align="right">5.215601</td>
+<td align="right">0.0000013</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>summary(nom_unres_brook) %&gt;% broom::glance() %&gt;% knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">r.squared</th>
+<th align="right">adj.r.squared</th>
+<th align="right">sigma</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+<th align="right">df</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.6940191</td>
+<td align="right">0.675806</td>
+<td align="right">13.87646</td>
+<td align="right">38.10539</td>
+<td align="right">0</td>
+<td align="right">6</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="c-manhattan-2" class="section level5">
+<h5><strong>C) Manhattan</strong></h5>
+<pre class="r"><code># Manhattan
+
+nom_unres_manhattan = lm(num_unsolved ~ inc_1000s + per_black_nh + per_hisp + pop_1000s +created_year, data = manhanttan_distinct)
+summary(nom_unres_manhattan)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">-9930.9263518</td>
+<td align="right">1959.4067115</td>
+<td align="right">-5.068333</td>
+<td align="right">0.0000042</td>
+</tr>
+<tr class="even">
+<td align="left">inc_1000s</td>
+<td align="right">-0.1787841</td>
+<td align="right">0.0814700</td>
+<td align="right">-2.194476</td>
+<td align="right">0.0321503</td>
+</tr>
+<tr class="odd">
+<td align="left">per_black_nh</td>
+<td align="right">-0.3101544</td>
+<td align="right">0.1330601</td>
+<td align="right">-2.330935</td>
+<td align="right">0.0231940</td>
+</tr>
+<tr class="even">
+<td align="left">per_hisp</td>
+<td align="right">-0.4697689</td>
+<td align="right">0.1367916</td>
+<td align="right">-3.434195</td>
+<td align="right">0.0010934</td>
+</tr>
+<tr class="odd">
+<td align="left">pop_1000s</td>
+<td align="right">0.0667469</td>
+<td align="right">0.0281830</td>
+<td align="right">2.368340</td>
+<td align="right">0.0211630</td>
+</tr>
+<tr class="even">
+<td align="left">created_year</td>
+<td align="right">4.9538462</td>
+<td align="right">0.9719125</td>
+<td align="right">5.097009</td>
+<td align="right">0.0000038</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>summary(nom_unres_manhattan) %&gt;% broom::glance() %&gt;% knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">r.squared</th>
+<th align="right">adj.r.squared</th>
+<th align="right">sigma</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+<th align="right">df</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.4350181</td>
+<td align="right">0.3871383</td>
+<td align="right">11.08151</td>
+<td align="right">9.085626</td>
+<td align="right">0.0000019</td>
+<td align="right">6</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="d-queens-2" class="section level5">
+<h5><strong>D) Queens</strong></h5>
+<pre class="r"><code># Queens
+nom_unres_queens = lm(num_unsolved ~ inc_1000s + per_black_nh + per_hisp + pop_1000s +created_year, data = queens_distinct)
+summary(nom_unres_queens)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">-12313.7565744</td>
+<td align="right">3388.0539732</td>
+<td align="right">-3.6344629</td>
+<td align="right">0.0005563</td>
+</tr>
+<tr class="even">
+<td align="left">inc_1000s</td>
+<td align="right">0.3423906</td>
+<td align="right">0.2888659</td>
+<td align="right">1.1852926</td>
+<td align="right">0.2402843</td>
+</tr>
+<tr class="odd">
+<td align="left">per_black_nh</td>
+<td align="right">0.3225323</td>
+<td align="right">0.1478968</td>
+<td align="right">2.1807930</td>
+<td align="right">0.0328810</td>
+</tr>
+<tr class="even">
+<td align="left">per_hisp</td>
+<td align="right">-0.1345578</td>
+<td align="right">0.1843454</td>
+<td align="right">-0.7299225</td>
+<td align="right">0.4681009</td>
+</tr>
+<tr class="odd">
+<td align="left">pop_1000s</td>
+<td align="right">0.3997215</td>
+<td align="right">0.0665291</td>
+<td align="right">6.0082235</td>
+<td align="right">0.0000001</td>
+</tr>
+<tr class="even">
+<td align="left">created_year</td>
+<td align="right">6.0928571</td>
+<td align="right">1.6805314</td>
+<td align="right">3.6255538</td>
+<td align="right">0.0005724</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>summary(nom_unres_queens) %&gt;% broom::glance() %&gt;% knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">r.squared</th>
+<th align="right">adj.r.squared</th>
+<th align="right">sigma</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+<th align="right">df</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.5884065</td>
+<td align="right">0.5562507</td>
+<td align="right">19.88432</td>
+<td align="right">18.29864</td>
+<td align="right">0</td>
+<td align="right">6</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="e-staten-island-2" class="section level5">
+<h5><strong>E) Staten Island</strong></h5>
+<pre class="r"><code># SI
+nom_unres_SI = lm(num_unsolved ~ inc_1000s + per_black_nh +created_year, data = SI_distinct)
+summary(nom_unres_SI)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">-6447.469268</td>
+<td align="right">17312.463561</td>
+<td align="right">-0.3724178</td>
+<td align="right">0.7166574</td>
+</tr>
+<tr class="even">
+<td align="left">inc_1000s</td>
+<td align="right">5.081843</td>
+<td align="right">3.011806</td>
+<td align="right">1.6873075</td>
+<td align="right">0.1196615</td>
+</tr>
+<tr class="odd">
+<td align="left">per_black_nh</td>
+<td align="right">9.109810</td>
+<td align="right">4.264795</td>
+<td align="right">2.1360488</td>
+<td align="right">0.0559883</td>
+</tr>
+<tr class="even">
+<td align="left">created_year</td>
+<td align="right">3.133333</td>
+<td align="right">8.586576</td>
+<td align="right">0.3649107</td>
+<td align="right">0.7220969</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>summary(nom_unres_SI) %&gt;% broom::glance() %&gt;% knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">r.squared</th>
+<th align="right">adj.r.squared</th>
+<th align="right">sigma</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+<th align="right">df</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.3437978</td>
+<td align="right">0.1648335</td>
+<td align="right">47.03062</td>
+<td align="right">1.921042</td>
+<td align="right">0.1846911</td>
+<td align="right">4</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="residuals-2" class="section level5">
+<h5><strong>Residuals</strong></h5>
+<pre class="r"><code>par(mfrow = c(2,3))
+plot(nom_unres_bronx, which = 1, main = &quot;Bronx
+&quot;)
+plot(nom_unres_brook, which = 1, main = &quot;Brooklyn
+&quot;)
+plot(nom_unres_manhattan, which = 1, main = &quot;Manhattan
+&quot;)
+plot(nom_unres_queens, which = 1, main = &quot;Queens
+&quot;)
+plot(nom_unres_SI, which = 1, main = &quot;Staten Island
+&quot;)</code></pre>
+<p><img src="regression_analysis_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
 <p><em>Comments:</em></p>
-<p>A complaint was labeled unresolved if its status was not labeled as “closed”. The total number of unresolved complaints is significantly predicted by year of complaint, borough, and CD median income, percent non-Hispanic Black and Hispanic, and population total.</p>
-<p>On average, for each additional year we see 5 more unresolved complaints in each community district. The Bronx, Queens, and Staten Island CDs had -10, -28, and 17, more unresolved complaints than manhattan CDs on average, respectively.</p>
-<p>Based on the adjusted R-squared value, number of unresolved complaints in a CD are 92.68% predicted by this combination of variables. Residuals appear to follow a normal distribution.</p>
+</div>
 </div>
 </div>
 <div id="discussion" class="section level2">
