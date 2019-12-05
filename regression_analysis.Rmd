@@ -1,17 +1,21 @@
 ---
 title: "<span style='font-size: 25px'>Regression Analysis</style>"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float: true
 ---
 
 ```{r setup, include=FALSE}
-#devtools::install_github("Chicago/RSocrata")
 library(RSocrata)
 library(tidyverse)
-
 ```
 
-## read in data
-```{r message = FALSE}
-nyc <- read_csv(file = "./p8105nyc_311_100k.csv") %>% 
+```{r message = FALSE, warning = FALSE}
+
+## Read in data
+nyc <- read_csv(file = "../p8105nyc_311_100k.csv") %>% 
     janitor::clean_names()
 
 nyc_tidy <- nyc %>%   
@@ -116,12 +120,7 @@ nyc_tidy <- nyc %>%
         status = as.factor(status)
     )
 
-
-```
-
-Adding community district data
-```{r message = FALSE}
-
+## Adding community district data
 inc_df = read_csv("./Med_income_2017.csv") %>% 
     janitor::clean_names() %>% 
     mutate(
@@ -152,7 +151,7 @@ add_inc = left_join(nyc_tidy, inc_df, by = "community_board") %>%
 
 ```
 
-### Aggregating data to community district and year level
+## Aggregating data to community district and year level
 
 To examine the effect of community district level variables on total number of complaints we must first aggregate to the community district level. We are also interested in how year effects the number of complaints in each district so we group by year as well to produce complaint totals for each year and community district.
 
@@ -212,9 +211,9 @@ We looked at these categories of complaints from 2014-2018 predicted by year, an
 
 As we have equal complaints across borough we startified our analysis to predict number of complaints within each borough.
 
-#### 1) Number of complaints by NYC community district:
+### 1) Number of complaints by NYC community district:
 
-##### **A) Bronx**
+#### **A) Bronx**
 
 ```{r message = FALSE}
 
@@ -227,7 +226,7 @@ summary(nom_comp_bronx) %>% broom::glance() %>% knitr::kable()
 
 ```
 
-##### **B) Brooklyn**
+#### **B) Brooklyn**
 
 ```{r message = FALSE}
 # Brooklyn
@@ -237,7 +236,7 @@ summary(nom_comp_brook) %>% broom::glance() %>% knitr::kable()
 
 ```
 
-##### **C) Manhattan**
+#### **C) Manhattan**
 
 ```{r message = FALSE}
 # Manhattan
@@ -248,7 +247,7 @@ summary(nom_comp_manhattan) %>% broom::glance() %>% knitr::kable()
 
 ```
 
-##### **D) Queens**
+#### **D) Queens**
 
 ```{r message = FALSE}
 # Queens
@@ -258,7 +257,7 @@ summary(nom_comp_queens) %>% broom::glance() %>% knitr::kable()
 
 ```
 
-##### **E) Staten Island**
+#### **E) Staten Island**
 
 ```{r message = FALSE}
 # SI
@@ -268,7 +267,7 @@ summary(nom_comp_SI) %>% broom::glance() %>% knitr::kable()
 
 ```
 
-##### **Residuals**
+#### **Residuals**
 
 
 ```{r}
@@ -300,9 +299,9 @@ Based on the adjusted R-squared values, number of complaints in a CD range from 
 
 
 
-#### 2) Number of health-related complaints by NYC community district:
+### 2) Number of health-related complaints by NYC community district:
 
-##### **A) Bronx**
+#### **A) Bronx**
 
 ```{r message = FALSE}
 
@@ -315,7 +314,7 @@ summary(nom_comp_h_bronx) %>% broom::glance() %>% knitr::kable()
 
 ```
 
-##### **B) Brooklyn**
+#### **B) Brooklyn**
 
 ```{r message = FALSE}
 # Brooklyn
@@ -325,7 +324,7 @@ summary(nom_comp_h_brook) %>% broom::glance() %>% knitr::kable()
 
 ```
 
-##### **C) Manhattan**
+#### **C) Manhattan**
 
 ```{r message = FALSE}
 # Manhattan
@@ -336,7 +335,7 @@ summary(nom_comp_h_manhattan) %>% broom::glance() %>% knitr::kable()
 
 ```
 
-##### **D) Queens**
+#### **D) Queens**
 
 ```{r message = FALSE}
 # Queens
@@ -346,7 +345,7 @@ summary(nom_comp_h_queens) %>% broom::glance() %>% knitr::kable()
 
 ```
 
-##### **E) Staten Island**
+#### **E) Staten Island**
 
 ```{r message = FALSE}
 # SI
@@ -356,7 +355,7 @@ summary(nom_comp_h_SI) %>% broom::glance() %>% knitr::kable()
 
 ```
 
-##### **Residuals**
+#### **Residuals**
 
 
 ```{r}
@@ -387,9 +386,9 @@ In Manhattan and Queens we see a significant effect on total number of health re
 Based on the adjusted R-squared values, number of health related complaints in a CD range from  `r 100*round(pull((summary(nom_comp_h_brook) %>% broom::glance()),adj.r.squared),4)`% in Brooklyn to `r 100*round(pull((summary(nom_comp_h_SI) %>% broom::glance()),adj.r.squared),4)`% in Staten Island predicted by this combination of variables. The plots of the residuals indicate that future analyses should increase or adjust the predictors to better fit the data.
 
 
-#### 3) Number of unresolved complaints by NYC community district:
+### 3) Number of unresolved complaints by NYC community district:
 
-##### **A) Bronx**
+#### **A) Bronx**
 
 ```{r message = FALSE}
 
@@ -402,7 +401,7 @@ summary(nom_unres_bronx) %>% broom::glance() %>% knitr::kable()
 
 ```
 
-##### **B) Brooklyn**
+#### **B) Brooklyn**
 
 ```{r message = FALSE}
 # Brooklyn
@@ -412,7 +411,7 @@ summary(nom_unres_brook) %>% broom::glance() %>% knitr::kable()
 
 ```
 
-##### **C) Manhattan**
+#### **C) Manhattan**
 
 ```{r message = FALSE}
 # Manhattan
@@ -423,7 +422,7 @@ summary(nom_unres_manhattan) %>% broom::glance() %>% knitr::kable()
 
 ```
 
-##### **D) Queens**
+#### **D) Queens**
 
 ```{r message = FALSE}
 # Queens
@@ -433,7 +432,7 @@ summary(nom_unres_queens) %>% broom::glance() %>% knitr::kable()
 
 ```
 
-##### **E) Staten Island**
+#### **E) Staten Island**
 
 ```{r message = FALSE}
 # SI
@@ -443,7 +442,7 @@ summary(nom_unres_SI) %>% broom::glance() %>% knitr::kable()
 
 ```
 
-##### **Residuals**
+#### **Residuals**
 
 
 ```{r}
