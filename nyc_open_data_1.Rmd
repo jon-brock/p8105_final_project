@@ -1,10 +1,20 @@
 ---
+<<<<<<< HEAD
 title: "Data Scraping Using RSocrata"
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(eval = FALSE)
+=======
+title: "NYC Open Data"
+author: "Steven Lawrence"
+date: "November 19, 2019"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(echo = TRUE)
+>>>>>>> 06e168b8b63cf4643c5a6012003f20880f3c810e
 ```
 
 ```{r}
@@ -12,27 +22,38 @@ knitr::opts_chunk$set(eval = FALSE)
 #devtools::install_github("Chicago/RSocrata")
 library(RSocrata)
 library(tidyverse)
+
 ```
 
 ```{r}
+
 token <- "QsuUJQpyjGciXV5KibPhY64hO"
 ```
 
 ```{r}
-brooklyn <- RSocrata::read.socrata(
-    url = "https://data.cityofnewyork.us/resource/erm2-nwe9.csv?city=Brooklyn", app_token = token) 
+
+brooklyn<-RSocrata::read.socrata(
+    url="https://data.cityofnewyork.us/resource/erm2-nwe9.csv?city=Brooklyn", 
+    app_token = token
+    ) 
+
 brooklyn %>% pull(borough) %>% head()
+
 dim(brooklyn)
+
 ```
 
 ```{r}
-manhattan <- RSocrata::read.socrata(
-    url = "https://data.cityofnewyork.us/resource/erm2-nwe9.csv?city=Queens", app_token = token) 
+
+manhattan<-RSocrata::read.socrata(url="https://data.cityofnewyork.us/resource/erm2-nwe9.csv?city=Queens", app_token = token) 
+
 dim(manhattan)
+
 ```
 
 ```{r}
-nyc_311_data <- RSocrata::read.socrata(
-    url = "https://data.cityofnewyork.us/resource/erm2-nwe9.csv?", app_token = token) 
+nyc_311_data<-RSocrata::read.socrata(url="https://data.cityofnewyork.us/resource/erm2-nwe9.csv?", app_token = token) 
+
 dim(manhattan)
 ```
+

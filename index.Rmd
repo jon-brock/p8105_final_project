@@ -1,5 +1,6 @@
 ---
 title: "<span style='font-size: 25px'>Project Overview</style>"
+<<<<<<< HEAD
 ---
 
 [DRAFT]
@@ -49,3 +50,6 @@ Steven and Molly: XXX
 Ava:
 
 
+=======
+---
+>>>>>>> d59acd99e927d800cc9c63f944fa0902b28105bd

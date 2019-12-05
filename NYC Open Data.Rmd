@@ -1,0 +1,158 @@
+---
+title: "NYC Open Data"
+author: "Steven Lawrence"
+date: "November 19, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#library(RSocrata)
+library(tidyverse)
+
+```
+
+This token is to beable to acces data from the socrata repository.  
+```{r,eval=F}
+token <- "QsuUJQpyjGciXV5KibPhY64hO"
+```
+Here is an example to pull data from the API.  the `url` includes the endpoint for the dataset ending with a `?`. Subsequently, using the variable names a query functions to organize the data ie: `$limit` and `borough=BROOKLYN`. However this did not work as I planned so I described how I collected the data below. 
+```{r,eval=F}
+brooklyn<-RSocrata::read.socrata(
+    url="https://data.cityofnewyork.us/resource/erm2-nwe9.csv?borough=BROOKLYN&$created_date between `2014/04/23 12:00:00 and 2018/03/05 12:00:00`&$limit=100", 
+    app_token = token) 
+
+write_csv(brooklyn, "brooklyn_311_100k.csv")
+
+brooklyn_csv <- read_csv("brooklyn_311_100k.csv")
+
+dim(brooklyn)
+
+head(brooklyn_csv)
+
+```
+
+#Importing and merging data
+
+I downloaded the data from the NYC Open data website filtering for each boorough and time frame 2014 - 2018.  Then I sampled from each dataset, containing 700k - 3 million rows, 100k data points in r, cleaned the `created_date` variable, and checked for equal sampling across the years. 
+
+Brooklyn
+
+```{r,eval=F}
+
+read_csv("311_brooklyn.csv") %>%
+    sample_n(100000, replace = F) %>%
+     separate(`Created Date`, into = c("month","day","year"), sep = "\\/" ) %>%
+    separate(year, into = c("year","time"), sep = " ") %>%
+    write_csv(., "brooklyn_311_100k.csv")
+
+brooklyn<- read_csv("brooklyn_311_100k.csv")
+
+table(brooklyn100k$year)
+
+```
+
+Manhattan
+```{r,eval=F}
+
+read_csv("311_manhattan.csv") %>%
+    sample_n(100000, replace = F) %>%
+     separate(`Created Date`, into = c("month","day","year"), sep = "\\/" ) %>%
+    separate(year, into = c("year","time"), sep = " ") %>%
+    write_csv(., "manhattan_311_100k.csv")
+
+manhattan<- read_csv("manhattan_311_100k.csv")
+
+table(manhattan$year)
+
+```
+
+Queens
+```{r,eval=F}
+
+read_csv("311_queens.csv")%>%
+    sample_n(100000, replace = F) %>%
+     separate(`Created Date`, into = c("month","day","year"), sep = "\\/" ) %>%
+    separate(year, into = c("year","time"), sep = " ") %>%
+    write_csv(., "queens_311_100k")
+
+queens<- read_csv("queens_311_100k")
+
+table(queens$year)
+
+```
+Bronx
+```{r,eval=F}
+
+read_csv("311_bronx.csv")%>%
+    sample_n(100000, replace = F) %>%
+     separate(`Created Date`, into = c("month","day","year"), sep = "\\/" ) %>%
+    separate(year, into = c("year","time"), sep = " ") %>%
+    write_csv(., "bronx_311_100k.csv")
+
+bronx<- read_csv("bronx_311_100k.csv")
+
+table(bronx$year)
+
+
+
+```
+Staten Island
+
+```{r,eval=F}
+ 
+
+read_csv("311_statenisland.csv")  %>%
+    sample_n(100000, replace = F) %>%
+     separate(`Created Date`, into = c("month","day","year"), sep = "\\/" ) %>%
+    separate(year, into = c("year","time"), sep = " ") %>%
+    write_csv(., "statenisland_311_100k.csv")
+
+statenisland <- read_csv("statenisland_311_100k.csv")
+
+table(statenisland$year)
+
+
+```
+Unspecified
+```{r,eval=F}
+
+
+read_csv("311_unspecified.csv")  %>%
+    sample_n(100000, replace = F) %>%
+     separate(`Created Date`, into = c("month","day","year"), sep = "\\/" ) %>%
+    separate(year, into = c("year","time"), sep = " ") %>%
+    write_csv(.,"unspecified_311_100k")
+
+unspec <- read_csv("unspecified_311_100k")
+
+head(unspec)
+
+table(unspec$year)
+
+
+```
+
+Combinging all the datasets of 100k data points.
+```{r, eval=F}
+rbind(brooklyn, manhattan, queens, bronx, statenisland, unspec) %>%
+    rename(created_year = "year" , created_day = "day",created_month = "month",created_time = "time") %>%
+    janitor::clean_names() %>%
+   # write_csv(., "p8105nyc_311_100k.csv")
+```
+
+```{r}
+nyc_311<-read_csv("p8105nyc_311_100k.csv") 
+
+nyc_311 %>% 
+
+```
+
+```{r}
+nyc_311 %>% 
+    
+```
+
