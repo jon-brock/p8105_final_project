@@ -454,7 +454,7 @@ library(viridis)</code></pre>
         pop_1000s = round(total_population/1000, 0),
         inc_1000s = round(median_income/1000, 1),
         income_bracket = case_when(
-            median_income &gt;= 20000 &amp; median_income &lt;= 30000 ~ &quot;20k-30k&quot;,
+            median_income &gt;= 20000 &amp; median_income &lt;= 30000 ~ &quot;20-30k&quot;,
             median_income &gt; 30000 &amp; median_income &lt;= 40000 ~ &quot;30-40k&quot;,
             median_income &gt; 40000 &amp; median_income &lt;= 50000 ~ &quot;40-50k&quot;,
             median_income &gt; 50000 &amp; median_income &lt;= 60000 ~ &quot;50-60k&quot;,
@@ -494,6 +494,9 @@ nyc_data &lt;- add_inc %&gt;%
   mutate(
     status = as.character(status)
   ) %&gt;% 
+  mutate(
+    income_bracket = forcats::fct_relevel(income_bracket, &quot;125k+&quot;, &quot;100-125k&quot;, &quot;90-100k&quot;, &quot;80-90k&quot;, &quot;70-80k&quot;, &quot;60-70k&quot;, &quot;50-60k&quot;, &quot;40-50k&quot;, &quot;30-40k&quot;, &quot;20-30k&quot;)
+  ) %&gt;% 
   drop_na(closed_year)</code></pre>
 <pre class="r"><code>mycontrols  &lt;- tableby.control(test=F, total=T,
                                cat.simplify = F,
@@ -508,6 +511,10 @@ tab_inc&lt;- tableby(created_year ~ income_bracket, data = nyc_data, control = m
 
 tab_comp &lt;- tableby(created_year ~ complaint_simp, data = nyc_data, control = mycontrols)
 
+tab_com_clo_inc &lt;- tableby(complaint_simp ~ diff_dayt +income_bracket + borough , data = nyc_data, control = mycontrols)
+
+
+#in this table I calculated the median and interquartile range of how many days it took for cases to close.  Given the data is skewed right I reported the median values being 1 to 2 days and largest interqutile range being 0 - 9 and smallest being 0 - 6 acroos years 2014 - 2018.   With this table we see that most complaints are closed within a week with a high density of them becing clases within a day or two. 
 summary(tab_clo, title = &quot;NYC 311 Complaints Demographics &quot;)</code></pre>
 <table>
 <caption>NYC 311 Complaints Demographics</caption>
@@ -676,15 +683,6 @@ summary(tab_clo, title = &quot;NYC 311 Complaints Demographics &quot;)</code></p
 <td align="center"></td>
 </tr>
 <tr class="even">
-<td align="left">   100-125k</td>
-<td align="center">4121 (5.4%)</td>
-<td align="center">4741 (5.5%)</td>
-<td align="center">5315 (5.9%)</td>
-<td align="center">5191 (5.5%)</td>
-<td align="center">4986 (4.9%)</td>
-<td align="center">24354 (5.4%)</td>
-</tr>
-<tr class="odd">
 <td align="left">   125k+</td>
 <td align="center">3212 (4.2%)</td>
 <td align="center">3433 (4.0%)</td>
@@ -693,61 +691,25 @@ summary(tab_clo, title = &quot;NYC 311 Complaints Demographics &quot;)</code></p
 <td align="center">3518 (3.5%)</td>
 <td align="center">17347 (3.9%)</td>
 </tr>
+<tr class="odd">
+<td align="left">   100-125k</td>
+<td align="center">4121 (5.4%)</td>
+<td align="center">4741 (5.5%)</td>
+<td align="center">5315 (5.9%)</td>
+<td align="center">5191 (5.5%)</td>
+<td align="center">4986 (4.9%)</td>
+<td align="center">24354 (5.4%)</td>
+</tr>
 <tr class="even">
-<td align="left">   20k-30k</td>
-<td align="center">7955 (10.5%)</td>
-<td align="center">9096 (10.5%)</td>
-<td align="center">9944 (11.1%)</td>
-<td align="center">9658 (10.3%)</td>
-<td align="center">10224 (10.1%)</td>
-<td align="center">46877 (10.5%)</td>
+<td align="left">   90-100k</td>
+<td align="center">1855 (2.4%)</td>
+<td align="center">2310 (2.7%)</td>
+<td align="center">2671 (3.0%)</td>
+<td align="center">2373 (2.5%)</td>
+<td align="center">2477 (2.5%)</td>
+<td align="center">11686 (2.6%)</td>
 </tr>
 <tr class="odd">
-<td align="left">   30-40k</td>
-<td align="center">4159 (5.5%)</td>
-<td align="center">4608 (5.3%)</td>
-<td align="center">4529 (5.1%)</td>
-<td align="center">4712 (5.0%)</td>
-<td align="center">4826 (4.8%)</td>
-<td align="center">22834 (5.1%)</td>
-</tr>
-<tr class="even">
-<td align="left">   40-50k</td>
-<td align="center">19825 (26.1%)</td>
-<td align="center">22656 (26.1%)</td>
-<td align="center">23089 (25.8%)</td>
-<td align="center">23391 (24.9%)</td>
-<td align="center">24424 (24.2%)</td>
-<td align="center">113385 (25.4%)</td>
-</tr>
-<tr class="odd">
-<td align="left">   50-60k</td>
-<td align="center">12763 (16.8%)</td>
-<td align="center">14389 (16.6%)</td>
-<td align="center">14696 (16.4%)</td>
-<td align="center">15807 (16.8%)</td>
-<td align="center">17946 (17.8%)</td>
-<td align="center">75601 (16.9%)</td>
-</tr>
-<tr class="even">
-<td align="left">   60-70k</td>
-<td align="center">11482 (15.1%)</td>
-<td align="center">12616 (14.6%)</td>
-<td align="center">12791 (14.3%)</td>
-<td align="center">14420 (15.4%)</td>
-<td align="center">15729 (15.6%)</td>
-<td align="center">67038 (15.0%)</td>
-</tr>
-<tr class="odd">
-<td align="left">   70-80k</td>
-<td align="center">6514 (8.6%)</td>
-<td align="center">7501 (8.7%)</td>
-<td align="center">7603 (8.5%)</td>
-<td align="center">8599 (9.2%)</td>
-<td align="center">9808 (9.7%)</td>
-<td align="center">40025 (9.0%)</td>
-</tr>
-<tr class="even">
 <td align="left">   80-90k</td>
 <td align="center">4137 (5.4%)</td>
 <td align="center">5291 (6.1%)</td>
@@ -756,14 +718,59 @@ summary(tab_clo, title = &quot;NYC 311 Complaints Demographics &quot;)</code></p
 <td align="center">6993 (6.9%)</td>
 <td align="center">27753 (6.2%)</td>
 </tr>
+<tr class="even">
+<td align="left">   70-80k</td>
+<td align="center">6514 (8.6%)</td>
+<td align="center">7501 (8.7%)</td>
+<td align="center">7603 (8.5%)</td>
+<td align="center">8599 (9.2%)</td>
+<td align="center">9808 (9.7%)</td>
+<td align="center">40025 (9.0%)</td>
+</tr>
 <tr class="odd">
-<td align="left">   90-100k</td>
-<td align="center">1855 (2.4%)</td>
-<td align="center">2310 (2.7%)</td>
-<td align="center">2671 (3.0%)</td>
-<td align="center">2373 (2.5%)</td>
-<td align="center">2477 (2.5%)</td>
-<td align="center">11686 (2.6%)</td>
+<td align="left">   60-70k</td>
+<td align="center">11482 (15.1%)</td>
+<td align="center">12616 (14.6%)</td>
+<td align="center">12791 (14.3%)</td>
+<td align="center">14420 (15.4%)</td>
+<td align="center">15729 (15.6%)</td>
+<td align="center">67038 (15.0%)</td>
+</tr>
+<tr class="even">
+<td align="left">   50-60k</td>
+<td align="center">12763 (16.8%)</td>
+<td align="center">14389 (16.6%)</td>
+<td align="center">14696 (16.4%)</td>
+<td align="center">15807 (16.8%)</td>
+<td align="center">17946 (17.8%)</td>
+<td align="center">75601 (16.9%)</td>
+</tr>
+<tr class="odd">
+<td align="left">   40-50k</td>
+<td align="center">19825 (26.1%)</td>
+<td align="center">22656 (26.1%)</td>
+<td align="center">23089 (25.8%)</td>
+<td align="center">23391 (24.9%)</td>
+<td align="center">24424 (24.2%)</td>
+<td align="center">113385 (25.4%)</td>
+</tr>
+<tr class="even">
+<td align="left">   30-40k</td>
+<td align="center">4159 (5.5%)</td>
+<td align="center">4608 (5.3%)</td>
+<td align="center">4529 (5.1%)</td>
+<td align="center">4712 (5.0%)</td>
+<td align="center">4826 (4.8%)</td>
+<td align="center">22834 (5.1%)</td>
+</tr>
+<tr class="odd">
+<td align="left">   20-30k</td>
+<td align="center">7955 (10.5%)</td>
+<td align="center">9096 (10.5%)</td>
+<td align="center">9944 (11.1%)</td>
+<td align="center">9658 (10.3%)</td>
+<td align="center">10224 (10.1%)</td>
+<td align="center">46877 (10.5%)</td>
 </tr>
 </tbody>
 </table>
@@ -916,6 +923,405 @@ summary(tab_clo, title = &quot;NYC 311 Complaints Demographics &quot;)</code></p
 <td align="center">7820 (9.7%)</td>
 <td align="center">8555 (9.6%)</td>
 <td align="center">41777 (10.9%)</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>summary(tab_com_clo_inc , title = &quot;NYC 311 Complaints Demographics &quot;)</code></pre>
+<table>
+<caption>NYC 311 Complaints Demographics</caption>
+<colgroup>
+<col width="9%" />
+<col width="6%" />
+<col width="6%" />
+<col width="6%" />
+<col width="7%" />
+<col width="4%" />
+<col width="5%" />
+<col width="6%" />
+<col width="5%" />
+<col width="7%" />
+<col width="6%" />
+<col width="8%" />
+<col width="4%" />
+<col width="7%" />
+<col width="5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="center">Air Quality (N=2243)</th>
+<th align="center">Car/Traffic (N=59771)</th>
+<th align="center">Collection (N=17981)</th>
+<th align="center">Hazard Material (N=2310)</th>
+<th align="center">Heat (N=40973)</th>
+<th align="center">Homeless (N=4427)</th>
+<th align="center">Maintenance (N=24873)</th>
+<th align="center">Noise (N=68688)</th>
+<th align="center">Paint/Plaster (N=11943)</th>
+<th align="center">Sanitation (N=43379)</th>
+<th align="center">Street Condition (N=54964)</th>
+<th align="center">Tree (N=11443)</th>
+<th align="center">Water/plumbing (N=41777)</th>
+<th align="center">Total (N=384772)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><strong>diff_dayt</strong></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="left">   Count</td>
+<td align="center">2243</td>
+<td align="center">59771</td>
+<td align="center">17981</td>
+<td align="center">2310</td>
+<td align="center">40973</td>
+<td align="center">4427</td>
+<td align="center">24873</td>
+<td align="center">68688</td>
+<td align="center">11943</td>
+<td align="center">43379</td>
+<td align="center">54964</td>
+<td align="center">11443</td>
+<td align="center">41777</td>
+<td align="center">384772</td>
+</tr>
+<tr class="odd">
+<td align="left">   Median</td>
+<td align="center">3.0</td>
+<td align="center">0.0</td>
+<td align="center">2.0</td>
+<td align="center">1.0</td>
+<td align="center">3.0</td>
+<td align="center">0.0</td>
+<td align="center">11.0</td>
+<td align="center">0.0</td>
+<td align="center">11.0</td>
+<td align="center">3.0</td>
+<td align="center">1.0</td>
+<td align="center">12.0</td>
+<td align="center">5.0</td>
+<td align="center">1.0</td>
+</tr>
+<tr class="even">
+<td align="left">   Q1,Q3</td>
+<td align="center">1.0, 6.0</td>
+<td align="center">0.0, 0.0</td>
+<td align="center">1.0, 4.0</td>
+<td align="center">0.0, 1.0</td>
+<td align="center">2.0, 5.0</td>
+<td align="center">0.0, 0.0</td>
+<td align="center">5.0, 21.0</td>
+<td align="center">0.0, 1.0</td>
+<td align="center">6.0, 19.0</td>
+<td align="center">1.0, 11.0</td>
+<td align="center">0.0, 7.0</td>
+<td align="center">2.0, 84.0</td>
+<td align="center">1.0, 16.0</td>
+<td align="center">0.0, 6.0</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>income_bracket</strong></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="left">   125k+</td>
+<td align="center">239 (10.7%)</td>
+<td align="center">1504 (2.5%)</td>
+<td align="center">448 (2.5%)</td>
+<td align="center">158 (6.8%)</td>
+<td align="center">1044 (2.5%)</td>
+<td align="center">761 (17.2%)</td>
+<td align="center">532 (2.1%)</td>
+<td align="center">4027 (5.9%)</td>
+<td align="center">209 (1.7%)</td>
+<td align="center">1085 (2.5%)</td>
+<td align="center">2218 (4.0%)</td>
+<td align="center">337 (2.9%)</td>
+<td align="center">1200 (2.9%)</td>
+<td align="center">13762 (3.6%)</td>
+</tr>
+<tr class="odd">
+<td align="left">   100-125k</td>
+<td align="center">338 (15.1%)</td>
+<td align="center">2028 (3.4%)</td>
+<td align="center">837 (4.7%)</td>
+<td align="center">286 (12.4%)</td>
+<td align="center">1754 (4.3%)</td>
+<td align="center">1722 (38.9%)</td>
+<td align="center">950 (3.8%)</td>
+<td align="center">4796 (7.0%)</td>
+<td align="center">306 (2.6%)</td>
+<td align="center">1571 (3.6%)</td>
+<td align="center">2630 (4.8%)</td>
+<td align="center">369 (3.2%)</td>
+<td align="center">1858 (4.4%)</td>
+<td align="center">19445 (5.1%)</td>
+</tr>
+<tr class="even">
+<td align="left">   90-100k</td>
+<td align="center">129 (5.8%)</td>
+<td align="center">1208 (2.0%)</td>
+<td align="center">357 (2.0%)</td>
+<td align="center">94 (4.1%)</td>
+<td align="center">780 (1.9%)</td>
+<td align="center">409 (9.2%)</td>
+<td align="center">493 (2.0%)</td>
+<td align="center">2672 (3.9%)</td>
+<td align="center">200 (1.7%)</td>
+<td align="center">837 (1.9%)</td>
+<td align="center">1262 (2.3%)</td>
+<td align="center">187 (1.6%)</td>
+<td align="center">962 (2.3%)</td>
+<td align="center">9590 (2.5%)</td>
+</tr>
+<tr class="odd">
+<td align="left">   80-90k</td>
+<td align="center">92 (4.1%)</td>
+<td align="center">3745 (6.3%)</td>
+<td align="center">2339 (13.0%)</td>
+<td align="center">123 (5.3%)</td>
+<td align="center">201 (0.5%)</td>
+<td align="center">13 (0.3%)</td>
+<td align="center">404 (1.6%)</td>
+<td align="center">1569 (2.3%)</td>
+<td align="center">51 (0.4%)</td>
+<td align="center">3200 (7.4%)</td>
+<td align="center">6205 (11.3%)</td>
+<td align="center">1796 (15.7%)</td>
+<td align="center">2455 (5.9%)</td>
+<td align="center">22193 (5.8%)</td>
+</tr>
+<tr class="even">
+<td align="left">   70-80k</td>
+<td align="center">102 (4.5%)</td>
+<td align="center">6681 (11.2%)</td>
+<td align="center">3195 (17.8%)</td>
+<td align="center">211 (9.1%)</td>
+<td align="center">783 (1.9%)</td>
+<td align="center">45 (1.0%)</td>
+<td align="center">849 (3.4%)</td>
+<td align="center">3246 (4.7%)</td>
+<td align="center">233 (2.0%)</td>
+<td align="center">4562 (10.5%)</td>
+<td align="center">7647 (13.9%)</td>
+<td align="center">2169 (19.0%)</td>
+<td align="center">3740 (9.0%)</td>
+<td align="center">33463 (8.7%)</td>
+</tr>
+<tr class="odd">
+<td align="left">   60-70k</td>
+<td align="center">312 (13.9%)</td>
+<td align="center">14040 (23.5%)</td>
+<td align="center">3800 (21.1%)</td>
+<td align="center">340 (14.7%)</td>
+<td align="center">4698 (11.5%)</td>
+<td align="center">210 (4.7%)</td>
+<td align="center">2477 (10.0%)</td>
+<td align="center">8799 (12.8%)</td>
+<td align="center">1132 (9.5%)</td>
+<td align="center">6531 (15.1%)</td>
+<td align="center">8305 (15.1%)</td>
+<td align="center">2177 (19.0%)</td>
+<td align="center">5288 (12.7%)</td>
+<td align="center">58109 (15.1%)</td>
+</tr>
+<tr class="even">
+<td align="left">   50-60k</td>
+<td align="center">348 (15.5%)</td>
+<td align="center">12436 (20.8%)</td>
+<td align="center">4119 (22.9%)</td>
+<td align="center">361 (15.6%)</td>
+<td align="center">4352 (10.6%)</td>
+<td align="center">241 (5.4%)</td>
+<td align="center">3589 (14.4%)</td>
+<td align="center">10206 (14.9%)</td>
+<td align="center">1460 (12.2%)</td>
+<td align="center">8042 (18.5%)</td>
+<td align="center">10144 (18.5%)</td>
+<td align="center">2392 (20.9%)</td>
+<td align="center">6834 (16.4%)</td>
+<td align="center">64524 (16.8%)</td>
+</tr>
+<tr class="odd">
+<td align="left">   40-50k</td>
+<td align="center">479 (21.4%)</td>
+<td align="center">12701 (21.2%)</td>
+<td align="center">2314 (12.9%)</td>
+<td align="center">568 (24.6%)</td>
+<td align="center">15301 (37.3%)</td>
+<td align="center">715 (16.2%)</td>
+<td align="center">8272 (33.3%)</td>
+<td align="center">21448 (31.2%)</td>
+<td align="center">4417 (37.0%)</td>
+<td align="center">10344 (23.8%)</td>
+<td align="center">11292 (20.5%)</td>
+<td align="center">1600 (14.0%)</td>
+<td align="center">11180 (26.8%)</td>
+<td align="center">100631 (26.2%)</td>
+</tr>
+<tr class="even">
+<td align="left">   30-40k</td>
+<td align="center">66 (2.9%)</td>
+<td align="center">2401 (4.0%)</td>
+<td align="center">265 (1.5%)</td>
+<td align="center">57 (2.5%)</td>
+<td align="center">3753 (9.2%)</td>
+<td align="center">74 (1.7%)</td>
+<td align="center">2099 (8.4%)</td>
+<td align="center">3725 (5.4%)</td>
+<td align="center">1175 (9.8%)</td>
+<td align="center">2363 (5.4%)</td>
+<td align="center">1865 (3.4%)</td>
+<td align="center">174 (1.5%)</td>
+<td align="center">2552 (6.1%)</td>
+<td align="center">20569 (5.3%)</td>
+</tr>
+<tr class="odd">
+<td align="left">   20-30k</td>
+<td align="center">138 (6.2%)</td>
+<td align="center">3027 (5.1%)</td>
+<td align="center">307 (1.7%)</td>
+<td align="center">112 (4.8%)</td>
+<td align="center">8307 (20.3%)</td>
+<td align="center">237 (5.4%)</td>
+<td align="center">5208 (20.9%)</td>
+<td align="center">8200 (11.9%)</td>
+<td align="center">2760 (23.1%)</td>
+<td align="center">4844 (11.2%)</td>
+<td align="center">3396 (6.2%)</td>
+<td align="center">242 (2.1%)</td>
+<td align="center">5708 (13.7%)</td>
+<td align="center">42486 (11.0%)</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>borough</strong></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="left">   BRONX</td>
+<td align="center">265 (11.8%)</td>
+<td align="center">8971 (15.0%)</td>
+<td align="center">995 (5.5%)</td>
+<td align="center">266 (11.5%)</td>
+<td align="center">15792 (38.5%)</td>
+<td align="center">204 (4.6%)</td>
+<td align="center">8466 (34.0%)</td>
+<td align="center">14523 (21.1%)</td>
+<td align="center">4661 (39.0%)</td>
+<td align="center">9059 (20.9%)</td>
+<td align="center">7279 (13.2%)</td>
+<td align="center">860 (7.5%)</td>
+<td align="center">9816 (23.5%)</td>
+<td align="center">81157 (21.1%)</td>
+</tr>
+<tr class="even">
+<td align="left">   BROOKLYN</td>
+<td align="center">410 (18.3%)</td>
+<td align="center">14065 (23.5%)</td>
+<td align="center">3580 (19.9%)</td>
+<td align="center">508 (22.0%)</td>
+<td align="center">8676 (21.2%)</td>
+<td align="center">386 (8.7%)</td>
+<td align="center">5595 (22.5%)</td>
+<td align="center">13751 (20.0%)</td>
+<td align="center">2837 (23.8%)</td>
+<td align="center">8902 (20.5%)</td>
+<td align="center">9353 (17.0%)</td>
+<td align="center">2048 (17.9%)</td>
+<td align="center">8508 (20.4%)</td>
+<td align="center">78619 (20.4%)</td>
+</tr>
+<tr class="odd">
+<td align="left">   MANHATTAN</td>
+<td align="center">870 (38.8%)</td>
+<td align="center">5645 (9.4%)</td>
+<td align="center">1446 (8.0%)</td>
+<td align="center">701 (30.3%)</td>
+<td align="center">9917 (24.2%)</td>
+<td align="center">3425 (77.4%)</td>
+<td align="center">5311 (21.4%)</td>
+<td align="center">20930 (30.5%)</td>
+<td align="center">2505 (21.0%)</td>
+<td align="center">6269 (14.5%)</td>
+<td align="center">9596 (17.5%)</td>
+<td align="center">900 (7.9%)</td>
+<td align="center">7926 (19.0%)</td>
+<td align="center">75441 (19.6%)</td>
+</tr>
+<tr class="even">
+<td align="left">   QUEENS</td>
+<td align="center">365 (16.3%)</td>
+<td align="center">18643 (31.2%)</td>
+<td align="center">5148 (28.6%)</td>
+<td align="center">406 (17.6%)</td>
+<td align="center">4926 (12.0%)</td>
+<td align="center">279 (6.3%)</td>
+<td align="center">2927 (11.8%)</td>
+<td align="center">11565 (16.8%)</td>
+<td align="center">1157 (9.7%)</td>
+<td align="center">8469 (19.5%)</td>
+<td align="center">11928 (21.7%)</td>
+<td align="center">3365 (29.4%)</td>
+<td align="center">6947 (16.6%)</td>
+<td align="center">76125 (19.8%)</td>
+</tr>
+<tr class="odd">
+<td align="left">   STATEN ISLAND</td>
+<td align="center">333 (14.8%)</td>
+<td align="center">12447 (20.8%)</td>
+<td align="center">6812 (37.9%)</td>
+<td align="center">429 (18.6%)</td>
+<td align="center">1662 (4.1%)</td>
+<td align="center">133 (3.0%)</td>
+<td align="center">2574 (10.3%)</td>
+<td align="center">7919 (11.5%)</td>
+<td align="center">783 (6.6%)</td>
+<td align="center">10680 (24.6%)</td>
+<td align="center">16808 (30.6%)</td>
+<td align="center">4270 (37.3%)</td>
+<td align="center">8580 (20.5%)</td>
+<td align="center">73430 (19.1%)</td>
 </tr>
 </tbody>
 </table>
