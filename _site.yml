@@ -11,7 +11,7 @@ navbar:
     - text: "Plots"
       href: descript_stats_plots.html
     - text: "Tables"
-      href: DiscriptiveTabels.html
+      href: DiscriptiveTables.html
     - text: "Visualizations"
       href: map_visual.html
     - text: "Regression"
