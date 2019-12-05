@@ -381,26 +381,7 @@ Based on the adjusted R-squared value,  number of unresolved complaints in a CD 
 ```{r}
 
 #data with days to close information
-add_inc %>% 
- filter(status == "Closed" ,
-        closed_year <= 2018) %>% 
-    mutate(
-        closed_year = as.numeric(closed_year),
-        closed_month = as.numeric(closed_month),
-        closed_day = as.numeric(closed_day)
-    ) %>% 
-    mutate(
-        diff_year = closed_year - created_year,
-        diff_month = closed_month - created_month,
-        diff_day = closed_day - created_day,
-        diff_dayt =  diff_year*365 + diff_month*30 + diff_day
-       # diff_dayt = as.factor(diff_dayt)
-    ) %>% group_by(income_bracket) %>% 
-  summarize(
-    mean_close = mean(diff_dayt, na.rm = T)
-  )
-
-add_inc %>% 
+nyc_data <- add_inc %>% 
  filter(status == "Closed",
         closed_year <= 2018) %>% 
     mutate(
@@ -414,13 +395,16 @@ add_inc %>%
         diff_day = closed_day - created_day,
         diff_dayt =  diff_year*365 + diff_month*30 + diff_day
        # diff_dayt = as.factor(diff_dayt)
-    ) %>% select(diff_dayt, diff_year,diff_month,diff_day, created_year, closed_year) %>% 
-  drop_na() %>% 
-  summary()
+  ) %>% 
+  drop_na(closed_year)
+  
+```
 
+
+```{r, results="asis}
 nyc_data %>% head()
 
-tab1<- tableby(status ~ diff_dayt, data = nyc_data)
+tab1<- tableby(created_year ~ diff_dayt +status + borough + complaint_simp, data = nyc_data)
 
 summary(tab1)
 
