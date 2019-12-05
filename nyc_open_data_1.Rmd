@@ -1,4 +1,11 @@
 ---
+<<<<<<< HEAD
+title: "Data Scraping Using RSocrata"
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(eval = FALSE)
+=======
 title: "NYC Open Data"
 author: "Steven Lawrence"
 date: "November 19, 2019"
@@ -7,6 +14,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+>>>>>>> 06e168b8b63cf4643c5a6012003f20880f3c810e
 ```
 
 ```{r}
