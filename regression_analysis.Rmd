@@ -5,11 +5,104 @@ date: "12/1/2019"
 output: html_document
 ---
 
+<<<<<<< HEAD
+```{r}
+=======
 ```{r setup, include=FALSE}
+<<<<<<< HEAD
 #install.packages("miceadds")
+=======
+>>>>>>> f473c7cadadc647b9a2591f97293cecc9afbe492
+#install.packages("RSocrata")
+>>>>>>> eff2e393ec0971be58554b808159d2f6ffc68d1a
 #devtools::install_github("Chicago/RSocrata")
 library(RSocrata)
 library(tidyverse)
+<<<<<<< HEAD
+
+```
+
+```{r}
+nyc311 = read_csv("/Users/avahamilton/Dropbox/Biostat MS/Data Science I/final/p8105nyc_311_100k.csv") %>% 
+    janitor::clean_names()
+
+summary(nyc311$city)
+
+nycedit = nyc311 %>% 
+    filter(borough != "Unspecified") %>% 
+    mutate(
+        year = as.numeric(created_year),
+        month = as.numeric(created_month),
+        day = as.numeric(created_day),
+        city = as.factor(city),
+        borough = as.factor(park_borough),
+        agency = as.factor(agency),
+        complaint_type = as.factor(complaint_type),
+        community_board = as.factor(community_board),
+        open_complaint = ifelse(is.na(closed_date),  1, 0),
+        complaint_simp = case_when(
+            str_detect(complaint_type,  regex("street", ignore_case = TRUE))|str_detect(complaint_type,  regex("sidewalk", ignore_case = TRUE))|str_detect(complaint_type,  regex("curb", ignore_case = TRUE))|str_detect(complaint_type,  regex("vehicle", ignore_case = TRUE)) ~ "Street Condition",
+            str_detect(complaint_type,  regex("noise", ignore_case = TRUE)) ~ "Noise",
+            str_detect(complaint_type, regex("heat", ignore_case = TRUE)) ~ "Heat",
+            str_detect(complaint_type, regex("water", ignore_case = TRUE))|str_detect(complaint_type, regex("plumbing", ignore_case = TRUE))|str_detect(complaint_type, regex("boiler", ignore_case = TRUE)) ~ "Water/plumbing",
+            str_detect(complaint_type, regex("paint", ignore_case = TRUE)) ~ "Paint/Plaster",
+            str_detect(complaint_type, regex("asbestos", ignore_case = TRUE))|str_detect(complaint_type, regex("lead", ignore_case = TRUE))|str_detect(complaint_type, regex("hazard", ignore_case = TRUE)) ~ "Hazard Material",
+            str_detect(complaint_type, regex("elevator", ignore_case = TRUE)) ~ "Elevator",
+            str_detect(complaint_type, regex("sanita", ignore_case = TRUE))|str_detect(complaint_type, regex("rodent", ignore_case = TRUE))|str_detect(complaint_type, regex("dirty", ignore_case = TRUE)) ~ "Sanitation",
+            str_detect(complaint_type, regex("tree", ignore_case = TRUE)) ~ "Tree",
+            str_detect(complaint_type, regex("parking", ignore_case = TRUE))|str_detect(complaint_type, regex("car", ignore_case = TRUE))|str_detect(complaint_type, regex("drive", ignore_case = TRUE)) ~ "Car"
+        ),
+        health_complaint = ifelse(
+            complaint_simp %in% c("Heat", "Water/Plumbing", "Hazard Material", "Sanitation"), 1,0),
+        complaint_simp = as.factor(complaint_simp)
+    )
+
+summary(nycedit$complaint_simp)
+
+nycedit_cb = nycedit %>% 
+    group_by(community_board, year) %>%
+    add_count(community_board, name = "number_complaints") %>% 
+    mutate(
+        num_unsolved = sum(open_complaint),
+        num_health_complaint = sum(health_complaint)
+    ) %>% 
+    select(number_complaints, num_unsolved, everything())
+
+
+
+nycedit %>% 
+    ggplot(aes(x = health_complaint)) +
+    geom_bar()
+
+```
+
+
+
+```{r}
+
+inc_df = read_csv("./Med_income_2017.csv") %>% janitor::clean_names()
+
+add_inc = left_join(nycedit_cb, inc_df, by = "community_board")
+
+
+nycedit_cb2 = add_inc %>% 
+    filter(is.na(median_income) == FALSE) %>% 
+    select(community_board, number_complaints, median_income, num_unsolved, num_health_complaint, year, borough, per_black_nh, per_hisp, per_white_nh) %>% 
+    distinct() %>% 
+    arrange(community_board)
+
+nyc_cb2 = glm(number_complaints ~ median_income + num_unsolved + year + borough + per_black_nh + per_hisp, data = nycedit_cb2)
+summary(nyc_cb2)
+
+health_cb = glm(num_health_complaint ~ median_income + num_unsolved + year + borough + per_black_nh + per_hisp, data = nycedit_cb2)
+summary(health_cb)
+
+
+
+nyc_model = glm(open_complaint ~ median_income + year + health_complaint + borough + per_black_nh + per_hisp + complaint_simp, data = add_inc)
+
+summary(nyc_model)
+=======
 library(viridis)
 library(modelr)
 library(mgcv)
@@ -435,12 +528,15 @@ par(mfrow = c(2,2))
 plot(num_unsolved_model_year)
 
 
+>>>>>>> f473c7cadadc647b9a2591f97293cecc9afbe492
 
 
 ```
 
 
 
+<<<<<<< HEAD
+=======
 *Comments:*
 
 A complaint was labeled unresolved if its status was not labeled as "closed". The total number of unresolved complaints is significantly predicted by year of complaint, borough, and CD median income, percent non-Hispanic Black and Hispanic, and population total. 
@@ -448,6 +544,7 @@ A complaint was labeled unresolved if its status was not labeled as "closed". Th
 On average, for each additional year we see `r round(pull((summary(num_unsolved_model_year)  %>% broom::tidy()) %>% filter(term == "created_year"),estimate),0)` more unresolved complaints in each community district. The Bronx, Queens, and Staten Island CDs had `r round(pull((summary(num_unsolved_model_year)  %>% broom::tidy()) %>% filter(term == "boroughBRONX"),estimate),0)`, `r round(pull((summary(num_unsolved_model_year)  %>% broom::tidy()) %>% filter(term == "boroughQUEENS"),estimate),0)`, and `r round(pull((summary(num_unsolved_model_year)  %>% broom::tidy()) %>% filter(term == "boroughSTATEN ISLAND"),estimate),0)`, more unresolved complaints than manhattan CDs on average, respectively.
 
 Based on the adjusted R-squared value,  number of unresolved complaints in a CD are `r 100*round(pull((summary(num_unsolved_model_year) %>% broom::glance()),adj.r.squared),4)`% predicted by this combination of variables. Residuals appear to follow a normal distribution.
+>>>>>>> f473c7cadadc647b9a2591f97293cecc9afbe492
 
 
 ## Discussion
