@@ -590,11 +590,11 @@ tab_inc&lt;- tableby(created_year ~ income_bracket, data = nyc_data, control = m
 tab_comp &lt;- tableby(created_year ~ complaint_simp, data = nyc_data, control = mycontrols)
 
 tab_com_clo_inc &lt;- tableby(complaint_simp ~ diff_dayt +income_bracket + borough , data = nyc_data, control = mycontrols)</code></pre>
-<p>In this table the median and interquartile range of how many days it took for cases to close. Given the data is skewed right I reported the median values being <code>1</code> to <code>2</code> days and largest interqutile range being <code>0 - 9</code> and smallest being <code>0 - 6</code> acroos years <code>2014 - 2018</code>.</p>
+<p>In table 1 the median and interquartile range of how many days it took for cases to close. Given the data is skewed right I reported the median values being <code>1</code> to <code>2</code> days and largest interqutile range being <code>0 - 9</code> and smallest being <code>0 - 6</code> acroos years <code>2014 - 2018</code>.</p>
 <p>Most complaints are closed within a week with a high density of them being closed within a day or two. Additionally, we observe even distribution across all boroughs and closed cases.</p>
-<pre class="r"><code>summary(tab_clo, title = &quot;NYC 311 Complaints Demographics &quot;)</code></pre>
+<pre class="r"><code>summary(tab_clo, title = &quot;NYC 311 Complaints Demographics: table 1&quot;)</code></pre>
 <table>
-<caption>NYC 311 Complaints Demographics</caption>
+<caption>NYC 311 Complaints Demographics: table 1</caption>
 <colgroup>
 <col width="24%" />
 <col width="12%" />
@@ -727,9 +727,9 @@ tab_com_clo_inc &lt;- tableby(complaint_simp ~ diff_dayt +income_bracket + borou
 </tbody>
 </table>
 <p>In this table we see that individuals in the income bracket 40 - 50k (25.4%) made the most complaints through out all the years in this study while individuals in the 90 - 100k (2.6%)made the least comlaints consistently.</p>
-<pre class="r"><code>summary(tab_inc, title = &quot;NYC 311 Complaints Demographics &quot;)</code></pre>
+<pre class="r"><code>summary(tab_inc, title = &quot;NYC 311 Complaints Demographics: table 2 &quot;)</code></pre>
 <table>
-<caption>NYC 311 Complaints Demographics</caption>
+<caption>NYC 311 Complaints Demographics: table 2</caption>
 <colgroup>
 <col width="21%" />
 <col width="12%" />
@@ -852,9 +852,10 @@ tab_com_clo_inc &lt;- tableby(complaint_simp ~ diff_dayt +income_bracket + borou
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>summary(tab_comp, title = &quot;NYC 311 Complaints Demographics &quot;)</code></pre>
+<p>In table 2 we see that the most complaints are of noise (17.9%). Interestingly we see that car/traffic complaints increase overtime that suggest an increase in conjestion.</p>
+<pre class="r"><code>summary(tab_comp, title = &quot;NYC 311 Complaints Demographics: table 3 &quot;)</code></pre>
 <table>
-<caption>NYC 311 Complaints Demographics</caption>
+<caption>NYC 311 Complaints Demographics: table 3</caption>
 <colgroup>
 <col width="26%" />
 <col width="11%" />
@@ -1005,9 +1006,9 @@ tab_com_clo_inc &lt;- tableby(complaint_simp ~ diff_dayt +income_bracket + borou
 </tbody>
 </table>
 <p>In this table cases with complaints that have something to do with tree, paint/plaster, and maintanance take the longest to close 11 - 12 days compared to the other compalaint cases that close with the said interquartile range of 0-9 days. Taking a look at the incomme bracket we observe that higher income brackest mostly complain about the homeless (17.2%) while the lowest income clase mostly complain about heat (20.3%) and maintanance(20.9%) comparing accross all income brackets. Furthermore we can also see that Manhattan has most of its complaints related to air quality (38.8%), hazardous material (30.3%), homeless (77.4%), and noise (30.5%) comparing across all boroughs.</p>
-<pre class="r"><code>summary(tab_com_clo_inc , title = &quot;NYC 311 Complaints Demographics &quot;)</code></pre>
+<pre class="r"><code>summary(tab_com_clo_inc , title = &quot;NYC 311 Complaints Demographics: table 4 &quot;)</code></pre>
 <table>
-<caption>NYC 311 Complaints Demographics</caption>
+<caption>NYC 311 Complaints Demographics: table 4</caption>
 <colgroup>
 <col width="9%" />
 <col width="6%" />
