@@ -24,8 +24,6 @@ __Data:__
 Data Management
 The data used in this project was collected from the [NYC Open Data website](https://data.cityofnewyork.us/Social-Services/311-Service-Requests-from-2010-to-Present/erm2-nwe9).  Web based collection of 311 complaints were made public on 10/18/2011, and contains information from 2010 to present, updated daily.  This data set contains over 22M rows 41 columns that allow us to know the nature, location, and time of the complaint, as well as which department responded to the complaint. Given the size of the data set we used the filtering option on the website to better manage in a couple of ways ways.  First, the data was filter between the years of 2014 and 2018 for each of the five boroughs individually. A sample of 100k from each of these five datasets were imported into R and combined for further analysis.  
 
-311 Data cleaning: Molly XXX
-
 American Commmunity Survey data:
 We also included aggregated American Commmunity Survey (ACS) data in our analysis. The American Community Survey is conducted annually across the United States by the US Census Bureau to 3.5 million households. ACS provides annual and 5-year estimates of information by graphical region, including NYC Community Districts. We pulled population 5-year estimates (2013-2017) of total population, percent non-Hispanic White, percent non-Hispanic Black, percent Hispanic, and median income of each community district.
 
