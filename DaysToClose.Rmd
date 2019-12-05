@@ -22,7 +22,7 @@ nyc <- read_csv(file = "./p8105nyc_311_100k.csv") %>%
     janitor::clean_names()
 
 nyc_tidy <- nyc %>%   
-    filter(borough != "Unspecified") %>% 
+    filter(borough != "Unspecified") %>%  
     separate(closed_date, 
              into = c("closed_month","closed_day","closed_year"), 
              sep = "\\/" ) %>%
