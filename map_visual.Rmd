@@ -13,7 +13,7 @@ library(rgdal)
 library(leaflet)
 library(dplyr)
 library(ggplot2)
-# set factors to false
+# setting factors to false
 options(stringsAsFactors = FALSE)
 ```
 
@@ -124,7 +124,7 @@ nyc_tidy <- nyc %>%
     )
 ```
 
-#### Creating map visualization with n = 10000 
+#### Creating map visual with n = 10000 
 
 ```{r}
 pal <- colorFactor(
