@@ -150,10 +150,6 @@ Load and tidy the data. Data is 100k randomly sampled complaints from all neighb
 Data downloaded from:
 https://wetransfer.com/downloads/f8c5d6c17483e279ff56018db9c44cc420191201000026/c5f48b
 
-<<<<<<< HEAD
-
-=======
->>>>>>> ddd63902552adb81ecfe91bcbcdcabe8dc21479c
 ```{r message = FALSE}
 nyc <- read_csv(file = "./p8105nyc_311_100k.csv") %>% 
     janitor::clean_names()
@@ -263,10 +259,6 @@ nyc_tidy <- nyc %>%
 
 ```
 
-<<<<<<< HEAD
-
-=======
->>>>>>> ddd63902552adb81ecfe91bcbcdcabe8dc21479c
 #### Reading in and tidying second dataset with community district data
 
 Used skimr::skim, colnames, and levels(factor(nyc$complaint_type)) to investigate and tidy the data. New variables were created to establish a binary status for closed (0) or open (1) complaints.
@@ -905,9 +897,6 @@ plot(nom_comp_h_SI, which = 1, main = "Staten Island
 
 ```
 
-
-<<<<<<< HEAD
-=======
 
 *Comments:*
 

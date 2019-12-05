@@ -161,7 +161,7 @@ nyc_inc %>%
   filter(created_year == "2018") %>%
   drop_na(complaint_simp) %>% 
   sample_n(10000) %>% 
-  mutate(click_label = str_c("<br>Complaint type: ", complaint_simp, "<br>Neighborhood: ", area_name, "<br>Income: $", median_income, "<br>Status: ", status)) %>%
+  mutate(click_label = str_c("<br>Complaint type: ", complaint_simp, "<br>Neighborhood: ", area_name, "<br>Median Income: $", median_income, "<br>Status: ", status)) %>%
   leaflet() %>% 
   addProviderTiles(providers$CartoDB.Positron) %>% 
   addCircleMarkers(lat = ~latitude, lng = ~longitude, radius = .1, color = ~pal(complaint_simp), popup = ~click_label) %>% 

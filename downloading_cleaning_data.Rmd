@@ -1,5 +1,8 @@
 ---
 title: "downloading_cleaning_data"
+author: "Ava Hamilton"
+date: "12/3/2019"
+output: html_document
 ---
 
 
@@ -13,7 +16,7 @@ library(tidyverse)
 
 ```
 
-This token is to beable to acces data from the socrata repository.  
+This token is to be able to acces data from the socrata repository.  
 ```{r,eval=F}
 token <- "QsuUJQpyjGciXV5KibPhY64hO"
 ```
