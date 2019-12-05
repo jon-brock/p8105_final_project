@@ -1,8 +1,5 @@
 ---
 title: "NYC Open Data"
-author: "Steven Lawrence"
-date: "November 19, 2019"
-output: html_document
 ---
 
 ```{r setup, include=FALSE}
