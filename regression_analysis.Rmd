@@ -1,8 +1,5 @@
 ---
-title: "regression_analysis"
-author: "Ava Hamilton"
-date: "12/1/2019"
-output: html_document
+title: "<span style='font-size: 25px'>Regression Analysis</style>"
 ---
 
 ```{r setup, include=FALSE}
@@ -14,7 +11,7 @@ library(tidyverse)
 
 ## read in data
 ```{r message = FALSE}
-nyc <- read_csv(file = "../p8105nyc_311_100k.csv") %>% 
+nyc <- read_csv(file = "./p8105nyc_311_100k.csv") %>% 
     janitor::clean_names()
 
 nyc_tidy <- nyc %>%   

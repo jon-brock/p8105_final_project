@@ -1,26 +1,26 @@
----
-title: "compiled"
-author: "Ava Hamilton"
-date: "12/4/2019"
-output: github_document
----
+compiled
+================
+Ava Hamilton
+12/4/2019
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-
-
-library(RSocrata)
-library(tidyverse)
-library(viridis)
-library(modelr)
-library(mgcv)
-
-```
 ## read in data
-```{r message = FALSE}
+
+``` r
 nyc <- read_csv(file = "./p8105nyc_311_100k.csv") %>% 
     janitor::clean_names()
+```
 
+    ## Warning: 13949 parsing failures.
+    ##    row                   col           expected                        actual                      file
+    ## 100085 taxi_pick_up_location 1/0/T/F/TRUE/FALSE WEST   50 STREET AND BROADWAY './p8105nyc_311_100k.csv'
+    ## 100150 taxi_pick_up_location 1/0/T/F/TRUE/FALSE JFK Airport                   './p8105nyc_311_100k.csv'
+    ## 100172 taxi_pick_up_location 1/0/T/F/TRUE/FALSE 625 EAST 14 STREET MANHATTAN  './p8105nyc_311_100k.csv'
+    ## 100215 taxi_pick_up_location 1/0/T/F/TRUE/FALSE Other                         './p8105nyc_311_100k.csv'
+    ## 100268 taxi_pick_up_location 1/0/T/F/TRUE/FALSE Other                         './p8105nyc_311_100k.csv'
+    ## ...... ..................... .................. ............................. .........................
+    ## See problems(...) for more details.
+
+``` r
 nyc_tidy <- nyc %>%   
     filter(borough != "Unspecified") %>% 
     separate(closed_date, 
@@ -122,13 +122,14 @@ nyc_tidy <- nyc %>%
         # openCorr = ifelse(status == "Closed", yes = 0, no = 1),
         status = as.factor(status)
     )
-
-
 ```
 
-Adding community district data
-```{r message = FALSE}
+    ## Warning: Expected 2 pieces. Additional pieces discarded in 489924 rows [1, 2, 3,
+    ## 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, ...].
 
+Adding community district data
+
+``` r
 inc_df = read_csv("./Med_income_2017.csv") %>% 
     janitor::clean_names() %>% 
     mutate(
@@ -155,6 +156,7 @@ add_inc = left_join(nyc_tidy, inc_df, by = "community_board") %>%
     mutate(
         year_fac = as.factor(created_year)
     )
-
-
 ```
+
+    ## Warning: Column `community_board` joining factor and character vector, coercing
+    ## into character vector

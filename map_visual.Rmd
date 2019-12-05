@@ -1,8 +1,5 @@
 ---
-title: "map_visual"
-author: "Stephen Powers"
-date: "12/4/2019"
-output: github_document
+title: "<span style='font-size: 25px'>Visualizations</style>"
 ---
 
 

@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
 
 <meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
@@ -233,7 +234,6 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
-  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -279,6 +279,15 @@ $(document).ready(function () {
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="descript_stats_plots.html">Descriptive Statistics Plots</a>
+</li>
+<li>
+  <a href="regression_analysis.html">Regression Analysis</a>
+</li>
+<li>
+  <a href="map_visual.html">Visualizations</a>
+</li>
+<li>
   <a href="mailto:&lt;jpb2210@cumc.columbia.edu&gt;">
     <span class="fa fa-envelope fa-lg"></span>
      
@@ -304,33 +313,17 @@ $(document).ready(function () {
 </div>
 
 
-<pre class="r"><code>library(tidyverse)</code></pre>
-<pre><code>## ── Attaching packages ────────────────────────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
-<pre><code>## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
-## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
-## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
-## ✔ readr   1.3.1     ✔ forcats 0.4.0</code></pre>
-<pre><code>## ── Conflicts ───────────────────────────────────────────────────────────── tidyverse_conflicts() ──
-## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()</code></pre>
-<pre class="r"><code>#install.packages(&quot;arsenal&quot;)
-library(arsenal)
-library(tidyverse)
-library(viridis)</code></pre>
-<pre><code>## Loading required package: viridisLite</code></pre>
-<pre class="r"><code>library(mgcv)</code></pre>
-<pre><code>## Loading required package: nlme</code></pre>
+<pre class="r"><code>library(tidyverse)
+#install.packages(&quot;arsenal&quot;)
+library(arsenal)</code></pre>
 <pre><code>## 
-## Attaching package: &#39;nlme&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
-## 
-##     collapse</code></pre>
-<pre><code>## This is mgcv 1.8-28. For overview type &#39;help(&quot;mgcv-package&quot;)&#39;.</code></pre>
-<pre><code>## 
-## Attaching package: &#39;mgcv&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:arsenal&#39;:
+## Attaching package: &#39;arsenal&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:mgcv&#39;:
 ## 
 ##     negbin</code></pre>
+<pre class="r"><code>library(tidyverse)
+library(viridis)
+library(mgcv)</code></pre>
 <div id="read-in-data" class="section level2">
 <h2>read in data</h2>
 <pre class="r"><code>nyc &lt;- read_csv(file = &quot;./p8105nyc_311_100k.csv&quot;) %&gt;% 
@@ -926,7 +919,8 @@ summary(tab_clo, title = &quot;NYC 311 Complaints Demographics &quot;)</code></p
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>summary(tab_com_clo_inc , title = &quot;NYC 311 Complaints Demographics &quot;)</code></pre>
+<pre class="r"><code>#In this table I observe that cases with complaints that have something to do with tree, paint/plaster, and maintanance take the longest to close 11 - 12 days compared to the other compalaint cases that close with the said interquartile range of 0-9 days.  Taking a look at the incomme bracket we observe that higher income brackest mostly complain about the homeless while the lower income clases mostly complain about heat and maintanance. Furthermore we can also see that Manhattan has most of its complaints related to air pollution, hazardous waste, homeless, and noise.    
+summary(tab_com_clo_inc , title = &quot;NYC 311 Complaints Demographics &quot;)</code></pre>
 <table>
 <caption>NYC 311 Complaints Demographics</caption>
 <colgroup>

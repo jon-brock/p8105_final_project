@@ -157,7 +157,9 @@ Key variables include: `year`, `borough`, `community_board`,
 Newly added variables include:
 
 1.  `complaint_simp` - based on key words, condenses complaint types
-    into the following categories:’
+    into the following categories: Air Quality, Car/Traffic, Collection,
+    Hazard Material, Heat, Homeless, Maintenance, Noise, Paint/Plaster,
+    Sanitation, Street Condition, Tree, and Water/plumbing.
 
 2.  `health_complaint` - binary yes (1) or no (0), based on health
     associated categories within `complaint_simp`.
@@ -181,7 +183,7 @@ inc_df = read_csv("./Med_income_2017.csv") %>%
     mutate(
         inc_1000s = round(median_income/1000, 1),
         income_bracket = case_when(
-            median_income >= 20000 & median_income <= 30000 ~ "20k-30k",
+            median_income >= 20000 & median_income <= 30000 ~ "20-30k",
             median_income > 30000 & median_income <= 40000 ~ "30-40k",
             median_income > 40000 & median_income <= 50000 ~ "40-50k",
             median_income > 50000 & median_income <= 60000 ~ "50-60k",
@@ -193,7 +195,7 @@ inc_df = read_csv("./Med_income_2017.csv") %>%
             median_income > 125000 & median_income <= 150000 ~ "125k+",
         ),
         income_bracket = as.factor(income_bracket),
-        income_bracket = fct_relevel(income_bracket, c("20k-30k", "30-40k", "40-50k", "50-60k", "60-70k", "70-80k", "80-90k", "90-100k", "100-125k", "125k+"))
+        income_bracket = fct_relevel(income_bracket, c("20-30k", "30-40k", "40-50k", "50-60k", "60-70k", "70-80k", "80-90k", "90-100k", "100-125k", "125k+"))
     )
 ```
 
@@ -234,7 +236,46 @@ nyc_plots <- nyc_inc %>%
         num_open_health = sum(open_health_complaint)
     ) %>% 
     select(-unique_key, -city, -park_borough, -agency, -agency_name, -descriptor, -incident_zip, -incident_address, -street_name, -cross_street_1, -cross_street_2, -intersection_street_1, -intersection_street_2, -landmark, -facility_type, -resolution_description, -resolution_action_updated_date, -bbl, -x_coordinate_state_plane, -y_coordinate_state_plane, -open_data_channel_type, -park_facility_name, -vehicle_type, -taxi_company_borough, -taxi_pick_up_location, -bridge_highway_name, -bridge_highway_direction, -bridge_highway_segment, -latitude, -longitude, -location, -road_ramp, -location_type, -address_type, -map_id)
+
+
+# for days to close calculation:
+
+nyc_plots %>%
+    filter(status == "Closed") %>% 
+    mutate(closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)) %>% 
+    filter(closed_year != 2047) %>% 
+    mutate(diff_year = abs(closed_year - created_year),
+        diff_month = abs(closed_month - created_month),
+        diff_day = abs(closed_day - created_day),
+        diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day))
 ```
+
+    ## # A tibble: 479,689 x 34
+    ## # Groups:   area_name, created_year [300]
+    ##    created_month created_day created_year created_time closed_month closed_day
+    ##            <dbl>       <dbl>        <dbl> <time>              <dbl>      <dbl>
+    ##  1             6          18         2016 06:42:00                6         23
+    ##  2            10          18         2017 04:15:02               10         18
+    ##  3            11           7         2018 07:39:00               11          9
+    ##  4            10           3         2015 11:28:42               10         20
+    ##  5            11          27         2015 10:58:11               11         27
+    ##  6             4          10         2014 12:00:00                4         25
+    ##  7             8          30         2016 11:06:20                9         15
+    ##  8            11           1         2014 02:41:40               11          1
+    ##  9             3           8         2016 10:06:05                3          8
+    ## 10             5          14         2016 08:36:23                5         14
+    ## # … with 479,679 more rows, and 28 more variables: closed_year <dbl>,
+    ## #   closed_time <chr>, complaint_type <fct>, status <fct>, due_date <chr>,
+    ## #   community_board <chr>, borough <fct>, open_complaint <dbl>,
+    ## #   complaint_simp <fct>, health_complaint <dbl>, open_health_complaint <dbl>,
+    ## #   area_name <chr>, median_income <dbl>, per_black_nh <dbl>,
+    ## #   per_white_nh <dbl>, per_hisp <dbl>, per_other <dbl>,
+    ## #   total_population <dbl>, inc_1000s <dbl>, income_bracket <fct>,
+    ## #   number_complaints <int>, num_unsolved <dbl>, num_health_complaint <dbl>,
+    ## #   num_open_health <dbl>, diff_year <dbl>, diff_month <dbl>, diff_day <dbl>,
+    ## #   diff_dayt <dbl>
 
 The newly combined dataframe was grouped according to `area_name`, a key
 variable from the population characteristics dataset that provides the
@@ -255,48 +296,154 @@ Newly added variables include:
 4.  `num_open_health` - total number of open/unresolved health
     complaints within the neighborhood the complaint was filed.
 
-# Function for calculating days until complaint resolution
-
-NEED THIS???
-
 # Plots
 
-## Total number of complaints
-
-Proportion complaints broken down by income bracket and then by income
-brakcet and borough:
+#### Total number of complaints by income bracket
 
 ``` r
-nyc_plots %>% 
-    filter(!is.na(income_bracket)) %>% 
-    group_by(income_bracket) %>% 
-    summarize(n = n(),
-              proportion = n/nrow(nyc_plots)) %>% 
-    ggplot(aes(x = income_bracket, y = proportion)) +
-    geom_col() +
-    ylab("Proportion of Total Complaints") +
-    ggtitle("Relative Number of Complaints Filed from Each Income Bracket")
-```
+# nyc_plots %>% 
+#     filter(!is.na(income_bracket)) %>% 
+#     group_by(income_bracket) %>% 
+#     summarize(n = n(),
+#               proportion = n/nrow(nyc_plots)) %>% 
+#     ggplot(aes(x = income_bracket, y = proportion)) +
+#     geom_col() +
+#     ylab("Proportion of Total Complaints") +
+#     ggtitle("Relative Number of Complaints Filed from Each Income Bracket")
 
-![](descript_stats_plots_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
-
-``` r
 nyc_plots %>% 
     filter(!is.na(income_bracket)) %>% 
     group_by(income_bracket, borough) %>% 
     summarize(n = n(),
               proportion = n/nrow(nyc_plots)) %>% 
-    ggplot(aes(x = income_bracket, y = proportion)) +
+    ggplot(aes(x = income_bracket, y = proportion, fill = income_bracket)) +
     geom_col() +
-    ylab("Proportion of Total Complaints") +
-    facet_wrap(~borough, scales = "free_x")
+    ylab("Proportion") +
+    xlab("Income Bracket") +
+    ggtitle("Proportion of Total Complaints from Each Income Bracket") +
+    facet_wrap(~borough, scales = "free_x") +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1))
 ```
 
-![](descript_stats_plots_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->
+![](descript_stats_plots_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 Middle class income groups proportionally file the most complaints
 across all income brackets. The only exception is the Bronx, in which
 the proportion of 311 complaints is higher in the lowest income group.
+
+#### Proportion of unsolved cases by income bracket
+
+Proportion open:
+
+``` r
+p <- nyc_plots %>% 
+    filter(!is.na(income_bracket)) %>% 
+    group_by(income_bracket, borough, open_complaint) %>% 
+    summarize(n = n()) %>% 
+    pivot_wider(names_from = open_complaint, values_from = n) %>% 
+    rename(closed = '0',
+           open = '1')
+
+p %>% mutate(proportion = (open/closed)) %>% 
+    ggplot(aes(x = income_bracket, y = proportion, fill = income_bracket)) +
+    geom_col() +
+    facet_wrap(~borough, scales = "free_x") +
+    ggtitle("Proportion of Open Cases Within Each Income Bracket") +
+    xlab("Income Bracket") +
+    ylab("Proportion Open") +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1))
+```
+
+![](descript_stats_plots_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+#### Total Health related complaints broken down by income bracket
+
+``` r
+nyc_plots %>% 
+    filter(!is.na(income_bracket)) %>% 
+    group_by(income_bracket, borough, health_complaint) %>% 
+    summarize(n = n(),
+              proportion = n/nrow(nyc_plots)) %>% 
+    ggplot(aes(x = income_bracket, y = proportion, fill = income_bracket)) +
+    geom_col() +
+    ylab("Proportion") +
+    xlab("Income Bracket") +
+    ggtitle("Proportion of Total Complaints from Each Income Bracket") +
+    facet_wrap(~borough, scales = "free_x") +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1))
+```
+
+![](descript_stats_plots_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+#### Proportion Health related complaints open broken down by income bracket:
+
+``` r
+h <- nyc_plots %>% 
+    filter(!is.na(income_bracket),
+           health_complaint == 1) %>% 
+    group_by(income_bracket, borough, open_complaint) %>% 
+    summarize(n = n()) %>% 
+    pivot_wider(names_from = open_complaint, values_from = n) %>% 
+    rename(closed = '0',
+           open = '1')
+
+h %>% mutate(proportion = (open/closed)) %>% 
+    ggplot(aes(x = income_bracket, y = proportion, fill = income_bracket)) +
+    geom_col() +
+    facet_wrap(~borough, scales = "free_x") +
+    ggtitle("Proportion of Health Related Open Cases Within Each Income Bracket") +
+    xlab("Income Bracket") +
+    ylab("Proportion Open") +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1))
+```
+
+    ## Warning: Removed 1 rows containing missing values (position_stack).
+
+![](descript_stats_plots_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+#### Median income of each complaint category:
+
+``` r
+nyc_plots %>% 
+    filter(!is.na(median_income),
+           !is.na(complaint_simp)) %>% 
+    mutate(complaint_simp = fct_reorder(complaint_simp, median_income)) %>% 
+    ggplot(aes(x = complaint_simp, 
+               y = (median_income/1000), 
+               fill = complaint_simp)) +
+    geom_boxplot() +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1),
+          legend.position = "none") +
+    scale_y_continuous(breaks = scales::pretty_breaks(n = 10)) +
+    ylab("Median Income (thousands)") +
+    xlab("Complaint Category") +
+    ggtitle("Median Income of Community District where Complaint Category Occurs")
+```
+
+![](descript_stats_plots_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+``` r
+# open cases:
+
+nyc_plots %>% 
+    filter(!is.na(median_income),
+           !is.na(complaint_simp),
+           open_complaint == 1) %>% 
+    ggplot(aes(x = complaint_simp, 
+               y = (median_income/1000), 
+               fill = complaint_simp)) +
+    geom_boxplot() +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1),
+          legend.position = "none") +
+    scale_y_continuous(breaks = scales::pretty_breaks(n = 10)) +
+    ylab("Median Income (thousands)") +
+    xlab("Complaint Category") +
+    ggtitle("Median Income of Community District where Open Complaint Category Occurs")
+```
+
+![](descript_stats_plots_files/figure-gfm/unnamed-chunk-8-2.png)<!-- -->
+
+#### Not to be included:
 
 Total complaints within each neighborhood of each borough:
 
@@ -314,28 +461,138 @@ nyc_plots %>%
     facet_wrap(~borough, scales = "free_x")
 ```
 
-![](descript_stats_plots_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
-
-Total number of `complaint_simp` broken down by each borough and income
-bracket:
-
-Should I change this to median number?
+![](descript_stats_plots_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 ``` r
 nyc_plots %>% 
-    filter(!is.na(income_bracket),
-           !is.na(complaint_simp)) %>% 
-    group_by(income_bracket, borough, complaint_simp) %>% 
-    summarize(n = n(),
-              proportion = n/nrow(nyc_plots)) %>% 
-    ggplot(aes(x = income_bracket, y = proportion, fill = complaint_simp)) +
+    filter(!is.na(community_board)) %>% 
+    group_by(community_board, borough) %>% 
+    summarize(n = n()) %>% 
+    filter(n > 100) %>% 
+    ggplot(aes(x = community_board, y = n)) +
     geom_col() +
+    ylab("Total Complaints") +
+    xlab("Community Board") +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    ggtitle("Complaints by Community Board") +
+    facet_wrap(~borough, scales = "free_x")
+```
+
+![](descript_stats_plots_files/figure-gfm/unnamed-chunk-9-2.png)<!-- -->
+
+other med income plot:
+
+``` r
+# 
+# nyc_plots %>% 
+#     filter(!is.na(income_bracket),
+#            !is.na(complaint_simp)) %>% 
+#     group_by(income_bracket, borough, complaint_simp) %>% 
+#     summarize(n = n()) %>% 
+#     mutate(proportion = n/nrow(nyc_plots)) %>% 
+#     arrange(income_bracket, proportion) %>% 
+#     mutate(order = row_number()) %>% 
+#     group_by(complaint_simp) %>% 
+#     ggplot(aes(x = complaint_simp, y = proportion, fill = complaint_simp)) +
+#     geom_col() +
+#     facet_wrap(~income_bracket, scales = "free_x", ncol = 5) +
+#     theme(axis.text.x = element_text(angle = 75, hjust = 1))
+# 
+
+# 
+#            complaint_simp = fct_reorder(complaint_simp, 
+#                                         proportion, 
+#                                         .desc = TRUE)) %>% 
+```
+
+density plot of number of days to close by income group or pop
+proportions?
+
+``` r
+nyc_plots %>%
+    filter(status == "Closed") %>% 
+    mutate(closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)) %>% 
+    filter(closed_year != 2047) %>% 
+    mutate(diff_year = abs(closed_year - created_year),
+        diff_month = abs(closed_month - created_month),
+        diff_day = abs(closed_day - created_day),
+        diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day)) %>% 
+    select(income_bracket,
+           median_income,
+           borough, 
+           diff_dayt,
+           diff_year,
+           diff_month,
+           diff_day) %>% 
+    filter(diff_dayt < 10,
+           !is.na(income_bracket)) %>% 
+    group_by(borough, income_bracket, diff_dayt) %>% 
+    summarize(n = n()) %>% 
+    ggplot(aes(x = diff_dayt, y = n, group = income_bracket, color = income_bracket)) + 
+    geom_line() +
     facet_wrap(~borough)
 ```
 
-![](descript_stats_plots_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+    ## Adding missing grouping variables: `area_name`, `created_year`
 
-# Proportion of unsolved cases by income bracket
+![](descript_stats_plots_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+``` r
+# sum total of income by borough
+# 
+# nyc_plots %>%
+#     filter(status == "Closed") %>% 
+#     mutate(closed_year = as.numeric(closed_year),
+#         closed_month = as.numeric(closed_month),
+#         closed_day = as.numeric(closed_day)) %>% 
+#     filter(closed_year != 2047) %>% 
+#     mutate(diff_year = abs(closed_year - created_year),
+#         diff_month = abs(closed_month - created_month),
+#         diff_day = abs(closed_day - created_day),
+#         diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day)) %>% 
+#     select(per_black_nh:per_other,
+#            area_name,
+#            created_year,
+#            borough, 
+#            diff_dayt) %>% 
+#     filter(diff_dayt < 10) %>%
+#     pivot_longer(cols = per_black_nh:per_other, names_to = "race", values_to = "percent_pop") %>% 
+#     filter(!is.na(race),
+#            !is.na(percent_pop),
+#            !is.na(diff_dayt)) %>%
+#     ggplot(aes(x = race, y = diff_dayt, color = race)) +
+#     geom_boxplot()
+# 
+#     
+# d <- nyc_plots %>% 
+#     filter(status == "Closed") %>% 
+#     mutate(closed_year = as.numeric(closed_year),
+#         closed_month = as.numeric(closed_month),
+#         closed_day = as.numeric(closed_day)) %>% 
+#     filter(closed_year != 2047) %>% 
+#     mutate(diff_year = abs(closed_year - created_year),
+#         diff_month = abs(closed_month - created_month),
+#         diff_day = abs(closed_day - created_day),
+#         diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day)) %>% 
+#     select(per_black_nh:per_other, diff_dayt, borough, area_name, created_year) %>% 
+#     pivot_longer(cols = per_black_nh:per_other, names_to = "race", values_to = "percent_pop") %>% 
+#     filter(!is.na(race),
+#            !is.na(percent_pop),
+#            !is.na(diff_dayt)) %>% 
+#     group_by(race, borough, percent_pop, diff_dayt) %>% 
+#     summarize(n = n())
+#     
+# 
+# d %>% ggplot(aes(x = percent_pop, y = diff_dayt, group = race, color = race)) +
+#     geom_line() +
+#     facet_wrap(~borough)
+```
+
+# Final Plots:
+
+## Proportion of unsolved cases by income bracket
 
 ``` r
 p <- nyc_plots %>% 
@@ -346,16 +603,189 @@ p <- nyc_plots %>%
     rename(closed = '0',
            open = '1')
 
-p %>% mutate(proportion = (open/closed)) %>% 
-    ggplot(aes(x = income_bracket, y = proportion)) +
+p %>% mutate(proportion = (open/(open + closed))) %>% 
+    ggplot(aes(x = income_bracket, y = proportion, fill = income_bracket)) +
     geom_col() +
     facet_wrap(~borough, scales = "free_x") +
-    ggtitle("Proportion of Open Cases Within Each Income Bracket")
+    ggtitle("Proportion of Open Cases Within Each Income Bracket") +
+    xlab("Income Bracket") +
+    ylab("Proportion Open") +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    scale_fill_viridis(discrete = TRUE) +
+    labs(fill = "Income Bracket")
 ```
 
-![](descript_stats_plots_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](descript_stats_plots_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
-  - number unsolved (open) cases versus income bracket - look at health
-    complaints.
-  - number of unsolved (open) cases within each neighborhood with color
-    representing proportion black, hispanic
+## Proportion of health related complaints by each income category:
+
+``` r
+h <- nyc_plots %>% 
+    filter(!is.na(income_bracket)) %>% 
+    group_by(income_bracket, borough, health_complaint) %>% 
+    summarize(n = n()) %>% 
+    pivot_wider(names_from = health_complaint, values_from = n) %>% 
+    rename(other = '0',
+           health_related = '1')
+
+h %>% mutate(proportion = (health_related/(health_related + other))) %>% 
+    ggplot(aes(x = income_bracket, y = proportion, fill = income_bracket)) +
+    geom_col() +
+    facet_wrap(~borough, scales = "free_x") +
+    ggtitle("Proportion of Health Related Complaints Within Each Income Bracket") +
+    xlab("Income Bracket") +
+    ylab("Proportion Health Related") +
+    labs(fill = "Income Bracket") +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    scale_fill_viridis(discrete = TRUE)
+```
+
+![](descript_stats_plots_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
+## Median income of each complaint category:
+
+``` r
+nyc_plots %>% 
+    filter(!is.na(median_income),
+           !is.na(complaint_simp)) %>% 
+    # mutate(complaint_simp = fct_reorder(complaint_simp, median_income)) %>%
+    ggplot(aes(x = complaint_simp, 
+               y = (median_income/1000), 
+               fill = complaint_simp)) +
+    geom_boxplot() +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1),
+          legend.position = "none") +
+    scale_y_continuous(breaks = scales::pretty_breaks(n = 10)) +
+    ylab("Median Income (thousands)") +
+    xlab("Complaint Category") +
+    ggtitle("Median Income of Community District where Complaint Category Occurs") +
+    scale_fill_viridis(discrete = TRUE)
+```
+
+![](descript_stats_plots_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+## plot of percent race plotted against proportion open:
+
+``` r
+r <- nyc_plots %>% 
+    pivot_longer(cols = per_black_nh:per_other, names_to = "race", values_to = "percent_pop") %>% 
+    filter(!is.na(race),
+           !is.na(percent_pop)) %>% 
+    group_by(race, borough, percent_pop, open_complaint) %>% 
+    summarize(n = n()) %>% 
+    pivot_wider(names_from = open_complaint, values_from = n) %>% 
+    rename(closed = '0',
+           open = '1')
+
+r %>% mutate(proportion = (open/(open + closed))) %>% 
+    ggplot(aes(x = percent_pop, y = proportion, color = race)) +
+    geom_point() +
+    geom_smooth(se = FALSE) +
+    xlab("Percentage of Community District Population") +
+    ylab("Proportion Open") +
+    ggtitle("Unresolved Complaints as a Function of Neighborhood Population") +
+    scale_color_viridis(name = "Race", labels = c("Black", "Hispanic", "Other", "White"), discrete = TRUE)
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+![](descript_stats_plots_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+
+## days to close given income level
+
+``` r
+d <- nyc_plots %>%
+    filter(status == "Closed") %>% 
+    mutate(closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)) %>% 
+    filter(closed_year != 2047) %>% 
+    mutate(diff_year = abs(closed_year - created_year),
+        diff_month = abs(closed_month - created_month),
+        diff_day = abs(closed_day - created_day),
+        diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day)) %>% 
+    select(income_bracket,
+           median_income,
+           borough, 
+           diff_dayt,
+           diff_year,
+           diff_month,
+           diff_day) %>% 
+    filter(diff_dayt <= 7,
+           !is.na(income_bracket)) %>% 
+    group_by(borough, income_bracket, diff_dayt) %>% 
+    summarize(n = n()) %>% 
+    pivot_wider(names_from = diff_dayt, values_from = n) %>% 
+    rename(day0 = `0`,
+           day1 = `1`,
+           day2 = `2`,
+           day3 = `3`,
+           day4 = `4`,
+           day5 = `5`,
+           day6 = `6`,
+           day7 = `7`)
+```
+
+    ## Adding missing grouping variables: `area_name`, `created_year`
+
+``` r
+d$total <- d %>% 
+    ungroup() %>% 
+    select(starts_with("day")) %>% 
+    rowSums(.)
+
+d %>% 
+    pivot_longer(cols = day0:day7, names_to = "day", values_to = "day_total") %>% 
+    mutate(day = recode(day, day0 = 0, day1 = 1, day2 = 2, day3 = 3, day4 = 4, day5 = 5, day6 = 6, day7 = 7),
+           proportion = day_total/total) %>% 
+    ggplot(aes(x = day, y = proportion, group = income_bracket, color = income_bracket)) + 
+    geom_line() +
+    facet_wrap(~borough, scales = "free_x") +
+    scale_x_continuous(breaks = scales::pretty_breaks(n = 7)) +
+    scale_color_viridis(discrete = TRUE) +
+    xlab("Days until Complaint Closed") +
+    ylab("Proportion Complaints Closed") +
+    ggtitle("Proportion of Complaints Closed Since Complaint Filed") +
+    labs(color = "Income Bracket")
+```
+
+![](descript_stats_plots_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+
+not sure if the above plot is more informative, alternative plot:
+
+``` r
+nyc_plots %>%
+    filter(status == "Closed") %>% 
+    mutate(closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)) %>% 
+    filter(closed_year != 2047) %>% 
+    mutate(diff_year = abs(closed_year - created_year),
+        diff_month = abs(closed_month - created_month),
+        diff_day = abs(closed_day - created_day),
+        diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day)) %>% 
+    select(income_bracket,
+           median_income,
+           borough, 
+           diff_dayt,
+           diff_year,
+           diff_month,
+           diff_day) %>% 
+    filter(diff_dayt <= 7,
+           !is.na(income_bracket)) %>% 
+    group_by(borough, income_bracket, diff_dayt) %>% 
+    summarize(n = n()) %>% 
+    ggplot(aes(x = diff_dayt, y = n, group = income_bracket, color = income_bracket)) + 
+    geom_line() +
+    facet_wrap(~borough, scales = "free_x") +
+    scale_x_continuous(breaks = scales::pretty_breaks(n = 7)) +
+    scale_color_viridis(discrete = TRUE) +
+    xlab("Days until Complaint Closed") +
+    ylab("Total Complaints Closed") +
+    ggtitle("Number of Complaints Closed Since Complaint Filed") +
+    labs(color = "Income Bracket")
+```
+
+    ## Adding missing grouping variables: `area_name`, `created_year`
+
+![](descript_stats_plots_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->

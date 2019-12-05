@@ -10,10 +10,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Ava Hamilton" />
 
 
-<title>regression_analysis</title>
+<title>regression_analysis.utf8</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -280,6 +279,15 @@ $(document).ready(function () {
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="descript_stats_plots.html">Descriptive Statistics Plots</a>
+</li>
+<li>
+  <a href="regression_analysis.html">Regression Analysis</a>
+</li>
+<li>
+  <a href="map_visual.html">Visualizations</a>
+</li>
+<li>
   <a href="mailto:&lt;jpb2210@cumc.columbia.edu&gt;">
     <span class="fa fa-envelope fa-lg"></span>
      
@@ -300,25 +308,24 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">regression_analysis</h1>
-<h4 class="author">Ava Hamilton</h4>
-<h4 class="date">12/1/2019</h4>
+<h1 class="title toc-ignore"><span style='font-size: 25px'>Regression Analysis
+</style></h1>
 
 </div>
 
 
 <div id="read-in-data" class="section level2">
 <h2>read in data</h2>
-<pre class="r"><code>nyc &lt;- read_csv(file = &quot;../p8105nyc_311_100k.csv&quot;) %&gt;% 
+<pre class="r"><code>nyc &lt;- read_csv(file = &quot;./p8105nyc_311_100k.csv&quot;) %&gt;% 
     janitor::clean_names()</code></pre>
 <pre><code>## Warning: 13949 parsing failures.
-##    row                   col           expected                        actual                       file
-## 100085 taxi_pick_up_location 1/0/T/F/TRUE/FALSE WEST   50 STREET AND BROADWAY &#39;../p8105nyc_311_100k.csv&#39;
-## 100150 taxi_pick_up_location 1/0/T/F/TRUE/FALSE JFK Airport                   &#39;../p8105nyc_311_100k.csv&#39;
-## 100172 taxi_pick_up_location 1/0/T/F/TRUE/FALSE 625 EAST 14 STREET MANHATTAN  &#39;../p8105nyc_311_100k.csv&#39;
-## 100215 taxi_pick_up_location 1/0/T/F/TRUE/FALSE Other                         &#39;../p8105nyc_311_100k.csv&#39;
-## 100268 taxi_pick_up_location 1/0/T/F/TRUE/FALSE Other                         &#39;../p8105nyc_311_100k.csv&#39;
-## ...... ..................... .................. ............................. ..........................
+##    row                   col           expected                        actual                      file
+## 100085 taxi_pick_up_location 1/0/T/F/TRUE/FALSE WEST   50 STREET AND BROADWAY &#39;./p8105nyc_311_100k.csv&#39;
+## 100150 taxi_pick_up_location 1/0/T/F/TRUE/FALSE JFK Airport                   &#39;./p8105nyc_311_100k.csv&#39;
+## 100172 taxi_pick_up_location 1/0/T/F/TRUE/FALSE 625 EAST 14 STREET MANHATTAN  &#39;./p8105nyc_311_100k.csv&#39;
+## 100215 taxi_pick_up_location 1/0/T/F/TRUE/FALSE Other                         &#39;./p8105nyc_311_100k.csv&#39;
+## 100268 taxi_pick_up_location 1/0/T/F/TRUE/FALSE Other                         &#39;./p8105nyc_311_100k.csv&#39;
+## ...... ..................... .................. ............................. .........................
 ## See problems(...) for more details.</code></pre>
 <pre class="r"><code>nyc_tidy &lt;- nyc %&gt;%   
     filter(borough != &quot;Unspecified&quot;) %&gt;% 
@@ -421,8 +428,8 @@ $(document).ready(function () {
         # openCorr = ifelse(status == &quot;Closed&quot;, yes = 0, no = 1),
         status = as.factor(status)
     )</code></pre>
-<pre><code>## Warning: Expected 2 pieces. Additional pieces discarded in 489924 rows [1,
-## 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, ...].</code></pre>
+<pre><code>## Warning: Expected 2 pieces. Additional pieces discarded in 489924 rows [1, 2, 3,
+## 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, ...].</code></pre>
 <p>Adding community district data</p>
 <pre class="r"><code>inc_df = read_csv(&quot;./Med_income_2017.csv&quot;) %&gt;% 
     janitor::clean_names() %&gt;% 
@@ -450,8 +457,8 @@ add_inc = left_join(nyc_tidy, inc_df, by = &quot;community_board&quot;) %&gt;%
     mutate(
         year_fac = as.factor(created_year)
     )</code></pre>
-<pre><code>## Warning: Column `community_board` joining factor and character vector,
-## coercing into character vector</code></pre>
+<pre><code>## Warning: Column `community_board` joining factor and character vector, coercing
+## into character vector</code></pre>
 <div id="aggregating-data-to-community-district-and-year-level" class="section level3">
 <h3>Aggregating data to community district and year level</h3>
 <p>To examine the effect of community district level variables on total number of complaints we must first aggregate to the community district level. We are also interested in how year effects the number of complaints in each district so we group by year as well to produce complaint totals for each year and community district.</p>
@@ -1433,7 +1440,7 @@ plot(nom_comp_h_SI, which = 1, main = &quot;Staten Island
 <p><img src="regression_analysis_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 <p><em>Comments:</em></p>
 <p>Complaints were determined to be health related if they were about heat, hot water, sanitary conditions, poor air quality, or hazardous materials.</p>
-<p>In Manhattan and Queens we see significant effecte on total number of health related complaints by median income of the CD. On average, or each $1000 increase in median income we see -2 more health-related complaints in Manhattan 3 <em><em>fewer</em></em> health-related complaints in Queens.</p>
+<p>In Manhattan and Queens we see a significant effect on total number of health related complaints by median income of the CD. On average, for each $1000 increase in median income we see -2 more health-related complaints in Manhattan 3 <em><em>fewer</em></em> health-related complaints in Queens.</p>
 <p>Based on the adjusted R-squared values, number of health related complaints in a CD range from 56.84% in Brooklyn to 97.01% in Staten Island predicted by this combination of variables. The plots of the residuals indicate that future analyses should increase or adjust the predictors to better fit the data.</p>
 </div>
 </div>
@@ -1863,14 +1870,18 @@ plot(nom_unres_SI, which = 1, main = &quot;Staten Island
 &quot;)</code></pre>
 <p><img src="regression_analysis_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
 <p><em>Comments:</em></p>
+<p>A complaint was labeled unresolved if its status was not labeled as “closed”. For all boroughs but Staten Island, year is, on average, a significant predictor if number of unresolved complaints for each CD.</p>
+<p>In Brooklyn and Queens we see significant effect on total number of unresolved complaints by the percent non-Hispanic Black population. On average, we see 0 and 0 more unresolved complaints for each additonal 5% increase in non-Hispanic Black population in Brooklyn and Queens respectively.</p>
+<p>Based on the adjusted R-squared values, number of unresolved complaints in a CD range from 16.48% in Staten Island to 67.58% in The Bronx predicted by this combination of variables. The plots of the residuals indicate that future analyses should increase or adjust the predictors to better fit the data.</p>
 </div>
 </div>
 </div>
 <div id="discussion" class="section level2">
 <h2>Discussion</h2>
-<p>NYC takes in</p>
-<p>Based on our descriptive figures, mapped data, and linear models of NYC 311 complaint data, we see that there are a few key factors that play into how types of complaints are dispersed across the city. XX complaints a year,</p>
-<p>With XX 311 complaints coming in everyday, a majority of which are closed same day, and 66.5% closed within the week, it is interesting to look into where the open complaints remain.</p>
+<p>Between 2014 and 2018, approximately 22 million 311 complaints were made across the 5 boroughs in NYC. We were interested in how complaints differ by borough and community district. Based on our descriptive figures, mapped data, and linear models of NYC 311 complaint data, we see that there are a few key factors that play into how types of complaints are dispersed across the city.</p>
+<p>With approximately 5000 311 complaints made everyday, a majority of which close within the week (66%), it is interesting to look into where the open complaints remain. We see that in four out of the five boroughs, race has an impact on number of unresolved complaints, where an increase in non-Hispanic Black population predicts an increase in number of unresolved complaints. In Manhattan we see the opposite effect, where an increase in non-Hispanic Black population predicts a decrease in number of unresolved complaints.</p>
+<p>As the income disparity in New York City is one of the greatest in the nation, we wanted to see how median household income of a neighborhood also effected complaints. [<a href="https://dailygazette.com/article/2018/07/19/study-finds-n-y-income-disparity-greatest-in-nation" class="uri">https://dailygazette.com/article/2018/07/19/study-finds-n-y-income-disparity-greatest-in-nation</a>]. We found that community districts with higher incomes had different types of complaints than those with lower incomes. By borough we see that in The Bronx, Brooklyn, and Queens, an increase in median income of a community district resulted in a decrease in total health-realted complaints. These areas are less likely to have calls related to water issues, rodents, and hazardous materials including asbestos and lead. What we do see, however, is that areas with higher incomes produce more 311 complaints about the homeless population. It is safe to assume that wealthier areas do not necessarily have more homeless residents, but that a panhandler is seen as more problematic in areas that have a greater density of wealth.</p>
+<p>Ultimately we see that 311 complaints come from all over the city, regardless of community district economic or racial background, and the data is a minefield for answering niche questions about New York City life.</p>
 </div>
 
 
