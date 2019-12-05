@@ -1,16 +1,28 @@
-name: "P8105 - Data Science"
+name: ""
 output_dir: "."
 navbar:
-  title: "Team 4"
+  title: ""
   left:
+<<<<<<< HEAD
+    - text: ""
+      href: 
+    - text: ""
+      href: 
+    - text: ""
+      href: 
+=======
     - text: "Home"
       href: index.html
+  right:
+    - text: "Full Report"
+      href: report.html
     - text: "Statistics"
       href: statistics.html
     - text: "Plots"
       href: plots.html
     - text: "Models"
       href: models.html
+>>>>>>> 64e3fcb461e02ae6f2e87be3fbbc2bd641b209c7
 output:
   html_document:
     theme: sandstone
