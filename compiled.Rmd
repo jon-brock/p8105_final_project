@@ -16,9 +16,144 @@ library(modelr)
 library(mgcv)
 
 ```
-## read in data
+
+
+
+
+
+# Importing and merging 311 data
+
+I downloaded the data from the NYC Open data website filtering for each boorough and time frame 2014 - 2018.  Then I sampled from each dataset, containing 700k - 3 million rows, 100k data points in r, cleaned the `created_date` variable, and checked for equal sampling across the years. 
+
+#### Bronx
+```{r,eval=F}
+
+read_csv("311_bronx.csv")%>%
+    sample_n(100000, replace = F) %>%
+     separate(`Created Date`, into = c("month","day","year"), sep = "\\/" ) %>%
+    separate(year, into = c("year","time"), sep = " ") %>%
+    write_csv(., "bronx_311_100k.csv")
+
+bronx<- read_csv("bronx_311_100k.csv")
+
+table(bronx$year)
+
+
+
+```
+
+#### Brooklyn
+
+```{r,eval=F}
+
+
+read_csv("311_brooklyn.csv") %>%
+    sample_n(100000, replace = F) %>%
+     separate(`Created Date`, into = c("month","day","year"), sep = "\\/" ) %>%
+    separate(year, into = c("year","time"), sep = " ") %>%
+    write_csv(., "brooklyn_311_100k.csv")
+
+brooklyn<- read_csv("brooklyn_311_100k.csv")
+
+table(brooklyn100k$year)
+
+
+
+
+```
+
+#### Manhattan
+```{r,eval=F}
+
+read_csv("311_manhattan.csv") %>%
+    sample_n(100000, replace = F) %>%
+     separate(`Created Date`, into = c("month","day","year"), sep = "\\/" ) %>%
+    separate(year, into = c("year","time"), sep = " ") %>%
+    write_csv(., "manhattan_311_100k.csv")
+
+manhattan<- read_csv("manhattan_311_100k.csv")
+
+table(manhattan$year)
+
+
+
+```
+
+#### Queens
+```{r,eval=F}
+
+
+read_csv("311_queens.csv")%>%
+    sample_n(100000, replace = F) %>%
+     separate(`Created Date`, into = c("month","day","year"), sep = "\\/" ) %>%
+    separate(year, into = c("year","time"), sep = " ") %>%
+    write_csv(., "queens_311_100k")
+
+queens<- read_csv("queens_311_100k")
+
+table(queens$year)
+
+
+
+```
+
+
+#### Staten Island
+
+```{r,eval=F}
+ 
+
+read_csv("311_statenisland.csv")  %>%
+    sample_n(100000, replace = F) %>%
+     separate(`Created Date`, into = c("month","day","year"), sep = "\\/" ) %>%
+    separate(year, into = c("year","time"), sep = " ") %>%
+    write_csv(., "statenisland_311_100k.csv")
+
+statenisland <- read_csv("statenisland_311_100k.csv")
+
+table(statenisland$year)
+
+
+```
+
+#### Unspecified
+```{r,eval=F}
+
+
+read_csv("311_unspecified.csv")  %>%
+    sample_n(100000, replace = F) %>%
+     separate(`Created Date`, into = c("month","day","year"), sep = "\\/" ) %>%
+    separate(year, into = c("year","time"), sep = " ") %>%
+    write_csv(.,"unspecified_311_100k")
+
+unspec <- read_csv("unspecified_311_100k")
+
+head(unspec)
+
+table(unspec$year)
+
+
+```
+
+Combinging all the datasets of 100k data points.
+```{r, eval=F}
+rbind(brooklyn, manhattan, queens, bronx, statenisland, unspec) %>%
+    rename(created_year = "year" , created_day = "day",created_month = "month",created_time = "time") %>%
+    janitor::clean_names() %>%
+   # write_csv(., "p8105nyc_311_100k.csv")
+```
+
+
+
+## NYC 311
+
+Load and tidy the data. Data is 100k randomly sampled complaints from all neighborhoods across all NYC boroughs (600k total samples). Years sampled were 2014-2018.
+
+Data downloaded from:
+https://wetransfer.com/downloads/f8c5d6c17483e279ff56018db9c44cc420191201000026/c5f48b
+
 ```{r message = FALSE}
-nyc <- read_csv(file = "./p8105nyc_311_100k.csv") %>% 
+nyc <- read_csv(file = "../p8105nyc_311_100k.csv") %>% 
     janitor::clean_names()
 
 nyc_tidy <- nyc %>%   
@@ -126,7 +261,25 @@ nyc_tidy <- nyc %>%
 
 ```
 
-Adding community district data
+
+Used skimr::skim, colnames, and levels(factor(nyc$complaint_type)) to investigate and tidy the data. New variables were created to establish a binary status for closed (0) or open (1) complaints.
+
+Key variables include: `year`, `borough`, `community_board`, `complaint_type`, and `status`.
+
+Newly added variables include:
+
+1. `complaint_simp` - based on key words, condenses complaint types into the following categories: Air Quality, Car/Traffic, Collection, Hazard Material, Heat, Homeless, Maintenance, Noise, Paint/Plaster, Sanitation, Street Condition, Tree, and Water/plumbing.
+
+2. `health_complaint` - binary yes (1) or no (0), based on health associated categories within `complaint_simp`.
+
+3. `open_health_complaint` - binary categorization, either health complaint that is open (1), or non-health related complaint or closed health complaint (0).
+
+4. `open_complaint` - binary categorization, closed `status` (0), open (1)
+
+## Income and population characteristics data:
+
+The variable, `community_board`, will be used to left join NYC 311 data with income and population characteristics data sourced from American Community Survey by Community District.
+
 ```{r message = FALSE}
 
 inc_df = read_csv("./Med_income_2017.csv") %>% 
