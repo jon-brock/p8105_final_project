@@ -9,8 +9,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(tidyverse)
-library(tseries)
-library(forecast)
+#install.packages("arsenal")
+library(arsenal)
+
 ```
 
 ```{r}
@@ -184,12 +185,11 @@ A complaint was labeled unresolved if its status was not labeled as "closed". Th
 add_inc %>%
     filter(status == "Closed") %>% 
 ### Aggregating data to community district and year level
-
+```
 To examine the effect of community district level variables on total number of complaints we must first aggregate to the community district level. We are also interested in how year effects the number of complaints in each district so we group by year as well to produce complaint totals for each year and community district.
 
 Once we have complaint totals, we do not want individual complaint information anymore. We select distinct year * community district observations. 
 
-```
 
 
 ```{r message = FALSE}
@@ -376,4 +376,33 @@ A complaint was labeled unresolved if its status was not labeled as "closed". Th
 On average, for each additional year we see `r round(pull((summary(num_unsolved_model_year)  %>% broom::tidy()) %>% filter(term == "created_year"),estimate),0)` more unresolved complaints in each community district. The Bronx, Queens, and Staten Island CDs had `r round(pull((summary(num_unsolved_model_year)  %>% broom::tidy()) %>% filter(term == "boroughBRONX"),estimate),0)`, `r round(pull((summary(num_unsolved_model_year)  %>% broom::tidy()) %>% filter(term == "boroughQUEENS"),estimate),0)`, and `r round(pull((summary(num_unsolved_model_year)  %>% broom::tidy()) %>% filter(term == "boroughSTATEN ISLAND"),estimate),0)`, more unresolved complaints than manhattan CDs on average, respectively.
 
 Based on the adjusted R-squared value,  number of unresolved complaints in a CD are `r 100*round(pull((summary(num_unsolved_model_year) %>% broom::glance()),adj.r.squared),4)`% predicted by this combination of variables. Residuals appear to follow a normal distribution.
+
+
+```{r}
+
+#data with days to close information
+nyc_data <-add_inc %>% 
+ filter(status == "Closed" ) %>% 
+    mutate(
+        closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)
+    ) %>% 
+    mutate(
+        diff_year = abs(closed_year - created_year),
+        diff_month = abs(closed_month - created_month),
+        diff_day = abs(closed_day - created_day),
+        diff_dayt = abs( diff_year*365 + diff_month*30 + diff_day )
+       # diff_dayt = as.factor(diff_dayt)
+    )
+
+nyc_data %>% head()
+
+
+
+```
+
+```{r}
+
+```
 
