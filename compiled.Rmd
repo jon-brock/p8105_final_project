@@ -16,7 +16,8 @@ library(modelr)
 library(mgcv)
 
 ```
-## read in data
+
+#### Reading in and tidying first dataset with NYC 311 complaint data 
 ```{r message = FALSE}
 nyc <- read_csv(file = "./p8105nyc_311_100k.csv") %>% 
     janitor::clean_names()
@@ -126,7 +127,7 @@ nyc_tidy <- nyc %>%
 
 ```
 
-Adding community district data
+#### Reading in and tidying second dataset with community district data
 ```{r message = FALSE}
 
 inc_df = read_csv("./Med_income_2017.csv") %>% 
@@ -158,3 +159,5 @@ add_inc = left_join(nyc_tidy, inc_df, by = "community_board") %>%
 
 
 ```
+
+
