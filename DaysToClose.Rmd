@@ -132,14 +132,19 @@ Adding community district data
 inc_df = read_csv("./Med_income_2017.csv") %>% 
     janitor::clean_names() %>% 
     mutate(
-       # pop_1000s = round(total_population/1000, 0),
+        pop_1000s = round(total_population/1000, 0),
         inc_1000s = round(median_income/1000, 1),
         income_bracket = case_when(
-            median_income < 30000 ~ "> 30k",
-            median_income >= 30000 & median_income < 49999 ~ "30 to 49k",
-            median_income >= 50000 & median_income < 99000 ~ "50 to < 99k",
-            median_income > 100000 & median_income <= 349999 ~ "100 -349k",
-            median_income > 350000~ "350k+"
+            median_income >= 20000 & median_income <= 30000 ~ "20k-30k",
+            median_income > 30000 & median_income <= 40000 ~ "30-40k",
+            median_income > 40000 & median_income <= 50000 ~ "40-50k",
+            median_income > 50000 & median_income <= 60000 ~ "50-60k",
+            median_income > 60000 & median_income <= 70000 ~ "60-70k",
+            median_income > 70000 & median_income <= 80000 ~ "70-80k",
+            median_income > 80000 & median_income <= 90000 ~ "80-90k",
+            median_income > 90000 & median_income <= 100000 ~ "90-100k",
+            median_income > 100000 & median_income <= 125000 ~ "100-125k",
+            median_income > 125000 & median_income <= 150000 ~ "125k+",
         ),
         income_bracket = as.factor(income_bracket)
     )
@@ -160,8 +165,7 @@ add_inc = left_join(nyc_tidy, inc_df, by = "community_board") %>%
 
 #data with days to close information
 nyc_data <- add_inc %>% 
- filter(status == "Closed",
-        closed_year <= 2018) %>% 
+ filter(status == "Closed" & closed_year <= 2018) %>% 
     mutate(
         closed_year = as.numeric(closed_year),
         closed_month = as.numeric(closed_month),
@@ -174,17 +178,32 @@ nyc_data <- add_inc %>%
         diff_dayt =  diff_year*365 + diff_month*30 + diff_day
        # diff_dayt = as.factor(diff_dayt)
   ) %>% 
+  mutate(
+    status = as.character(status)
+  ) %>% 
   drop_na(closed_year)
   
 ```
 
 
-```{r, results="asis}
-nyc_data %>% head()
+```{r, results="asis" }
 
-tab1<- tableby(created_year ~ diff_dayt +status + borough + complaint_simp, data = nyc_data)
+mycontrols  <- tableby.control(test=F, total=T,
+                               cat.simplify = F,
+                               numeric.stats=c("N", "median", "q1q3"),
+                               cat.stats=c("countpct"),
+                               stats.labels=list(N='Count', median='Median', q1q3='Q1,Q3'),
+                               digits = 1)
 
-summary(tab1)
+tab_clo<- tableby(created_year ~ diff_dayt + status  + borough, data = nyc_data, control = mycontrols)
+
+tab_inc<- tableby(created_year ~ income_bracket, data = nyc_data, control = mycontrols)
+
+tab_comp <- tableby(created_year ~ complaint_simp, data = nyc_data, control = mycontrols)
+
+summary(tab_clo, title = "NYC 311 Complaints Demographics ")
+summary(tab_inc, title = "NYC 311 Complaints Demographics ")
+summary(tab_comp, title = "NYC 311 Complaints Demographics ")
 
 
 ```
