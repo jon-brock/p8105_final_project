@@ -20,7 +20,11 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
@@ -247,7 +251,67 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
 
 
 
@@ -257,6 +321,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -279,7 +353,13 @@ $(document).ready(function () {
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="screencast.html">Screencast</a>
+</li>
+<li>
   <a href="descript_stats_plots.html">Descriptive Statistics Plots</a>
+</li>
+<li>
+  <a href="DiscriptiveTabels.html">Descriptive Tables</a>
 </li>
 <li>
   <a href="regression_analysis.html">Regression Analysis</a>
@@ -306,6 +386,14 @@ $(document).ready(function () {
 
 <div class="fluid-row" id="header">
 
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore"><span style='font-size: 25px'>Regression Analysis
@@ -314,20 +402,11 @@ $(document).ready(function () {
 </div>
 
 
-<div id="read-in-data" class="section level2">
-<h2>read in data</h2>
-<pre class="r"><code>nyc &lt;- read_csv(file = &quot;./p8105nyc_311_100k.csv&quot;) %&gt;% 
-    janitor::clean_names()</code></pre>
-<pre><code>## Warning: 13949 parsing failures.
-##    row                   col           expected                        actual                      file
-## 100085 taxi_pick_up_location 1/0/T/F/TRUE/FALSE WEST   50 STREET AND BROADWAY &#39;./p8105nyc_311_100k.csv&#39;
-## 100150 taxi_pick_up_location 1/0/T/F/TRUE/FALSE JFK Airport                   &#39;./p8105nyc_311_100k.csv&#39;
-## 100172 taxi_pick_up_location 1/0/T/F/TRUE/FALSE 625 EAST 14 STREET MANHATTAN  &#39;./p8105nyc_311_100k.csv&#39;
-## 100215 taxi_pick_up_location 1/0/T/F/TRUE/FALSE Other                         &#39;./p8105nyc_311_100k.csv&#39;
-## 100268 taxi_pick_up_location 1/0/T/F/TRUE/FALSE Other                         &#39;./p8105nyc_311_100k.csv&#39;
-## ...... ..................... .................. ............................. .........................
-## See problems(...) for more details.</code></pre>
-<pre class="r"><code>nyc_tidy &lt;- nyc %&gt;%   
+<pre class="r"><code>## Read in data
+nyc &lt;- read_csv(file = &quot;../p8105nyc_311_100k.csv&quot;) %&gt;% 
+    janitor::clean_names()
+
+nyc_tidy &lt;- nyc %&gt;%   
     filter(borough != &quot;Unspecified&quot;) %&gt;% 
     separate(closed_date, 
              into = c(&quot;closed_month&quot;,&quot;closed_day&quot;,&quot;closed_year&quot;), 
@@ -427,11 +506,10 @@ $(document).ready(function () {
         ),
         # openCorr = ifelse(status == &quot;Closed&quot;, yes = 0, no = 1),
         status = as.factor(status)
-    )</code></pre>
-<pre><code>## Warning: Expected 2 pieces. Additional pieces discarded in 489924 rows [1, 2, 3,
-## 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, ...].</code></pre>
-<p>Adding community district data</p>
-<pre class="r"><code>inc_df = read_csv(&quot;./Med_income_2017.csv&quot;) %&gt;% 
+    )
+
+## Adding community district data
+inc_df = read_csv(&quot;./Med_income_2017.csv&quot;) %&gt;% 
     janitor::clean_names() %&gt;% 
     mutate(
         pop_1000s = round(total_population/1000, 0),
@@ -457,10 +535,8 @@ add_inc = left_join(nyc_tidy, inc_df, by = &quot;community_board&quot;) %&gt;%
     mutate(
         year_fac = as.factor(created_year)
     )</code></pre>
-<pre><code>## Warning: Column `community_board` joining factor and character vector, coercing
-## into character vector</code></pre>
-<div id="aggregating-data-to-community-district-and-year-level" class="section level3">
-<h3>Aggregating data to community district and year level</h3>
+<div id="aggregating-data-to-community-district-and-year-level" class="section level2">
+<h2>Aggregating data to community district and year level</h2>
 <p>To examine the effect of community district level variables on total number of complaints we must first aggregate to the community district level. We are also interested in how year effects the number of complaints in each district so we group by year as well to produce complaint totals for each year and community district.</p>
 <p>Once we have complaint totals, we do not want individual complaint information anymore. We select distinct year * community district observations.</p>
 <pre class="r"><code># grouping by community district and year
@@ -501,7 +577,6 @@ queens_distinct = cb_group_year_distinct %&gt;%
 SI_distinct = cb_group_year_distinct %&gt;% 
     filter(borough == &quot;STATEN ISLAND&quot;)</code></pre>
 </div>
-</div>
 <div id="what-neighborhood-characteristics-effect-number-and-type-of-complaints-in-each-community-district" class="section level2">
 <h2>What neighborhood characteristics effect number and type of complaints in each community district?</h2>
 <p>We conducted linear models to examine predictors of number of complaints from 2014-2018 per community district. Our three outcomes were:</p>
@@ -512,10 +587,10 @@ SI_distinct = cb_group_year_distinct %&gt;%
 </ol>
 <p>We looked at these categories of complaints from 2014-2018 predicted by year, and community district level variables including median income (in the 1000s), total population (in the 1000s), percent non-hispanic black and percent Hispanic. For outcomes 1 and 2 we included number of unresolved complaints as a predictor as well.</p>
 <p>As we have equal complaints across borough we startified our analysis to predict number of complaints within each borough.</p>
-<div id="number-of-complaints-by-nyc-community-district" class="section level4">
-<h4>1) Number of complaints by NYC community district:</h4>
-<div id="a-bronx" class="section level5">
-<h5><strong>A) Bronx</strong></h5>
+<div id="number-of-complaints-by-nyc-community-district" class="section level3">
+<h3>1) Number of complaints by NYC community district:</h3>
+<div id="a-bronx" class="section level4">
+<h4><strong>A) Bronx</strong></h4>
 <pre class="r"><code># number of complaints
 options(scipen = 5)
 
@@ -607,8 +682,8 @@ summary(nom_comp_bronx)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre>
 </tbody>
 </table>
 </div>
-<div id="b-brooklyn" class="section level5">
-<h5><strong>B) Brooklyn</strong></h5>
+<div id="b-brooklyn" class="section level4">
+<h4><strong>B) Brooklyn</strong></h4>
 <pre class="r"><code># Brooklyn
 nom_comp_brook = lm(number_complaints ~ inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s +created_year, data = brooklyn_distinct)
 summary(nom_comp_brook)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre>
@@ -698,8 +773,8 @@ summary(nom_comp_brook)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre>
 </tbody>
 </table>
 </div>
-<div id="c-manhattan" class="section level5">
-<h5><strong>C) Manhattan</strong></h5>
+<div id="c-manhattan" class="section level4">
+<h4><strong>C) Manhattan</strong></h4>
 <pre class="r"><code># Manhattan
 
 nom_comp_manhattan = lm(number_complaints ~ inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s +created_year, data = manhanttan_distinct)
@@ -790,8 +865,8 @@ summary(nom_comp_manhattan)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></
 </tbody>
 </table>
 </div>
-<div id="d-queens" class="section level5">
-<h5><strong>D) Queens</strong></h5>
+<div id="d-queens" class="section level4">
+<h4><strong>D) Queens</strong></h4>
 <pre class="r"><code># Queens
 nom_comp_queens = lm(number_complaints ~ inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s +created_year, data = queens_distinct)
 summary(nom_comp_queens)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre>
@@ -881,8 +956,8 @@ summary(nom_comp_queens)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre
 </tbody>
 </table>
 </div>
-<div id="e-staten-island" class="section level5">
-<h5><strong>E) Staten Island</strong></h5>
+<div id="e-staten-island" class="section level4">
+<h4><strong>E) Staten Island</strong></h4>
 <pre class="r"><code># SI
 nom_comp_SI = lm(number_complaints ~ inc_1000s + num_unsolved + per_black_nh +created_year, data = SI_distinct)
 summary(nom_comp_SI)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre>
@@ -958,8 +1033,8 @@ summary(nom_comp_SI)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre>
 </tbody>
 </table>
 </div>
-<div id="residuals" class="section level5">
-<h5><strong>Residuals</strong></h5>
+<div id="residuals" class="section level4">
+<h4><strong>Residuals</strong></h4>
 <pre class="r"><code>par(mfrow = c(2,3))
 plot(nom_comp_bronx, which = 1, main = &quot;Bronx
 &quot;)
@@ -971,17 +1046,17 @@ plot(nom_comp_queens, which = 1, main = &quot;Queens
 &quot;)
 plot(nom_comp_SI, which = 1, main = &quot;Staten Island
 &quot;)</code></pre>
-<p><img src="regression_analysis_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="regression_analysis_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p><em>Comments:</em></p>
 <p>In the Bronx, on average, for each additional year we see 102 more complaints in each community district, for each additional 1000 people in a CD we see 16 more complaints, and for each $1000 increase in median income we see 29 <em><em>fewer</em></em> complaints.</p>
 <p>In Manhattan and Queens we see an effect on total number of complaints by number of unresolved complaints. On average, for each additional unresolved complaint people in Manhattan and Queens will have 17 and 8 more complaints respectively.</p>
 <p>Based on the adjusted R-squared values, number of complaints in a CD range from 67.14% in Manhattan to 95.25% in Staten Island predicted by this combination of variables. Residuals appear to follow normal distributions.</p>
 </div>
 </div>
-<div id="number-of-health-related-complaints-by-nyc-community-district" class="section level4">
-<h4>2) Number of health-related complaints by NYC community district:</h4>
-<div id="a-bronx-1" class="section level5">
-<h5><strong>A) Bronx</strong></h5>
+<div id="number-of-health-related-complaints-by-nyc-community-district" class="section level3">
+<h3>2) Number of health-related complaints by NYC community district:</h3>
+<div id="a-bronx-1" class="section level4">
+<h4><strong>A) Bronx</strong></h4>
 <pre class="r"><code># number of complaints
 options(scipen = 5)
 
@@ -1073,8 +1148,8 @@ summary(nom_comp_h_bronx)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pr
 </tbody>
 </table>
 </div>
-<div id="b-brooklyn-1" class="section level5">
-<h5><strong>B) Brooklyn</strong></h5>
+<div id="b-brooklyn-1" class="section level4">
+<h4><strong>B) Brooklyn</strong></h4>
 <pre class="r"><code># Brooklyn
 nom_comp_h_brook = lm(num_health_complaint ~ inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s +created_year, data = brooklyn_distinct)
 summary(nom_comp_h_brook)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre>
@@ -1164,8 +1239,8 @@ summary(nom_comp_h_brook)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pr
 </tbody>
 </table>
 </div>
-<div id="c-manhattan-1" class="section level5">
-<h5><strong>C) Manhattan</strong></h5>
+<div id="c-manhattan-1" class="section level4">
+<h4><strong>C) Manhattan</strong></h4>
 <pre class="r"><code># Manhattan
 
 nom_comp_h_manhattan = lm(num_health_complaint ~ inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s +created_year, data = manhanttan_distinct)
@@ -1256,8 +1331,8 @@ summary(nom_comp_h_manhattan)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code>
 </tbody>
 </table>
 </div>
-<div id="d-queens-1" class="section level5">
-<h5><strong>D) Queens</strong></h5>
+<div id="d-queens-1" class="section level4">
+<h4><strong>D) Queens</strong></h4>
 <pre class="r"><code># Queens
 nom_comp_h_queens = lm(num_health_complaint ~ inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s +created_year, data = queens_distinct)
 summary(nom_comp_h_queens)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre>
@@ -1347,8 +1422,8 @@ summary(nom_comp_h_queens)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></p
 </tbody>
 </table>
 </div>
-<div id="e-staten-island-1" class="section level5">
-<h5><strong>E) Staten Island</strong></h5>
+<div id="e-staten-island-1" class="section level4">
+<h4><strong>E) Staten Island</strong></h4>
 <pre class="r"><code># SI
 nom_comp_h_SI = lm(num_health_complaint ~ inc_1000s + num_unsolved + per_black_nh +created_year, data = SI_distinct)
 summary(nom_comp_h_SI)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre>
@@ -1424,8 +1499,8 @@ summary(nom_comp_h_SI)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre>
 </tbody>
 </table>
 </div>
-<div id="residuals-1" class="section level5">
-<h5><strong>Residuals</strong></h5>
+<div id="residuals-1" class="section level4">
+<h4><strong>Residuals</strong></h4>
 <pre class="r"><code>par(mfrow = c(2,3))
 plot(nom_comp_h_bronx, which = 1, main = &quot;Bronx
 &quot;)
@@ -1437,17 +1512,17 @@ plot(nom_comp_h_queens, which = 1, main = &quot;Queens
 &quot;)
 plot(nom_comp_h_SI, which = 1, main = &quot;Staten Island
 &quot;)</code></pre>
-<p><img src="regression_analysis_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p><img src="regression_analysis_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 <p><em>Comments:</em></p>
 <p>Complaints were determined to be health related if they were about heat, hot water, sanitary conditions, poor air quality, or hazardous materials.</p>
 <p>In Manhattan and Queens we see a significant effect on total number of health related complaints by median income of the CD. On average, for each $1000 increase in median income we see -2 more health-related complaints in Manhattan 3 <em><em>fewer</em></em> health-related complaints in Queens.</p>
 <p>Based on the adjusted R-squared values, number of health related complaints in a CD range from 56.84% in Brooklyn to 97.01% in Staten Island predicted by this combination of variables. The plots of the residuals indicate that future analyses should increase or adjust the predictors to better fit the data.</p>
 </div>
 </div>
-<div id="number-of-unresolved-complaints-by-nyc-community-district" class="section level4">
-<h4>3) Number of unresolved complaints by NYC community district:</h4>
-<div id="a-bronx-2" class="section level5">
-<h5><strong>A) Bronx</strong></h5>
+<div id="number-of-unresolved-complaints-by-nyc-community-district" class="section level3">
+<h3>3) Number of unresolved complaints by NYC community district:</h3>
+<div id="a-bronx-2" class="section level4">
+<h4><strong>A) Bronx</strong></h4>
 <pre class="r"><code># number of complaints
 options(scipen = 5)
 
@@ -1532,8 +1607,8 @@ summary(nom_unres_bronx)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre
 </tbody>
 </table>
 </div>
-<div id="b-brooklyn-2" class="section level5">
-<h5><strong>B) Brooklyn</strong></h5>
+<div id="b-brooklyn-2" class="section level4">
+<h4><strong>B) Brooklyn</strong></h4>
 <pre class="r"><code># Brooklyn
 nom_unres_brook = lm(num_unsolved ~ inc_1000s + per_black_nh + per_hisp + pop_1000s +created_year, data = brooklyn_distinct)
 summary(nom_unres_brook)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre>
@@ -1616,8 +1691,8 @@ summary(nom_unres_brook)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre
 </tbody>
 </table>
 </div>
-<div id="c-manhattan-2" class="section level5">
-<h5><strong>C) Manhattan</strong></h5>
+<div id="c-manhattan-2" class="section level4">
+<h4><strong>C) Manhattan</strong></h4>
 <pre class="r"><code># Manhattan
 
 nom_unres_manhattan = lm(num_unsolved ~ inc_1000s + per_black_nh + per_hisp + pop_1000s +created_year, data = manhanttan_distinct)
@@ -1701,8 +1776,8 @@ summary(nom_unres_manhattan)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code><
 </tbody>
 </table>
 </div>
-<div id="d-queens-2" class="section level5">
-<h5><strong>D) Queens</strong></h5>
+<div id="d-queens-2" class="section level4">
+<h4><strong>D) Queens</strong></h4>
 <pre class="r"><code># Queens
 nom_unres_queens = lm(num_unsolved ~ inc_1000s + per_black_nh + per_hisp + pop_1000s +created_year, data = queens_distinct)
 summary(nom_unres_queens)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre>
@@ -1785,8 +1860,8 @@ summary(nom_unres_queens)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pr
 </tbody>
 </table>
 </div>
-<div id="e-staten-island-2" class="section level5">
-<h5><strong>E) Staten Island</strong></h5>
+<div id="e-staten-island-2" class="section level4">
+<h4><strong>E) Staten Island</strong></h4>
 <pre class="r"><code># SI
 nom_unres_SI = lm(num_unsolved ~ inc_1000s + per_black_nh +created_year, data = SI_distinct)
 summary(nom_unres_SI)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre>
@@ -1855,8 +1930,8 @@ summary(nom_unres_SI)  %&gt;% broom::tidy() %&gt;% knitr::kable()</code></pre>
 </tbody>
 </table>
 </div>
-<div id="residuals-2" class="section level5">
-<h5><strong>Residuals</strong></h5>
+<div id="residuals-2" class="section level4">
+<h4><strong>Residuals</strong></h4>
 <pre class="r"><code>par(mfrow = c(2,3))
 plot(nom_unres_bronx, which = 1, main = &quot;Bronx
 &quot;)
@@ -1868,7 +1943,7 @@ plot(nom_unres_queens, which = 1, main = &quot;Queens
 &quot;)
 plot(nom_unres_SI, which = 1, main = &quot;Staten Island
 &quot;)</code></pre>
-<p><img src="regression_analysis_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p><img src="regression_analysis_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 <p><em>Comments:</em></p>
 <p>A complaint was labeled unresolved if its status was not labeled as “closed”. For all boroughs but Staten Island, year is, on average, a significant predictor if number of unresolved complaints for each CD.</p>
 <p>In Brooklyn and Queens we see significant effect on total number of unresolved complaints by the percent non-Hispanic Black population. On average, we see 0 and 0 more unresolved complaints for each additonal 5% increase in non-Hispanic Black population in Brooklyn and Queens respectively.</p>
@@ -1886,6 +1961,8 @@ plot(nom_unres_SI, which = 1, main = &quot;Staten Island
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -1917,7 +1994,38 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
