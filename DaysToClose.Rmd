@@ -1,0 +1,408 @@
+---
+title: "DaystoClose"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+#install.packages("arsenal")
+library(arsenal)
+
+```
+
+```{r}
+
+new_311 <- nyc_311 %>% 
+filter(borough != "Unspecified") 
+
+
+
+nyc_tidy <- new_311 %>% 
+#install.packages("RSocrata")
+#devtools::install_github("Chicago/RSocrata")
+library(RSocrata)
+library(tidyverse)
+library(viridis)
+library(modelr)
+library(mgcv)
+
+```
+## read in data
+```{r message = FALSE}
+nyc <- read_csv(file = "../p8105nyc_311_100k.csv") %>% 
+    janitor::clean_names()
+
+nyc_tidy <- nyc %>%   
+    filter(borough != "Unspecified") %>% 
+    separate(closed_date, 
+             into = c("closed_month","closed_day","closed_year"), 
+             sep = "\\/" ) %>%
+    separate(closed_year, 
+             into = c("closed_year","closed_time"), 
+             sep = " ") %>% 
+    mutate(
+        created_year = as.numeric(created_year),
+        created_month = as.numeric(created_month),
+        created_day = as.numeric(created_day),
+        city = as.factor(city),
+        status = as.factor(status),
+        borough = as.factor(borough),
+        agency = as.factor(agency),
+        complaint_type = as.factor(complaint_type),
+        community_board = as.factor(community_board),
+        open_complaint = ifelse(status == "Closed", yes = 0, no = 1),
+        # open_complaint = ifelse(is.na(closed_year),  yes = 1, no = 0),
+        complaint_simp = case_when(
+            str_detect(complaint_type, 
+                       regex("street", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("sidewalk", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("curb", ignore_case = TRUE)) ~ "Street Condition",
+            str_detect(complaint_type, 
+                       regex("noise", ignore_case = TRUE)) ~ "Noise",
+            str_detect(complaint_type, 
+                       regex("heat", ignore_case = TRUE)) ~ "Heat",
+            str_detect(complaint_type, 
+                       regex("water", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("leak", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("plumbing", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("boiler", ignore_case = TRUE)) ~ "Water/plumbing",
+            str_detect(complaint_type, 
+                       regex("paint", ignore_case = TRUE)) ~ "Paint/Plaster",
+            str_detect(complaint_type, 
+                       regex("asbestos", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("lead", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("hazard", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("mold", ignore_case = TRUE)) ~ "Hazard Material",
+            str_detect(complaint_type, 
+                       regex("elevator", ignore_case = TRUE)) 
+            |str_detect(complaint_type, 
+                        regex("maintenance", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("electric", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("stairs", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("window", ignore_case = TRUE)) 
+            |str_detect(complaint_type, 
+                        regex("appliance", ignore_case = TRUE)) ~ "Maintenance",
+            str_detect(complaint_type, 
+                       regex("sanita", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("rodent", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("dirty", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("sew", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("standing water", ignore_case = TRUE)) ~ "Sanitation",
+            str_detect(complaint_type, 
+                       regex("tree", ignore_case = TRUE)) ~ "Tree",
+            str_detect(complaint_type, 
+                       regex("parking", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("car", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("drive", ignore_case = TRUE))
+            |str_detect(complaint_type,  
+                        regex("vehicle", ignore_case = TRUE))
+            |str_detect(complaint_type,  
+                        regex("traffic", ignore_case = TRUE)) ~ "Car/Traffic",
+            str_detect(complaint_type, 
+                       regex("air", ignore_case = TRUE)) ~ "Air Quality",
+            str_detect(complaint_type, 
+                       regex("collection", ignore_case = TRUE)) ~ "Collection",
+            str_detect(complaint_type, 
+                       regex("homeless", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("panhandling", ignore_case = TRUE)) ~ "Homeless"),
+        health_complaint = ifelse(
+            complaint_simp %in% c("Heat", "Water/Plumbing", "Hazard Material", "Sanitation", "Air Quality"), yes = 1, no = 0),
+        complaint_simp = as.factor(complaint_simp),
+        open_health_complaint = case_when(
+            open_complaint == 1 & health_complaint == 1 ~ 1,
+            open_complaint == 0 | health_complaint == 0 ~ 0
+        ),
+        # openCorr = ifelse(status == "Closed", yes = 0, no = 1),
+        status = as.factor(status)
+    )
+
+
+```
+
+Adding community district data
+```{r message = FALSE}
+
+inc_df = read_csv("./Med_income_2017.csv") %>% 
+    janitor::clean_names() %>% 
+    mutate(
+       # pop_1000s = round(total_population/1000, 0),
+        inc_1000s = round(median_income/1000, 1),
+        income_bracket = case_when(
+            median_income < 30000 ~ "> 30k",
+            median_income >= 30000 & median_income < 49999 ~ "30 to 49k",
+            median_income >= 50000 & median_income < 99000 ~ "50 to < 99k",
+            median_income > 100000 & median_income <= 349999 ~ "100 -349k",
+            median_income > 350000~ "350k+"
+        ),
+        income_bracket = as.factor(income_bracket)
+    )
+
+# adding income to data and removing any observations that do not have a specific community board to link to income
+add_inc = left_join(nyc_tidy, inc_df, by = "community_board") %>% 
+    filter(is.na(median_income) == FALSE) %>% 
+    mutate(
+        year_fac = as.factor(created_year)
+    )
+
+
+```
+
+<<<<<<< HEAD:DaysToClose.Rmd
+We looked at number of complaints from 2014-2018 predicted by year, borough, community district (CD) level variables including median income (in the 1000s), total population (in the 1000s), percent non-hispanic black, percent hispanic, and number of unresolved complaints. 
+
+Number of complaints by NYC community district:
+The total number of complaints in significantly predicted by year, borough and CD number of unsolved complaints, percent Hispanic, and population total.
+
+Number of health-related complaints by NYC community district:
+Complaints were determined to be health related if they were about heat, hot water, sanitary conditions, poor air quality, or hazardous materials. The total number of health-related complaints in significantly predicted by borough and CD median income, percent non-Hispanic Black and Hispanic, and population total.
+
+Number of unresolved complaints by NYC community district:
+A complaint was labeled unresolved if its status was not labeled as "closed". The total number of unresolved complaints in significantly predicted by year of complaint, borough, and CD median income, number of unsolved complaints, percent non-Hispanic Black and Hispanic, and population total.
+
+```{r}
+add_inc %>%
+    filter(status == "Closed") %>% 
+### Aggregating data to community district and year level
+```
+To examine the effect of community district level variables on total number of complaints we must first aggregate to the community district level. We are also interested in how year effects the number of complaints in each district so we group by year as well to produce complaint totals for each year and community district.
+
+Once we have complaint totals, we do not want individual complaint information anymore. We select distinct year * community district observations. 
+
+
+
+```{r message = FALSE}
+
+# grouping by community district and year
+cb_group_year = add_inc %>% 
+    group_by(community_board, created_year) %>%
+    add_count(community_board, name = "number_complaints") %>% 
+
+    mutate(
+        closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)
+    ) %>% 
+    mutate(
+        diff_year = abs(closed_year - created_year),
+        diff_month = abs(closed_month - created_month),
+        diff_day = abs(closed_day - created_day),
+        diff_dayt = abs( diff_year*365 + diff_month*30 + diff_day ),
+        diff_dayt = as.factor(diff_dayt)
+    ) %>% 
+    select(income_bracket, 
+           borough, 
+           diff_dayt,
+           diff_year,
+           diff_month,
+           diff_day)  %>% 
+    mutate(
+        income_bracket = forcats::fct_relevel(income_bracket,"350k+" ,"100-349k", "50-99","30-49k",">30")
+    ) %>% 
+  group_by(diff_dayt, borough, income_bracket) %>% 
+    summarize(
+        n = n()
+    ) %>% summary()
+  ggplot(aes(x= diff_dayt, fill = income_bracket))+ geom_bar()+scale_fill_viridis_d()
+
+  
+  summary()
+
+
+
+    
+  #  filter(
+    #    diff_dayt <10
+  #  ) %>% 
+    ggplot(aes(x= diff_dayt, fill = income_bracket))+ geom_density(alpha = 0.5)+scale_fill_viridis_d()
+
+
+########## including year
+cb_group_year_distinct = cb_group_year %>% 
+    select(community_board, number_complaints, inc_1000s, num_unsolved, num_health_complaint, borough, per_black_nh, per_hisp, per_white_nh, median_income, num_open_health, created_year, year_fac, pop_1000s) %>% 
+    distinct() %>% 
+    arrange(community_board) %>% 
+    mutate(
+        borough = relevel(borough, ref = "MANHATTAN")
+        )
+
+cb_group_year_distinct = within(cb_group_year_distinct, borough <- relevel(borough, ref = "MANHATTAN"))
+
+#figure out why is there values greater than 1300 days
+```
+
+
+```{r}
+
+add_inc %>%
+    filter(status == "Closed") %>% 
+    mutate(
+        closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)
+    ) %>% 
+    mutate(
+        diff_year = abs(closed_year - created_year),
+        diff_month = abs(closed_month - created_month),
+        diff_day = abs(closed_day - created_day),
+        diff_dayt = abs( diff_year*365 + diff_month*30 + diff_day )
+       # diff_dayt = as.factor(diff_dayt)
+    ) %>% 
+    select(income_bracket, 
+           borough, 
+           diff_dayt,
+           diff_year,
+           diff_month,
+           diff_day) %>% 
+    mutate(
+        income_bracket = forcats::fct_relevel(income_bracket,"350k+" ,"100-349k", "50-99","30-49k",">30")
+    ) %>% 
+        ggplot(aes(x= diff_dayt))+geom_density()
+    group_by(diff_dayt, borough, income_bracket) %>% 
+    summarize(
+        n = n()
+    ) %>% 
+    summary()
+```
+
+=======
+## What neighborhood characteristics effect number and type of complaints in each community district? 
+
+We conducted linear models to examine predictors of number of complaints from 2014-2018 per community district. Our three outcomes were:
+
+1) Total number of complaints
+2) Number of health complaints
+3) Number of unresolved complaints.
+
+We looked at these categories of complaints from 2014-2018 predicted by year, borough, and community district level variables including median income (in the 1000s), total population (in the 1000s), percent non-hispanic black and percent Hispanic. For outcomes 1 and 2 we included number of unresolved complaints as a predictor as well. 
+
+
+#### 1) Number of complaints by NYC community district:
+```{r message = FALSE}
+
+# number of complaints
+options(scipen = 5)
+
+num_comp_model_year = lm(number_complaints ~ inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s + borough +created_year, data = cb_group_year_distinct)
+
+summary(num_comp_model_year)  %>% broom::tidy() %>% knitr::kable()
+summary(num_comp_model_year) %>% broom::glance() %>% knitr::kable()
+
+par(mfrow = c(2,2))
+plot(num_comp_model_year)
+```
+
+*Comments:*
+
+The total number of complaints is significantly predicted by year, borough and CD number of unsolved complaints, percent Hispanic, and population total. 
+
+On average, for each additional year we see `r round(pull((summary(num_comp_model_year)  %>% broom::tidy()) %>% filter(term == "created_year"),estimate),0)` more complaints in each community district, for each additional 1000 people in a CD we see `r round(pull((summary(num_comp_model_year)  %>% broom::tidy()) %>% filter(term == "pop_1000s"),estimate),0)` more complaints, with Staten Island CDs having `r round(pull((summary(num_comp_model_year)  %>% broom::tidy()) %>% filter(term == "boroughSTATEN ISLAND"),estimate),0)` more complaints than manhattan CDs.
+
+Based on the adjusted R-squared value, number of complaints in a CD are `r 100*round(pull((summary(num_comp_model_year) %>% broom::glance()),adj.r.squared),4)`% predicted by this combination of variables. Residuals appear to follow a normal distribution.
+
+
+
+#### 2) Number of health-related complaints by NYC community district:
+```{r}
+
+# number of health complaints
+
+num_health_model_year = lm(num_health_complaint ~  inc_1000s + num_unsolved + per_black_nh + per_hisp + pop_1000s + borough + created_year, data = cb_group_year_distinct)
+
+summary(num_health_model_year)  %>% broom::tidy() %>% knitr::kable()
+summary(num_health_model_year) %>% broom::glance() %>% knitr::kable()
+
+par(mfrow = c(2,2))
+plot(num_health_model_year)
+```
+
+
+*Comments:*
+
+Complaints were determined to be health related if they were about heat, hot water, sanitary conditions, poor air quality, or hazardous materials. The total number of health-related complaints is significantly predicted by borough and CD median income, percent non-Hispanic Black and Hispanic, and population total.
+
+On average, for each $1000 increase in median income we see `r -1 * round(pull((summary(num_health_model_year)  %>% broom::tidy()) %>% filter(term == "inc_1000s"),estimate),0)` *_fewer_* health related complaints in each community district; for each additional percent of a CD that is black or hispanic we see `r round(pull((summary(num_health_model_year)  %>% broom::tidy()) %>% filter(term == "per_black_nh"),estimate),0)` and `r round(pull((summary(num_health_model_year)  %>% broom::tidy()) %>% filter(term == "per_hisp"),estimate),0)` more health-related complaints.
+
+Based on the adjusted R-squared value, number of health-related complaints in a CD is `r 100*round(pull((summary(num_health_model_year) %>% broom::glance()),adj.r.squared),4)`% predicted by this combination of variables. Residuals appear to follow a mostly normal distribution, but there is still room for improvement in model fit, in a later analysis. 
+
+
+#### 3) Number of unresolved complaints by NYC community district:
+```{r}
+
+
+# number of unresolved
+
+num_unsolved_model_year = lm(num_unsolved ~ inc_1000s + per_black_nh + per_hisp + pop_1000s + borough +created_year, data = cb_group_year_distinct)
+
+summary(num_unsolved_model_year)  %>% broom::tidy() %>% knitr::kable()
+summary(num_unsolved_model_year) %>% broom::glance() %>% knitr::kable()
+
+
+par(mfrow = c(2,2))
+plot(num_unsolved_model_year)
+
+
+
+
+```
+
+
+
+*Comments:*
+
+A complaint was labeled unresolved if its status was not labeled as "closed". The total number of unresolved complaints is significantly predicted by year of complaint, borough, and CD median income, percent non-Hispanic Black and Hispanic, and population total. 
+
+On average, for each additional year we see `r round(pull((summary(num_unsolved_model_year)  %>% broom::tidy()) %>% filter(term == "created_year"),estimate),0)` more unresolved complaints in each community district. The Bronx, Queens, and Staten Island CDs had `r round(pull((summary(num_unsolved_model_year)  %>% broom::tidy()) %>% filter(term == "boroughBRONX"),estimate),0)`, `r round(pull((summary(num_unsolved_model_year)  %>% broom::tidy()) %>% filter(term == "boroughQUEENS"),estimate),0)`, and `r round(pull((summary(num_unsolved_model_year)  %>% broom::tidy()) %>% filter(term == "boroughSTATEN ISLAND"),estimate),0)`, more unresolved complaints than manhattan CDs on average, respectively.
+
+Based on the adjusted R-squared value,  number of unresolved complaints in a CD are `r 100*round(pull((summary(num_unsolved_model_year) %>% broom::glance()),adj.r.squared),4)`% predicted by this combination of variables. Residuals appear to follow a normal distribution.
+
+
+```{r}
+
+#data with days to close information
+nyc_data <-add_inc %>% 
+ filter(status == "Closed" ) %>% 
+    mutate(
+        closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)
+    ) %>% 
+    mutate(
+        diff_year = abs(closed_year - created_year),
+        diff_month = abs(closed_month - created_month),
+        diff_day = abs(closed_day - created_day),
+        diff_dayt = abs( diff_year*365 + diff_month*30 + diff_day )
+       # diff_dayt = as.factor(diff_dayt)
+    )
+
+nyc_data %>% head()
+
+
+
+```
+
+```{r}
+
+```
+

@@ -43,7 +43,6 @@ Brooklyn
 
 ```{r,eval=F}
 
-
 read_csv("311_brooklyn.csv") %>%
     sample_n(100000, replace = F) %>%
      separate(`Created Date`, into = c("month","day","year"), sep = "\\/" ) %>%
@@ -53,9 +52,6 @@ read_csv("311_brooklyn.csv") %>%
 brooklyn<- read_csv("brooklyn_311_100k.csv")
 
 table(brooklyn100k$year)
-
-
-
 
 ```
 
@@ -72,13 +68,10 @@ manhattan<- read_csv("manhattan_311_100k.csv")
 
 table(manhattan$year)
 
-
-
 ```
 
 Queens
 ```{r,eval=F}
-
 
 read_csv("311_queens.csv")%>%
     sample_n(100000, replace = F) %>%
@@ -89,8 +82,6 @@ read_csv("311_queens.csv")%>%
 queens<- read_csv("queens_311_100k")
 
 table(queens$year)
-
-
 
 ```
 Bronx
@@ -157,12 +148,14 @@ rbind(brooklyn, manhattan, queens, bronx, statenisland, unspec) %>%
 nyc_311<-read_csv("p8105nyc_311_100k.csv") 
 
 nyc_311 %>% 
-head()
+
 ```
 
-
-## Ava cleaning
 ```{r}
+<<<<<<< HEAD:NYC Open Data.Rmd
+nyc_311 %>% 
+    
+=======
 
 nyc311 = read_csv("/Users/avahamilton/Dropbox/Biostat MS/Data Science I/final/p8105nyc_311_100k.csv") %>% 
     janitor::clean_names()
@@ -210,6 +203,7 @@ nycedit = nyc311 %>%
     )
 
 summary(nycedit$complaint_simp)
+>>>>>>> ec0981564edd62bed75c0dc16ded55214df00f94:nyc_open_data.Rmd
 ```
 
 ### Income and percent hisp/black variables from American Community Survey by Community District
