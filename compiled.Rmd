@@ -1,22 +1,21 @@
 ---
 title: "compiled"
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-
-library(RSocrata)
 library(tidyverse)
 library(viridis)
 library(modelr)
 library(mgcv)
+library(arsenal)
 
 ```
 
-<<<<<<< HEAD
+
 #### Reading in and tidying first dataset with NYC 311 complaint data 
-=======
 
 
 
@@ -152,9 +151,9 @@ Load and tidy the data. Data is 100k randomly sampled complaints from all neighb
 Data downloaded from:
 https://wetransfer.com/downloads/f8c5d6c17483e279ff56018db9c44cc420191201000026/c5f48b
 
->>>>>>> acba6a69c020baeb3813ce12b274633923c9fa5f
+
 ```{r message = FALSE}
-nyc <- read_csv(file = "../p8105nyc_311_100k.csv") %>% 
+nyc <- read_csv(file = "./p8105nyc_311_100k.csv") %>% 
     janitor::clean_names()
 
 nyc_tidy <- nyc %>%   
@@ -262,9 +261,8 @@ nyc_tidy <- nyc %>%
 
 ```
 
-<<<<<<< HEAD
+
 #### Reading in and tidying second dataset with community district data
-=======
 
 Used skimr::skim, colnames, and levels(factor(nyc$complaint_type)) to investigate and tidy the data. New variables were created to establish a binary status for closed (0) or open (1) complaints.
 
@@ -285,7 +283,6 @@ We also included aggregated American Commmunity Survey (ACS) data in our analysi
 
 The variable, `community_board`, will be used to left join NYC 311 data with income and population characteristics data sourced from American Community Survey by Community District.
 
->>>>>>> acba6a69c020baeb3813ce12b274633923c9fa5f
 ```{r message = FALSE}
 
 inc_df = read_csv("./Med_income_2017.csv") %>% 
@@ -322,11 +319,85 @@ __Exploratory analysis:__ Visualizations, summaries, and exploratory statistical
 
 # STEPHEN, descibe plotly
 
+# Calculate days to close
+```{r}
+
+#data with days to close information
+nyc_data <- nyc_inc %>% 
+ filter(status == "Closed" & closed_year <= 2018) %>% 
+    mutate(
+        closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)
+    ) %>% 
+    mutate(
+        diff_year = closed_year - created_year,
+        diff_month = closed_month - created_month,
+        diff_day = closed_day - created_day,
+        diff_dayt =  diff_year*365 + diff_month*30 + diff_day
+       # diff_dayt = as.factor(diff_dayt)
+  ) %>% 
+  mutate(
+    status = as.character(status)
+  ) %>% 
+  mutate(
+    income_bracket = forcats::fct_relevel(income_bracket, "125k+", "100-125k", "90-100k", "80-90k", "70-80k", "60-70k", "50-60k", "40-50k", "30-40k", "20-30k")
+  ) %>% 
+  drop_na(closed_year)
+  
+```
+## Tables
+
+Tables report median, and IQR given the skewness of our data and the count. 
+```{r, message=FALSE, warning=FALSE}
+mycontrols  <- tableby.control(test=F, total=T,
+                               cat.simplify = F,
+                               numeric.stats=c("N", "median", "q1q3"),
+                               cat.stats=c("countpct"),
+                               stats.labels=list(N='Count', median='Median', q1q3='Q1,Q3'),
+                               digits = 1)
+
+tab_clo<- tableby(created_year ~ diff_dayt + status  + borough, data = nyc_data, control = mycontrols)
+
+tab_inc<- tableby(created_year ~ income_bracket, data = nyc_data, control = mycontrols)
+
+tab_comp <- tableby(created_year ~ complaint_simp, data = nyc_data, control = mycontrols)
+
+tab_com_clo_inc <- tableby(complaint_simp ~ diff_dayt +income_bracket + borough , data = nyc_data, control = mycontrols)
+
+```
+
+In table 1 the median and interquartile range of how many days it took for cases to close.  Given the data is skewed right I reported the median values being `1` to `2` days and largest interqutile range being `0 - 9` and smallest being `0 - 6` acroos years `2014 - 2018`. 
+
+Most complaints are closed within a week with a high density of them being closed within a day or two. Additionally, we observe even distribution across all boroughs and closed cases. 
+```{r, results="asis" }
+summary(tab_clo, title = "NYC 311 Complaints Demographics: table 1")
+
+```
+For table 2 we see that individuals in the income bracket 40 - 50k (25.4%) made the most complaints through out all the years in this study while individuals in the 90 - 100k (2.6%)made the least comlaints consistently. 
+```{r, results="asis" }
+summary(tab_inc, title = "NYC 311 Complaints Demographics: table 2 ")
+```
+In table 3 we see that the most complaints are of noise (17.9%).  Interestingly we see that car/traffic complaints increase overtime that suggest an increase in conjestion. 
+```{r,results="asis" }
+summary(tab_comp, title = "NYC 311 Complaints Demographics: table 3 ")
+
+```
+
+Finally in table 4  cases with complaints that have something to do with tree, paint/plaster, and maintanance take the longest to close 11 - 12 days compared to the other compalaint cases that close with the said interquartile range of 0-9 days.  Taking a look at the incomme bracket we observe that higher income brackest mostly complain about the homeless (17.2%) while the lowest income clase mostly complain about heat (20.3%) and maintanance(20.9%) comparing accross all income brackets. Furthermore we can also see that Manhattan has most of its complaints related to air quality (38.8%), hazardous material (30.3%), homeless (77.4%), and noise (30.5%) comparing across all boroughs.  
+
+```{r,results="asis" }
+summary(tab_com_clo_inc , title = "NYC 311 Complaints Demographics: table 4 ")
+
+```
+
+
 ### Aggregating data to community district and year level
 
 To examine the effect of community district level variables on total number of complaints we must first aggregate to the community district level. We are also interested in how year effects the number of complaints in each district so we group by year as well to produce complaint totals for each year and community district.
 
 Once we have complaint totals, we do not want individual complaint information anymore. We select distinct year * community district observations. 
+
 ```{r message = FALSE}
 
 # grouping by community district and year
