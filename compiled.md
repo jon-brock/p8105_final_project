@@ -1,26 +1,27 @@
----
-title: "<span style='font-size: 25px'>Visualizations</style>"
----
+compiled
+================
+Ava Hamilton
+12/4/2019
 
+## read in data
 
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-library(tidyverse)
-library(viridis)
-library(rgdal)
-library(leaflet)
-library(dplyr)
-library(ggplot2)
-# setting factors to false
-options(stringsAsFactors = FALSE)
-```
-
-
-```{r, warning=FALSE}
+``` r
 nyc <- read_csv(file = "./p8105nyc_311_100k.csv") %>% 
     janitor::clean_names()
+```
 
-nyc_tidy <- nyc %>% 
+    ## Warning: 13949 parsing failures.
+    ##    row                   col           expected                        actual                      file
+    ## 100085 taxi_pick_up_location 1/0/T/F/TRUE/FALSE WEST   50 STREET AND BROADWAY './p8105nyc_311_100k.csv'
+    ## 100150 taxi_pick_up_location 1/0/T/F/TRUE/FALSE JFK Airport                   './p8105nyc_311_100k.csv'
+    ## 100172 taxi_pick_up_location 1/0/T/F/TRUE/FALSE 625 EAST 14 STREET MANHATTAN  './p8105nyc_311_100k.csv'
+    ## 100215 taxi_pick_up_location 1/0/T/F/TRUE/FALSE Other                         './p8105nyc_311_100k.csv'
+    ## 100268 taxi_pick_up_location 1/0/T/F/TRUE/FALSE Other                         './p8105nyc_311_100k.csv'
+    ## ...... ..................... .................. ............................. .........................
+    ## See problems(...) for more details.
+
+``` r
+nyc_tidy <- nyc %>%   
     filter(borough != "Unspecified") %>% 
     separate(closed_date, 
              into = c("closed_month","closed_day","closed_year"), 
@@ -38,8 +39,8 @@ nyc_tidy <- nyc %>%
         agency = as.factor(agency),
         complaint_type = as.factor(complaint_type),
         community_board = as.factor(community_board),
-       open_complaint = ifelse(status == "Closed", yes = 0, no = 1),
-      # open_complaint = ifelse(is.na(closed_year),  yes = 1, no = 0),
+        open_complaint = ifelse(status == "Closed", yes = 0, no = 1),
+        # open_complaint = ifelse(is.na(closed_year),  yes = 1, no = 0),
         complaint_simp = case_when(
             str_detect(complaint_type, 
                        regex("street", ignore_case = TRUE))
@@ -118,16 +119,21 @@ nyc_tidy <- nyc %>%
             open_complaint == 1 & health_complaint == 1 ~ 1,
             open_complaint == 0 | health_complaint == 0 ~ 0
         ),
-       # openCorr = ifelse(status == "Closed", yes = 0, no = 1),
+        # openCorr = ifelse(status == "Closed", yes = 0, no = 1),
         status = as.factor(status)
     )
 ```
 
+    ## Warning: Expected 2 pieces. Additional pieces discarded in 489924 rows [1, 2, 3,
+    ## 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, ...].
 
-```{r}
+Adding community district data
+
+``` r
 inc_df = read_csv("./Med_income_2017.csv") %>% 
     janitor::clean_names() %>% 
     mutate(
+        pop_1000s = round(total_population/1000, 0),
         inc_1000s = round(median_income/1000, 1),
         income_bracket = case_when(
             median_income >= 20000 & median_income <= 30000 ~ "20k-30k",
@@ -141,28 +147,16 @@ inc_df = read_csv("./Med_income_2017.csv") %>%
             median_income > 100000 & median_income <= 125000 ~ "100-125k",
             median_income > 125000 & median_income <= 150000 ~ "125k+",
         ),
-        income_bracket = as.factor(income_bracket),
-        income_bracket = fct_relevel(income_bracket, c("20k-30k", "30-40k", "40-50k", "50-60k", "60-70k", "70-80k", "80-90k", "90-100k", "100-125k", "125k+"))
+        income_bracket = as.factor(income_bracket)
     )
-nyc_inc = left_join(nyc_tidy, inc_df, by = "community_board")
+
+# adding income to data and removing any observations that do not have a specific community board to link to income
+add_inc = left_join(nyc_tidy, inc_df, by = "community_board") %>% 
+    filter(is.na(median_income) == FALSE) %>% 
+    mutate(
+        year_fac = as.factor(created_year)
+    )
 ```
 
-#### Creating map visual with n = 10000 
-
-```{r}
-pal <- colorFactor(
-  palette = "viridis",
-  domain = unique(nyc_tidy$complaint_simp))
-
-nyc_inc %>% 
-  filter(created_year == "2018") %>%
-  drop_na(complaint_simp) %>% 
-  sample_n(10000) %>% 
-  mutate(click_label = str_c("<br>Complaint type: ", complaint_simp, "<br>Neighborhood: ", area_name, "<br>Income: $", median_income, "<br>Status: ", status)) %>%
-  leaflet() %>% 
-  addProviderTiles(providers$CartoDB.Positron) %>% 
-  addCircleMarkers(lat = ~latitude, lng = ~longitude, radius = .1, color = ~pal(complaint_simp), popup = ~click_label) %>% 
-  addLegend("bottomright", pal = pal, values = ~complaint_simp,
-    title = "Type of Complaints in NYC in 2018",
-    opacity = 1)
-```
+    ## Warning: Column `community_board` joining factor and character vector, coercing
+    ## into character vector

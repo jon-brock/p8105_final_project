@@ -1,8 +1,5 @@
 ---
-title: "regression_analysis"
-author: "Ava Hamilton"
-date: "12/1/2019"
-output: html_document
+title: "<span style='font-size: 25px'>Regression Analysis</style>"
 ---
 
 ```{r setup, include=FALSE}
@@ -146,11 +143,7 @@ inc_df = read_csv("./Med_income_2017.csv") %>%
     )
 
 # adding income to data and removing any observations that do not have a specific community board to link to income
-add_inc = left_join(nyc_tidy, inc_df, by = "community_board") %>% 
-    filter(is.na(median_income) == FALSE) %>% 
-    mutate(
-        year_fac = as.factor(created_year)
-    )
+nyc_inc = left_join(nyc_tidy, inc_df, by = "community_board") 
 
 
 ```
@@ -163,7 +156,8 @@ Once we have complaint totals, we do not want individual complaint information a
 ```{r message = FALSE}
 
 # grouping by community district and year
-cb_group_year = add_inc %>% 
+cb_group_year = nyc_inc %>% 
+    filter(is.na(median_income) == FALSE) %>% 
     group_by(community_board, created_year) %>%
     add_count(community_board, name = "number_complaints") %>% 
     mutate(
@@ -176,7 +170,7 @@ cb_group_year = add_inc %>%
 
 ########## including year
 cb_group_year_distinct = cb_group_year %>% 
-    select(community_board, number_complaints, inc_1000s, num_unsolved, num_health_complaint, borough, per_black_nh, per_hisp, per_white_nh, median_income, num_open_health, created_year, year_fac, pop_1000s) %>% 
+    select(community_board, number_complaints, inc_1000s, num_unsolved, num_health_complaint, borough, per_black_nh, per_hisp, per_white_nh, median_income, num_open_health, created_year, pop_1000s) %>% 
     distinct() %>% 
     arrange(community_board) %>% 
     mutate(

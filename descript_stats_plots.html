@@ -10,10 +10,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Molly Martorella" />
 
 
-<title>Descriptive stats plots</title>
+<title>descript_stats_plots.utf8</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -280,6 +279,18 @@ $(document).ready(function () {
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="screencast.html">Screencast</a>
+</li>
+<li>
+  <a href="descript_stats_plots.html">Descriptive Statistics Plots</a>
+</li>
+<li>
+  <a href="regression_analysis.html">Regression Analysis</a>
+</li>
+<li>
+  <a href="map_visual.html">Visualizations</a>
+</li>
+<li>
   <a href="mailto:&lt;jpb2210@cumc.columbia.edu&gt;">
     <span class="fa fa-envelope fa-lg"></span>
      
@@ -300,9 +311,8 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Descriptive stats plots</h1>
-<h4 class="author">Molly Martorella</h4>
-<h4 class="date">12/3/2019</h4>
+<h1 class="title toc-ignore"><span style='font-size: 25px'>Descriptive Statistics Plots
+</style></h1>
 
 </div>
 
@@ -314,30 +324,9 @@ $(document).ready(function () {
 <p>Load and tidy the data. Data is 100k randomly sampled complaints from all neighborhoods across all NYC boroughs (600k total samples). Years sampled were 2014-2018.</p>
 <p>Data downloaded from: <a href="https://wetransfer.com/downloads/f8c5d6c17483e279ff56018db9c44cc420191201000026/c5f48b" class="uri">https://wetransfer.com/downloads/f8c5d6c17483e279ff56018db9c44cc420191201000026/c5f48b</a></p>
 <pre class="r"><code>nyc &lt;- read_csv(file = &quot;./p8105nyc_311_100k.csv&quot;) %&gt;% 
-    janitor::clean_names()</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
-##   .default = col_character(),
-##   unique_key = col_double(),
-##   created_year = col_double(),
-##   created_time = col_time(format = &quot;&quot;),
-##   incident_zip = col_double(),
-##   landmark = col_logical(),
-##   bbl = col_double(),
-##   x_coordinate_state_plane = col_double(),
-##   y_coordinate_state_plane = col_double(),
-##   vehicle_type = col_logical(),
-##   taxi_company_borough = col_logical(),
-##   taxi_pick_up_location = col_logical(),
-##   bridge_highway_name = col_logical(),
-##   bridge_highway_direction = col_logical(),
-##   road_ramp = col_logical(),
-##   bridge_highway_segment = col_logical(),
-##   latitude = col_double(),
-##   longitude = col_double()
-## )</code></pre>
-<pre><code>## See spec(...) for full column specifications.</code></pre>
-<pre class="r"><code>nyc_tidy &lt;- nyc %&gt;% 
+    janitor::clean_names()
+
+nyc_tidy &lt;- nyc %&gt;% 
     filter(borough != &quot;Unspecified&quot;) %&gt;% 
     separate(closed_date, 
              into = c(&quot;closed_month&quot;,&quot;closed_day&quot;,&quot;closed_year&quot;), 
