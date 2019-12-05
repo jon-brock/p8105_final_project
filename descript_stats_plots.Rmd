@@ -8,6 +8,7 @@ output: github_document
 ```{r setup, include=FALSE}
 
 library(tidyverse)
+library(viridis)
 
 knitr::opts_chunk$set(echo = TRUE)
 
@@ -157,7 +158,7 @@ inc_df = read_csv("./Med_income_2017.csv") %>%
     mutate(
         inc_1000s = round(median_income/1000, 1),
         income_bracket = case_when(
-            median_income >= 20000 & median_income <= 30000 ~ "20k-30k",
+            median_income >= 20000 & median_income <= 30000 ~ "20-30k",
             median_income > 30000 & median_income <= 40000 ~ "30-40k",
             median_income > 40000 & median_income <= 50000 ~ "40-50k",
             median_income > 50000 & median_income <= 60000 ~ "50-60k",
@@ -169,7 +170,7 @@ inc_df = read_csv("./Med_income_2017.csv") %>%
             median_income > 125000 & median_income <= 150000 ~ "125k+",
         ),
         income_bracket = as.factor(income_bracket),
-        income_bracket = fct_relevel(income_bracket, c("20k-30k", "30-40k", "40-50k", "50-60k", "60-70k", "70-80k", "80-90k", "90-100k", "100-125k", "125k+"))
+        income_bracket = fct_relevel(income_bracket, c("20-30k", "30-40k", "40-50k", "50-60k", "60-70k", "70-80k", "80-90k", "90-100k", "100-125k", "125k+"))
     )
 
 
@@ -192,6 +193,20 @@ nyc_plots <- nyc_inc %>%
         num_open_health = sum(open_health_complaint)
     ) %>% 
     select(-unique_key, -city, -park_borough, -agency, -agency_name, -descriptor, -incident_zip, -incident_address, -street_name, -cross_street_1, -cross_street_2, -intersection_street_1, -intersection_street_2, -landmark, -facility_type, -resolution_description, -resolution_action_updated_date, -bbl, -x_coordinate_state_plane, -y_coordinate_state_plane, -open_data_channel_type, -park_facility_name, -vehicle_type, -taxi_company_borough, -taxi_pick_up_location, -bridge_highway_name, -bridge_highway_direction, -bridge_highway_segment, -latitude, -longitude, -location, -road_ramp, -location_type, -address_type, -map_id)
+
+
+# for days to close calculation:
+
+nyc_plots %>%
+    filter(status == "Closed") %>% 
+    mutate(closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)) %>% 
+    filter(closed_year != 2047) %>% 
+    mutate(diff_year = abs(closed_year - created_year),
+        diff_month = abs(closed_month - created_month),
+        diff_day = abs(closed_day - created_day),
+        diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day))
 
 ```
 
@@ -507,7 +522,8 @@ p %>% mutate(proportion = (open/(open + closed))) %>%
     ggtitle("Proportion of Open Cases Within Each Income Bracket") +
     xlab("Income Bracket") +
     ylab("Proportion Open") +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1))
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    scale_fill_viridis(discrete = TRUE)
 
 ```
 
@@ -530,7 +546,9 @@ h %>% mutate(proportion = (health_related/(health_related + other))) %>%
     ggtitle("Proportion of Health Related Complaints Within Each Income Bracket") +
     xlab("Income Bracket") +
     ylab("Proportion Health Related") +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1))
+    labs(fill = "Income Bracket") +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    scale_fill_viridis(discrete = TRUE)
 
 ```
 
@@ -541,7 +559,7 @@ h %>% mutate(proportion = (health_related/(health_related + other))) %>%
 nyc_plots %>% 
     filter(!is.na(median_income),
            !is.na(complaint_simp)) %>% 
-    mutate(complaint_simp = fct_reorder(complaint_simp, median_income)) %>% 
+    # mutate(complaint_simp = fct_reorder(complaint_simp, median_income)) %>%
     ggplot(aes(x = complaint_simp, 
                y = (median_income/1000), 
                fill = complaint_simp)) +
@@ -551,7 +569,8 @@ nyc_plots %>%
     scale_y_continuous(breaks = scales::pretty_breaks(n = 10)) +
     ylab("Median Income (thousands)") +
     xlab("Complaint Category") +
-    ggtitle("Median Income of Community District where Complaint Category Occurs")
+    ggtitle("Median Income of Community District where Complaint Category Occurs") +
+    scale_fill_viridis(discrete = TRUE)
 
 ```
 
@@ -566,7 +585,7 @@ r <- nyc_plots %>%
     summarize(n = n()) %>% 
     pivot_wider(names_from = open_complaint, values_from = n) %>% 
     rename(closed = '0',
-           open = '1')
+           open = '1') 
 
 r %>% mutate(proportion = (open/(open + closed))) %>% 
     ggplot(aes(x = percent_pop, y = proportion, color = race)) +
@@ -574,7 +593,8 @@ r %>% mutate(proportion = (open/(open + closed))) %>%
     geom_smooth(se = FALSE) +
     xlab("Percentage of Community District Population") +
     ylab("Proportion Open") +
-    ggtitle("Unresolved Complaints as a Function of Neighborhood Population")
+    ggtitle("Unresolved Complaints as a Function of Neighborhood Population") +
+    scale_color_viridis(name = "Race", labels = c("Black", "Hispanic", "Other", "White"), discrete = TRUE)
     
 ```
 

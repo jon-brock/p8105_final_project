@@ -456,7 +456,7 @@ $(document).ready(function () {
     mutate(
         inc_1000s = round(median_income/1000, 1),
         income_bracket = case_when(
-            median_income &gt;= 20000 &amp; median_income &lt;= 30000 ~ &quot;20k-30k&quot;,
+            median_income &gt;= 20000 &amp; median_income &lt;= 30000 ~ &quot;20-30k&quot;,
             median_income &gt; 30000 &amp; median_income &lt;= 40000 ~ &quot;30-40k&quot;,
             median_income &gt; 40000 &amp; median_income &lt;= 50000 ~ &quot;40-50k&quot;,
             median_income &gt; 50000 &amp; median_income &lt;= 60000 ~ &quot;50-60k&quot;,
@@ -468,7 +468,7 @@ $(document).ready(function () {
             median_income &gt; 125000 &amp; median_income &lt;= 150000 ~ &quot;125k+&quot;,
         ),
         income_bracket = as.factor(income_bracket),
-        income_bracket = fct_relevel(income_bracket, c(&quot;20k-30k&quot;, &quot;30-40k&quot;, &quot;40-50k&quot;, &quot;50-60k&quot;, &quot;60-70k&quot;, &quot;70-80k&quot;, &quot;80-90k&quot;, &quot;90-100k&quot;, &quot;100-125k&quot;, &quot;125k+&quot;))
+        income_bracket = fct_relevel(income_bracket, c(&quot;20-30k&quot;, &quot;30-40k&quot;, &quot;40-50k&quot;, &quot;50-60k&quot;, &quot;60-70k&quot;, &quot;70-80k&quot;, &quot;80-90k&quot;, &quot;90-100k&quot;, &quot;100-125k&quot;, &quot;125k+&quot;))
     )</code></pre>
 <pre><code>## Parsed with column specification:
 ## cols(
@@ -479,7 +479,8 @@ $(document).ready(function () {
 ##   per_blackNH = col_double(),
 ##   per_whiteNH = col_double(),
 ##   per_hisp = col_double(),
-##   per_other = col_double()
+##   per_other = col_double(),
+##   `Total Population` = col_double()
 ## )</code></pre>
 <pre class="r"><code>nyc_inc = left_join(nyc_tidy, inc_df, by = &quot;community_board&quot;)</code></pre>
 <pre><code>## Warning: Column `community_board` joining factor and character vector,
@@ -496,7 +497,45 @@ $(document).ready(function () {
         num_health_complaint = sum(health_complaint),
         num_open_health = sum(open_health_complaint)
     ) %&gt;% 
-    select(-unique_key, -city, -park_borough, -agency, -agency_name, -descriptor, -incident_zip, -incident_address, -street_name, -cross_street_1, -cross_street_2, -intersection_street_1, -intersection_street_2, -landmark, -facility_type, -resolution_description, -resolution_action_updated_date, -bbl, -x_coordinate_state_plane, -y_coordinate_state_plane, -open_data_channel_type, -park_facility_name, -vehicle_type, -taxi_company_borough, -taxi_pick_up_location, -bridge_highway_name, -bridge_highway_direction, -bridge_highway_segment, -latitude, -longitude, -location, -road_ramp, -location_type, -address_type, -map_id)</code></pre>
+    select(-unique_key, -city, -park_borough, -agency, -agency_name, -descriptor, -incident_zip, -incident_address, -street_name, -cross_street_1, -cross_street_2, -intersection_street_1, -intersection_street_2, -landmark, -facility_type, -resolution_description, -resolution_action_updated_date, -bbl, -x_coordinate_state_plane, -y_coordinate_state_plane, -open_data_channel_type, -park_facility_name, -vehicle_type, -taxi_company_borough, -taxi_pick_up_location, -bridge_highway_name, -bridge_highway_direction, -bridge_highway_segment, -latitude, -longitude, -location, -road_ramp, -location_type, -address_type, -map_id)
+
+
+# for days to close calculation:
+
+nyc_plots %&gt;%
+    filter(status == &quot;Closed&quot;) %&gt;% 
+    mutate(closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)) %&gt;% 
+    filter(closed_year != 2047) %&gt;% 
+    mutate(diff_year = abs(closed_year - created_year),
+        diff_month = abs(closed_month - created_month),
+        diff_day = abs(closed_day - created_day),
+        diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day))</code></pre>
+<pre><code>## # A tibble: 479,689 x 34
+## # Groups:   area_name, created_year [300]
+##    created_month created_day created_year created_time closed_month
+##            &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt; &lt;time&gt;              &lt;dbl&gt;
+##  1             6          18         2016 06:42:00                6
+##  2            10          18         2017 04:15:02               10
+##  3            11           7         2018 07:39:00               11
+##  4            10           3         2015 11:28:42               10
+##  5            11          27         2015 10:58:11               11
+##  6             4          10         2014 12:00:00                4
+##  7             8          30         2016 11:06:20                9
+##  8            11           1         2014 02:41:40               11
+##  9             3           8         2016 10:06:05                3
+## 10             5          14         2016 08:36:23                5
+## # … with 479,679 more rows, and 29 more variables: closed_day &lt;dbl&gt;,
+## #   closed_year &lt;dbl&gt;, closed_time &lt;chr&gt;, complaint_type &lt;fct&gt;,
+## #   status &lt;fct&gt;, due_date &lt;chr&gt;, community_board &lt;chr&gt;, borough &lt;fct&gt;,
+## #   open_complaint &lt;dbl&gt;, complaint_simp &lt;fct&gt;, health_complaint &lt;dbl&gt;,
+## #   open_health_complaint &lt;dbl&gt;, area_name &lt;chr&gt;, median_income &lt;dbl&gt;,
+## #   per_black_nh &lt;dbl&gt;, per_white_nh &lt;dbl&gt;, per_hisp &lt;dbl&gt;,
+## #   per_other &lt;dbl&gt;, total_population &lt;dbl&gt;, inc_1000s &lt;dbl&gt;,
+## #   income_bracket &lt;fct&gt;, number_complaints &lt;int&gt;, num_unsolved &lt;dbl&gt;,
+## #   num_health_complaint &lt;dbl&gt;, num_open_health &lt;dbl&gt;, diff_year &lt;dbl&gt;,
+## #   diff_month &lt;dbl&gt;, diff_day &lt;dbl&gt;, diff_dayt &lt;dbl&gt;</code></pre>
 <p>The newly combined dataframe was grouped according to <code>area_name</code>, a key variable from the population characteristics dataset that provides the local neighborhood name within the borough. Extraneous variables were removed to reduce the dataframe size and ease manipulation of the data.</p>
 <p>Newly added variables include:</p>
 <ol style="list-style-type: decimal">
@@ -775,7 +814,8 @@ p %&gt;% mutate(proportion = (open/(open + closed))) %&gt;%
     ggtitle(&quot;Proportion of Open Cases Within Each Income Bracket&quot;) +
     xlab(&quot;Income Bracket&quot;) +
     ylab(&quot;Proportion Open&quot;) +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1))</code></pre>
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    scale_fill_viridis(discrete = TRUE)</code></pre>
 <p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 </div>
 <div id="proportion-of-health-related-complaints-by-each-income-category" class="section level2">
@@ -795,7 +835,9 @@ h %&gt;% mutate(proportion = (health_related/(health_related + other))) %&gt;%
     ggtitle(&quot;Proportion of Health Related Complaints Within Each Income Bracket&quot;) +
     xlab(&quot;Income Bracket&quot;) +
     ylab(&quot;Proportion Health Related&quot;) +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1))</code></pre>
+    labs(fill = &quot;Income Bracket&quot;) +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    scale_fill_viridis(discrete = TRUE)</code></pre>
 <p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 </div>
 <div id="median-income-of-each-complaint-category-1" class="section level2">
@@ -803,7 +845,7 @@ h %&gt;% mutate(proportion = (health_related/(health_related + other))) %&gt;%
 <pre class="r"><code>nyc_plots %&gt;% 
     filter(!is.na(median_income),
            !is.na(complaint_simp)) %&gt;% 
-    mutate(complaint_simp = fct_reorder(complaint_simp, median_income)) %&gt;% 
+    # mutate(complaint_simp = fct_reorder(complaint_simp, median_income)) %&gt;%
     ggplot(aes(x = complaint_simp, 
                y = (median_income/1000), 
                fill = complaint_simp)) +
@@ -813,7 +855,8 @@ h %&gt;% mutate(proportion = (health_related/(health_related + other))) %&gt;%
     scale_y_continuous(breaks = scales::pretty_breaks(n = 10)) +
     ylab(&quot;Median Income (thousands)&quot;) +
     xlab(&quot;Complaint Category&quot;) +
-    ggtitle(&quot;Median Income of Community District where Complaint Category Occurs&quot;)</code></pre>
+    ggtitle(&quot;Median Income of Community District where Complaint Category Occurs&quot;) +
+    scale_fill_viridis(discrete = TRUE)</code></pre>
 <p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 </div>
 <div id="plot-of-percent-race-plotted-against-proportion-open" class="section level2">
@@ -826,7 +869,7 @@ h %&gt;% mutate(proportion = (health_related/(health_related + other))) %&gt;%
     summarize(n = n()) %&gt;% 
     pivot_wider(names_from = open_complaint, values_from = n) %&gt;% 
     rename(closed = &#39;0&#39;,
-           open = &#39;1&#39;)
+           open = &#39;1&#39;) 
 
 r %&gt;% mutate(proportion = (open/(open + closed))) %&gt;% 
     ggplot(aes(x = percent_pop, y = proportion, color = race)) +
@@ -834,7 +877,8 @@ r %&gt;% mutate(proportion = (open/(open + closed))) %&gt;%
     geom_smooth(se = FALSE) +
     xlab(&quot;Percentage of Community District Population&quot;) +
     ylab(&quot;Proportion Open&quot;) +
-    ggtitle(&quot;Unresolved Complaints as a Function of Neighborhood Population&quot;)</code></pre>
+    ggtitle(&quot;Unresolved Complaints as a Function of Neighborhood Population&quot;) +
+    scale_color_viridis(name = &quot;Race&quot;, labels = c(&quot;Black&quot;, &quot;Hispanic&quot;, &quot;Other&quot;, &quot;White&quot;), discrete = TRUE)</code></pre>
 <pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
 <p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 </div>
