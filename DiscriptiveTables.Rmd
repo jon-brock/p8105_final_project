@@ -9,18 +9,15 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-```
-### Libraries used
-```{r, message=FALSE, warning=FALSE}
 library(tidyverse)
-#install.packages("arsenal")
 library(arsenal)
 ```
-### read in data
+
+
 ```{r message = FALSE, warning=FALSE}
 
 #data previously combined in the nyc_open_data.Rmd file
-nyc <- read_csv(file = "./p8105nyc_311_100k.csv") %>% 
+nyc <- read_csv(file = "../p8105nyc_311_100k.csv") %>% 
     janitor::clean_names()
 
 #creating variables that aggragate similiar complaints. 
@@ -129,9 +126,9 @@ nyc_tidy <- nyc %>%
 
 ```
 
-### Adding community district data
-```{r message = FALSE, warning=FALSE}
 
+```{r message = FALSE, warning=FALSE}
+### Adding community district data
 inc_df = read_csv("./Med_income_2017.csv") %>% 
     janitor::clean_names() %>% 
     mutate(
@@ -163,9 +160,9 @@ add_inc = left_join(nyc_tidy, inc_df, by = "community_board") %>%
 ```
 
 
-# Calculate days to close
-```{r}
 
+```{r}
+# Calculate days to close
 #data with days to close information
 nyc_data <- add_inc %>% 
  filter(status == "Closed" & closed_year <= 2018) %>% 

@@ -269,12 +269,6 @@ $(document).ready(function () {
 }
 }
 
-@media print {
-.toc-content {
-  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
-  float: right;
-}
-}
 
 .toc-content {
   padding-left: 30px;
@@ -407,16 +401,8 @@ div.tocify {
 </div>
 
 
-<div id="libraries-used" class="section level3">
-<h3>Libraries used</h3>
-<pre class="r"><code>library(tidyverse)
-#install.packages(&quot;arsenal&quot;)
-library(arsenal)</code></pre>
-</div>
-<div id="read-in-data" class="section level3">
-<h3>read in data</h3>
 <pre class="r"><code>#data previously combined in the nyc_open_data.Rmd file
-nyc &lt;- read_csv(file = &quot;./p8105nyc_311_100k.csv&quot;) %&gt;% 
+nyc &lt;- read_csv(file = &quot;../p8105nyc_311_100k.csv&quot;) %&gt;% 
     janitor::clean_names()
 
 #creating variables that aggragate similiar complaints. 
@@ -521,10 +507,8 @@ nyc_tidy &lt;- nyc %&gt;%
         # openCorr = ifelse(status == &quot;Closed&quot;, yes = 0, no = 1),
         status = as.factor(status)
     )</code></pre>
-</div>
-<div id="adding-community-district-data" class="section level3">
-<h3>Adding community district data</h3>
-<pre class="r"><code>inc_df = read_csv(&quot;./Med_income_2017.csv&quot;) %&gt;% 
+<pre class="r"><code>### Adding community district data
+inc_df = read_csv(&quot;./Med_income_2017.csv&quot;) %&gt;% 
     janitor::clean_names() %&gt;% 
     mutate(
         pop_1000s = round(total_population/1000, 0),
@@ -550,10 +534,8 @@ add_inc = left_join(nyc_tidy, inc_df, by = &quot;community_board&quot;) %&gt;%
     mutate(
         year_fac = as.factor(created_year)
     )</code></pre>
-</div>
-<div id="calculate-days-to-close" class="section level1">
-<h1>Calculate days to close</h1>
-<pre class="r"><code>#data with days to close information
+<pre class="r"><code># Calculate days to close
+#data with days to close information
 nyc_data &lt;- add_inc %&gt;% 
  filter(status == &quot;Closed&quot; &amp; closed_year &lt;= 2018) %&gt;% 
     mutate(
@@ -575,7 +557,6 @@ nyc_data &lt;- add_inc %&gt;%
     income_bracket = forcats::fct_relevel(income_bracket, &quot;125k+&quot;, &quot;100-125k&quot;, &quot;90-100k&quot;, &quot;80-90k&quot;, &quot;70-80k&quot;, &quot;60-70k&quot;, &quot;50-60k&quot;, &quot;40-50k&quot;, &quot;30-40k&quot;, &quot;20-30k&quot;)
   ) %&gt;% 
   drop_na(closed_year)</code></pre>
-</div>
 <div id="tables" class="section level1">
 <h1>Tables</h1>
 <p>Tables report median, and IQR given the skewness of our data and the count.</p>
