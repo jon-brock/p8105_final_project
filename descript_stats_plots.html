@@ -445,7 +445,7 @@ $(document).ready(function () {
 <li><p><code>complaint_simp</code> - based on key words, condenses complaint types into the following categories: Air Quality, Car/Traffic, Collection, Hazard Material, Heat, Homeless, Maintenance, Noise, Paint/Plaster, Sanitation, Street Condition, Tree, and Water/plumbing.</p></li>
 <li><p><code>health_complaint</code> - binary yes (1) or no (0), based on health associated categories within <code>complaint_simp</code>.</p></li>
 <li><p><code>open_health_complaint</code> - binary categorization, either health complaint that is open (1), or non-health related complaint or closed health complaint (0).</p></li>
-<li><p><code>open_complaint</code> - binary categorization, closed <code>status</code> (0), open (1)</p></li>
+<li><p><code>open_complaint</code> - binary categorization, closed <code>status</code> (0), open (1).</p></li>
 </ol>
 </div>
 <div id="income-and-population-characteristics-data" class="section level2">
@@ -486,17 +486,11 @@ $(document).ready(function () {
 <pre><code>## Warning: Column `community_board` joining factor and character vector,
 ## coercing into character vector</code></pre>
 <p><code>income_bracket</code> and <code>inc_1000s</code> (rounds income and divides by 1000) variables were added to the neighborhood population characteristics data to ease downstream plots and analyses. The data were left joined using the <code>community_board</code> variable.</p>
+<p>&lt;&lt;&lt; STOP DATA TIDYING COPYING HERE &gt;&gt;&gt;</p>
 </div>
 <div id="combined-and-tidied-data-for-plotting" class="section level2">
 <h2>Combined and tidied data for plotting</h2>
 <pre class="r"><code>nyc_plots &lt;- nyc_inc %&gt;% 
-    group_by(area_name, created_year) %&gt;%
-    add_count(area_name, name = &quot;number_complaints&quot;) %&gt;% 
-    mutate(
-        num_unsolved = sum(open_complaint),
-        num_health_complaint = sum(health_complaint),
-        num_open_health = sum(open_health_complaint)
-    ) %&gt;% 
     select(-unique_key, -city, -park_borough, -agency, -agency_name, -descriptor, -incident_zip, -incident_address, -street_name, -cross_street_1, -cross_street_2, -intersection_street_1, -intersection_street_2, -landmark, -facility_type, -resolution_description, -resolution_action_updated_date, -bbl, -x_coordinate_state_plane, -y_coordinate_state_plane, -open_data_channel_type, -park_facility_name, -vehicle_type, -taxi_company_borough, -taxi_pick_up_location, -bridge_highway_name, -bridge_highway_direction, -bridge_highway_segment, -latitude, -longitude, -location, -road_ramp, -location_type, -address_type, -map_id)
 
 
@@ -512,8 +506,7 @@ nyc_plots %&gt;%
         diff_month = abs(closed_month - created_month),
         diff_day = abs(closed_day - created_day),
         diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day))</code></pre>
-<pre><code>## # A tibble: 479,689 x 34
-## # Groups:   area_name, created_year [300]
+<pre><code>## # A tibble: 479,689 x 30
 ##    created_month created_day created_year created_time closed_month
 ##            &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt; &lt;time&gt;              &lt;dbl&gt;
 ##  1             6          18         2016 06:42:00                6
@@ -526,16 +519,16 @@ nyc_plots %&gt;%
 ##  8            11           1         2014 02:41:40               11
 ##  9             3           8         2016 10:06:05                3
 ## 10             5          14         2016 08:36:23                5
-## # … with 479,679 more rows, and 29 more variables: closed_day &lt;dbl&gt;,
+## # … with 479,679 more rows, and 25 more variables: closed_day &lt;dbl&gt;,
 ## #   closed_year &lt;dbl&gt;, closed_time &lt;chr&gt;, complaint_type &lt;fct&gt;,
 ## #   status &lt;fct&gt;, due_date &lt;chr&gt;, community_board &lt;chr&gt;, borough &lt;fct&gt;,
 ## #   open_complaint &lt;dbl&gt;, complaint_simp &lt;fct&gt;, health_complaint &lt;dbl&gt;,
 ## #   open_health_complaint &lt;dbl&gt;, area_name &lt;chr&gt;, median_income &lt;dbl&gt;,
 ## #   per_black_nh &lt;dbl&gt;, per_white_nh &lt;dbl&gt;, per_hisp &lt;dbl&gt;,
 ## #   per_other &lt;dbl&gt;, total_population &lt;dbl&gt;, inc_1000s &lt;dbl&gt;,
-## #   income_bracket &lt;fct&gt;, number_complaints &lt;int&gt;, num_unsolved &lt;dbl&gt;,
-## #   num_health_complaint &lt;dbl&gt;, num_open_health &lt;dbl&gt;, diff_year &lt;dbl&gt;,
-## #   diff_month &lt;dbl&gt;, diff_day &lt;dbl&gt;, diff_dayt &lt;dbl&gt;</code></pre>
+## #   income_bracket &lt;fct&gt;, diff_year &lt;dbl&gt;, diff_month &lt;dbl&gt;,
+## #   diff_day &lt;dbl&gt;, diff_dayt &lt;dbl&gt;</code></pre>
+<p>THIS IS NOT TRUE DO NOT INCLUDE:</p>
 <p>The newly combined dataframe was grouped according to <code>area_name</code>, a key variable from the population characteristics dataset that provides the local neighborhood name within the borough. Extraneous variables were removed to reduce the dataframe size and ease manipulation of the data.</p>
 <p>Newly added variables include:</p>
 <ol style="list-style-type: decimal">
@@ -743,7 +736,6 @@ nyc_plots %&gt;%
     ggplot(aes(x = diff_dayt, y = n, group = income_bracket, color = income_bracket)) + 
     geom_line() +
     facet_wrap(~borough)</code></pre>
-<pre><code>## Adding missing grouping variables: `area_name`, `created_year`</code></pre>
 <p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <pre class="r"><code># sum total of income by borough
 # 
@@ -797,8 +789,10 @@ nyc_plots %&gt;%
 </div>
 <div id="final-plots" class="section level1">
 <h1>Final Plots:</h1>
-<div id="proportion-of-unsolved-cases-by-income-bracket-1" class="section level2">
-<h2>Proportion of unsolved cases by income bracket</h2>
+<div id="intro-plots" class="section level2">
+<h2>Intro Plots</h2>
+<div id="proportion-of-unsolved-cases-by-income-bracket-1" class="section level4">
+<h4>Proportion of unsolved cases by income bracket</h4>
 <pre class="r"><code>p &lt;- nyc_plots %&gt;% 
     filter(!is.na(income_bracket)) %&gt;% 
     group_by(income_bracket, borough, open_complaint) %&gt;% 
@@ -818,6 +812,7 @@ p %&gt;% mutate(proportion = (open/(open + closed))) %&gt;%
     scale_fill_viridis(discrete = TRUE) +
     labs(fill = &quot;Income Bracket&quot;)</code></pre>
 <p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
 </div>
 <div id="proportion-of-health-related-complaints-by-each-income-category" class="section level2">
 <h2>Proportion of health related complaints by each income category:</h2>
@@ -914,9 +909,9 @@ r %&gt;% mutate(proportion = (open/(open + closed))) %&gt;%
            day4 = `4`,
            day5 = `5`,
            day6 = `6`,
-           day7 = `7`)</code></pre>
-<pre><code>## Adding missing grouping variables: `area_name`, `created_year`</code></pre>
-<pre class="r"><code>d$total &lt;- d %&gt;% 
+           day7 = `7`)
+
+d$total &lt;- d %&gt;% 
     ungroup() %&gt;% 
     select(starts_with(&quot;day&quot;)) %&gt;% 
     rowSums(.)
@@ -966,8 +961,49 @@ d %&gt;%
     ylab(&quot;Total Complaints Closed&quot;) +
     ggtitle(&quot;Number of Complaints Closed Since Complaint Filed&quot;) +
     labs(color = &quot;Income Bracket&quot;)</code></pre>
-<pre><code>## Adding missing grouping variables: `area_name`, `created_year`</code></pre>
 <p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+</div>
+<div id="total-number-of-health-complaints-filed-per-neighborhood" class="section level2">
+<h2>Total number of health complaints filed per neighborhood</h2>
+<pre class="r"><code>nyc_plots %&gt;%
+    select(area_name, borough, open_complaint, health_complaint, open_health_complaint) %&gt;% 
+    group_by(area_name, borough, health_complaint) %&gt;%
+    summarize(n = n()) %&gt;% 
+    pivot_wider(names_from = health_complaint, values_from = n) %&gt;% 
+    rename(closed = `0`,
+           open = `1`) %&gt;% 
+    mutate(total_health = (open + closed),
+           proportion = open/(open + closed)) %&gt;% 
+    filter(!is.na(area_name), !is.na(total_health)) %&gt;% 
+    ggplot(aes(x = area_name, y = total_health, fill = borough)) + 
+    geom_col() + 
+    facet_wrap(~borough, scales = &quot;free_x&quot;) + 
+    theme(axis.text.x = element_text(angle = 75, hjust = 1)) +
+    xlab(&quot;Neighborhood&quot;) +
+    ylab(&quot;Total Number of Health Complaints&quot;) +
+    ggtitle(&quot;Total Number of Health Complaints Filed per Neighborhood&quot;) +
+    theme(legend.position = &quot;none&quot;) +
+    scale_fill_viridis(discrete = TRUE)</code></pre>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<pre class="r"><code>nyc_plots %&gt;%
+    select(area_name, borough, open_complaint) %&gt;% 
+    group_by(area_name, borough, open_complaint) %&gt;%
+    summarize(n = n()) %&gt;% 
+    pivot_wider(names_from = open_complaint, values_from = n) %&gt;% 
+    rename(closed = `0`,
+           open = `1`) %&gt;% 
+    mutate(proportion_open = open/(open + closed)) %&gt;% 
+    filter(!is.na(area_name), !is.na(proportion_open)) %&gt;% 
+    ggplot(aes(x = area_name, y = proportion_open, fill = borough)) + 
+    geom_col() + 
+    facet_wrap(~borough, scales = &quot;free_x&quot;) + 
+    theme(axis.text.x = element_text(angle = 75, hjust = 1)) +
+    xlab(&quot;Neighborhood&quot;) +
+    ggtitle(&quot;Proportion of Complaints that are Open per Neighborhood&quot;) +
+    ylab(&quot;Proportion Open&quot;) +
+    theme(legend.position = &quot;none&quot;) +
+    scale_fill_viridis(discrete = TRUE)</code></pre>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-18-2.png" width="672" /></p>
 </div>
 </div>
 
