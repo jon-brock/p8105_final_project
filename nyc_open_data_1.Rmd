@@ -1,9 +1,8 @@
 ---
 title: "Data Scraping Using RSocrata"
-output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(eval = FALSE)
 ```
 
