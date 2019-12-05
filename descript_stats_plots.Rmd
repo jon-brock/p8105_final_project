@@ -362,6 +362,42 @@ The only trend we were able to discern is a decrease is the proportion of open c
 We were also curious whether the income bracket of a neighborhood affected the number of days until a complaint was closed.
 
 ```{r, warning=FALSE, message=FALSE}
+nyc_plots %>%
+    filter(status == "Closed") %>% 
+    mutate(closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)) %>% 
+    filter(closed_year != 2047) %>% 
+    mutate(diff_year = abs(closed_year - created_year),
+        diff_month = abs(closed_month - created_month),
+        diff_day = abs(closed_day - created_day),
+        diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day)) %>% 
+    select(income_bracket,
+           median_income,
+           borough, 
+           diff_dayt,
+           diff_year,
+           diff_month,
+           diff_day) %>% 
+    filter(diff_dayt <= 7,
+           !is.na(income_bracket)) %>% 
+    group_by(borough, income_bracket, diff_dayt) %>% 
+    summarize(n = n()) %>% 
+    ggplot(aes(x = diff_dayt, y = n, group = income_bracket, color = income_bracket)) + 
+    geom_line() +
+    facet_wrap(~borough, scales = "free_x") +
+    scale_x_continuous(breaks = scales::pretty_breaks(n = 7)) +
+    scale_color_viridis(discrete = TRUE) +
+    xlab("Days until Complaint Closed") +
+    ylab("Total Complaints Closed") +
+    ggtitle("Number of Complaints Closed Since Complaint Filed") +
+    labs(color = "Income Bracket")
+    
+```
+
+Looking at the total number of complaints largely reflects a difference in the total number of complaints filed by each group. We then looked at the proportion of complaints closed per day within an income bracket.
+
+```{r, warning=FALSE, message=FALSE}
 
 d <- nyc_plots %>%
     filter(status == "Closed") %>% 
@@ -414,42 +450,6 @@ d %>%
     labs(color = "Income Bracket")
 
 
-```
-
-Looking at the total number of complaints largely reflects a difference in the total number of complaints filed by each group. We then looked at the proportion of complaints closed per day within an income bracket.
-
-```{r, warning=FALSE, message=FALSE}
-nyc_plots %>%
-    filter(status == "Closed") %>% 
-    mutate(closed_year = as.numeric(closed_year),
-        closed_month = as.numeric(closed_month),
-        closed_day = as.numeric(closed_day)) %>% 
-    filter(closed_year != 2047) %>% 
-    mutate(diff_year = abs(closed_year - created_year),
-        diff_month = abs(closed_month - created_month),
-        diff_day = abs(closed_day - created_day),
-        diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day)) %>% 
-    select(income_bracket,
-           median_income,
-           borough, 
-           diff_dayt,
-           diff_year,
-           diff_month,
-           diff_day) %>% 
-    filter(diff_dayt <= 7,
-           !is.na(income_bracket)) %>% 
-    group_by(borough, income_bracket, diff_dayt) %>% 
-    summarize(n = n()) %>% 
-    ggplot(aes(x = diff_dayt, y = n, group = income_bracket, color = income_bracket)) + 
-    geom_line() +
-    facet_wrap(~borough, scales = "free_x") +
-    scale_x_continuous(breaks = scales::pretty_breaks(n = 7)) +
-    scale_color_viridis(discrete = TRUE) +
-    xlab("Days until Complaint Closed") +
-    ylab("Total Complaints Closed") +
-    ggtitle("Number of Complaints Closed Since Complaint Filed") +
-    labs(color = "Income Bracket")
-    
 ```
 
 This revealed no difference in the number of days to close a complaint given the income bracket of a neighborhood.

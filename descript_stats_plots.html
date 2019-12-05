@@ -550,6 +550,38 @@ r %&gt;% mutate(proportion = (open/(open + closed))) %&gt;%
 <div id="days-to-close-given-income-level" class="section level3">
 <h3>Days to close given income level</h3>
 <p>We were also curious whether the income bracket of a neighborhood affected the number of days until a complaint was closed.</p>
+<pre class="r"><code>nyc_plots %&gt;%
+    filter(status == &quot;Closed&quot;) %&gt;% 
+    mutate(closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)) %&gt;% 
+    filter(closed_year != 2047) %&gt;% 
+    mutate(diff_year = abs(closed_year - created_year),
+        diff_month = abs(closed_month - created_month),
+        diff_day = abs(closed_day - created_day),
+        diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day)) %&gt;% 
+    select(income_bracket,
+           median_income,
+           borough, 
+           diff_dayt,
+           diff_year,
+           diff_month,
+           diff_day) %&gt;% 
+    filter(diff_dayt &lt;= 7,
+           !is.na(income_bracket)) %&gt;% 
+    group_by(borough, income_bracket, diff_dayt) %&gt;% 
+    summarize(n = n()) %&gt;% 
+    ggplot(aes(x = diff_dayt, y = n, group = income_bracket, color = income_bracket)) + 
+    geom_line() +
+    facet_wrap(~borough, scales = &quot;free_x&quot;) +
+    scale_x_continuous(breaks = scales::pretty_breaks(n = 7)) +
+    scale_color_viridis(discrete = TRUE) +
+    xlab(&quot;Days until Complaint Closed&quot;) +
+    ylab(&quot;Total Complaints Closed&quot;) +
+    ggtitle(&quot;Number of Complaints Closed Since Complaint Filed&quot;) +
+    labs(color = &quot;Income Bracket&quot;)</code></pre>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>Looking at the total number of complaints largely reflects a difference in the total number of complaints filed by each group. We then looked at the proportion of complaints closed per day within an income bracket.</p>
 <pre class="r"><code>d &lt;- nyc_plots %&gt;%
     filter(status == &quot;Closed&quot;) %&gt;% 
     mutate(closed_year = as.numeric(closed_year),
@@ -598,38 +630,6 @@ d %&gt;%
     xlab(&quot;Days until Complaint Closed&quot;) +
     ylab(&quot;Proportion Complaints Closed&quot;) +
     ggtitle(&quot;Proportion of Complaints Closed Since Complaint Filed&quot;) +
-    labs(color = &quot;Income Bracket&quot;)</code></pre>
-<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
-<p>Looking at the total number of complaints largely reflects a difference in the total number of complaints filed by each group. We then looked at the proportion of complaints closed per day within an income bracket.</p>
-<pre class="r"><code>nyc_plots %&gt;%
-    filter(status == &quot;Closed&quot;) %&gt;% 
-    mutate(closed_year = as.numeric(closed_year),
-        closed_month = as.numeric(closed_month),
-        closed_day = as.numeric(closed_day)) %&gt;% 
-    filter(closed_year != 2047) %&gt;% 
-    mutate(diff_year = abs(closed_year - created_year),
-        diff_month = abs(closed_month - created_month),
-        diff_day = abs(closed_day - created_day),
-        diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day)) %&gt;% 
-    select(income_bracket,
-           median_income,
-           borough, 
-           diff_dayt,
-           diff_year,
-           diff_month,
-           diff_day) %&gt;% 
-    filter(diff_dayt &lt;= 7,
-           !is.na(income_bracket)) %&gt;% 
-    group_by(borough, income_bracket, diff_dayt) %&gt;% 
-    summarize(n = n()) %&gt;% 
-    ggplot(aes(x = diff_dayt, y = n, group = income_bracket, color = income_bracket)) + 
-    geom_line() +
-    facet_wrap(~borough, scales = &quot;free_x&quot;) +
-    scale_x_continuous(breaks = scales::pretty_breaks(n = 7)) +
-    scale_color_viridis(discrete = TRUE) +
-    xlab(&quot;Days until Complaint Closed&quot;) +
-    ylab(&quot;Total Complaints Closed&quot;) +
-    ggtitle(&quot;Number of Complaints Closed Since Complaint Filed&quot;) +
     labs(color = &quot;Income Bracket&quot;)</code></pre>
 <p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <p>This revealed no difference in the number of days to close a complaint given the income bracket of a neighborhood.</p>
