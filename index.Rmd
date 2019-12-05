@@ -32,7 +32,9 @@ We also included aggregated American Commmunity Survey (ACS) data in our analysi
 
 __Exploratory analysis:__ Visualizations, summaries, and exploratory statistical analyses. Justify the steps you took, and show any major changes to your ideas.
 
-Steven and Molly: XXX
+Stephen and Molly: 
+
+We created an interactive map visual inspired from P8105 in-class map visualizations using the Airbnb dataset. Our map consisted of New York City 311 data combined with community income data from NYC. The primary objective of this visual was to create a map that displayed 311 complaints in NYC by complaint type. Our dataset (2014-2018) contained over 5000000 data points, which was too many data points to create an interactive map. Therefore, we restricted our sample to complaints created in 2018, and we took a random sample of 10000 of the 2018 data points. These data were grouped and colored by complaint type. The map visual includes an interactive aspect where one can click on each data point to reveal a label for the data point. The label describes the complaint type, location or neighborhood, median income, and status of the complaint (open or closed). 
 
 __Additional analysis:__  If you undertake formal statistical analyses, describe these in detail
 
