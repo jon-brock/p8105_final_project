@@ -29,7 +29,11 @@ Steven L. Source/scraping method for 311: XXX
 Data Management
 The data used in this project was collected from the NYC Open Data website [https://data.cityofnewyork.us/Social-Services/311-Service-Requests-from-2010-to-Present/erm2-nwe9].  Web based collection of 311 complaints was made public on 10/18/ 2011, contains information from 2010 to present, and is updated daily.  This data set contains 22M rows and counting with 41 columns that allow us to know the nature, the location, and time of the complaint, as well as which department responded to the complaint.  Given the size of the data set we used the filtering option on the website to better manage in three ways.  First, the data was filter between the years of 2014 and 2018 for each borough individually.  Subsequently, each data set was imported into R where a sample of 100k was taken from each borrow and binded into one data set for further analysis.  
 
-Cleaning 311 adding variables: XXX
+<<<<<<< HEAD
+Cleaning 311 adding variables: XXX 
+=======
+Cleaning 311 adding variables: [SEE descript_stats_plots file.]
+>>>>>>> f75d8ad4a0efdea45e647ff5b5d43004ebd93996
 
 American Commmunity Survey data:
 We also included aggregated American Commmunity Survey (ACS) data in our analysis. The American Community Survey is conducted annually across the United States by the US Census Bureau to 3.5 million households. ACS provides annual and 5-year estimates of information by graphical region, including NYC Community Districts. We pulled population 5-year estimates (2013-2017) of total population, percent non-Hispanic White, percent non-Hispanic Black, percent Hispanic, and median income of each community district.
@@ -48,7 +52,9 @@ __Discussion:__ What were your findings? Are they what you expect? What insights
 
 Steven and Molly: XXX
 
-Ava:
+Ava: 
+
+
 
 
 =======
