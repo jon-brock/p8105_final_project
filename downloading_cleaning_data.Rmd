@@ -1,8 +1,5 @@
 ---
 title: "downloading_cleaning_data"
-author: "Ava Hamilton"
-date: "12/3/2019"
-output: html_document
 ---
 
 

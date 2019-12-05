@@ -1,8 +1,5 @@
 ---
 title: "compiled"
-author: "Ava Hamilton"
-date: "12/4/2019"
-output: github_document
 ---
 
 ```{r setup, include=FALSE}
