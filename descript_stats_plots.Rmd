@@ -1,5 +1,10 @@
 ---
 title: "<span style='font-size: 25px'>Descriptive Statistics Plots</style>"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float: true
 ---
 
 ```{r setup, include=FALSE}
@@ -122,7 +127,7 @@ nyc_tidy <- nyc %>%
 ```
 
 
-```{r, include=FALSE}
+```{r, include=FALSE, warning=FALSE}
 
 inc_df = read_csv("./Med_income_2017.csv") %>% 
     janitor::clean_names() %>% 
@@ -149,7 +154,7 @@ nyc_inc = left_join(nyc_tidy, inc_df, by = "community_board")
 
 ```
 
-```{r, include=FALSE}
+```{r, include=FALSE, warning=FALSE}
 
 nyc_plots <- nyc_inc %>% 
     group_by(area_name, created_year) %>%
@@ -177,15 +182,11 @@ nyc_plots %>%
 
 ```
 
-# Final Plots:
-
-## Intro plots
-
-#### Proportion open complaints per neighborhood
+# Neighborhood Trends
 
 We first wanted to consider if there were differences in the number, type, or status of complaints across each neighborhood.
 
-```{r}
+```{r, warning=FALSE, message=FALSE, fig.width = 8, fig.height = 8, dpi = 200, fig.align = 'center'}
 nyc_plots %>%
     select(area_name, borough, complaint_simp, open_complaint) %>% 
     group_by(area_name, borough, complaint_simp, open_complaint) %>%
@@ -212,7 +213,7 @@ Looking at the total and type of complaint shows Inwood/Washington Heights to ha
 
 We next considered how many of the total complaints in each neighborhood have been closed.
 
-```{r}
+```{r, warning = FALSE, message=FALSE, fig.width = 8, fig.height = 8, dpi = 200, fig.align = 'center'}
 
 nyc_plots %>%
     select(area_name, borough, complaint_simp, open_complaint) %>% 
@@ -236,11 +237,13 @@ nyc_plots %>%
 
 The above plot demonstrates that the highest proportion of open cases are complaints involving a tree. Air Quality and Car/Traffic are also addressed less than other complaints across all neighborhoods. Notably, Hazard Material complaints remain unaddressed in Morrisania/Crotona, Rockaway/Broad Channel and Coney Island. Depending on the neighborhood, Homeless complaints are typically left open.
 
-#### Proportion of open complaints by income bracket
+# Income Trends
+
+### Proportion of open complaints by income bracket
 
 Because we saw a difference in the number of complaints and open complaints across each neighborhood, we wanted to understand how complaints are distributed based on `income_bracket`.
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 
 p <- nyc_plots %>% 
     filter(!is.na(income_bracket)) %>% 
@@ -267,11 +270,11 @@ Surprisingly, across all boroughs (except Brooklyn) the proportion of open cases
 
 We found the total number of cases per income bracket reflected the economic distribution of each neighborhood and was not informative as to which group filed the most complaints. As such, we did not include this plot.
 
-#### Proportion of health related complaints by each income category:
+### Proportion of health related complaints by each income bracket:
 
 Even though total complaint number was uninformative, we wanted to understand if a type of complaint was more prevalent within an income bracket. The following is a plot of the proportion of health related complaints (which includes: Air Quality, Heat, Hazard Material, Sanitation, and Water/Plumbing) out of all complaints filed.
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 
 h <- nyc_plots %>% 
     filter(!is.na(income_bracket)) %>% 
@@ -296,13 +299,11 @@ h %>% mutate(proportion = (health_related/(health_related + other))) %>%
 
 It is apparent that health related complaints are proportionally higher in lower income groups across all boroughs of NYC.
 
-## Income across complaint categories
-
-#### Median income of each complaint category:
+### Median income of each complaint category:
 
 Given the difference in the proportion of health complaints across income brackets, we wanted to further investigate what incomes are associated with a given complaint.
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 
 nyc_plots %>% 
     filter(!is.na(median_income),
@@ -324,15 +325,15 @@ nyc_plots %>%
 
 This plot demonstrates that neighborhoods with higher median incomes file more complaints relating to Homeless. Neighborhoods with lower median incomes file more complaints related to Heat, Maintenance, and Paint/Plaster.
 
-## Status of complaints given race or income level
+# Complaint Status or Days until Resolution given Race or Income
 
-#### Open status given Community District Population
+### Open status given Community District Population
 
 One initial question we wanted to address was whether or not the status of complaints was more readily addressed given population characteristics of a neighborhood.
 
 The following is a plot of the proportion of cases that are open given the racial percentage of a community district.
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 r <- nyc_plots %>% 
     pivot_longer(cols = per_black_nh:per_other, names_to = "race", values_to = "percent_pop") %>% 
     filter(!is.na(race),
@@ -356,11 +357,47 @@ r %>% mutate(proportion = (open/(open + closed))) %>%
 
 The only trend we were able to discern is a decrease is the proportion of open cases as the percent hispanic population increases.
 
-#### Days to close given income level
+### Days to close given income level
 
 We were also curious whether the income bracket of a neighborhood affected the number of days until a complaint was closed.
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
+nyc_plots %>%
+    filter(status == "Closed") %>% 
+    mutate(closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)) %>% 
+    filter(closed_year != 2047) %>% 
+    mutate(diff_year = abs(closed_year - created_year),
+        diff_month = abs(closed_month - created_month),
+        diff_day = abs(closed_day - created_day),
+        diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day)) %>% 
+    select(income_bracket,
+           median_income,
+           borough, 
+           diff_dayt,
+           diff_year,
+           diff_month,
+           diff_day) %>% 
+    filter(diff_dayt <= 7,
+           !is.na(income_bracket)) %>% 
+    group_by(borough, income_bracket, diff_dayt) %>% 
+    summarize(n = n()) %>% 
+    ggplot(aes(x = diff_dayt, y = n, group = income_bracket, color = income_bracket)) + 
+    geom_line() +
+    facet_wrap(~borough, scales = "free_x") +
+    scale_x_continuous(breaks = scales::pretty_breaks(n = 7)) +
+    scale_color_viridis(discrete = TRUE) +
+    xlab("Days until Complaint Closed") +
+    ylab("Total Complaints Closed") +
+    ggtitle("Number of Complaints Closed Since Complaint Filed") +
+    labs(color = "Income Bracket")
+    
+```
+
+Looking at the total number of complaints largely reflects a difference in the total number of complaints filed by each group. We then looked at the proportion of complaints closed per day within an income bracket.
+
+```{r, warning=FALSE, message=FALSE}
 
 d <- nyc_plots %>%
     filter(status == "Closed") %>% 
@@ -413,42 +450,6 @@ d %>%
     labs(color = "Income Bracket")
 
 
-```
-
-Looking at the total number of complaints largely reflects a difference in the total number of complaints filed by each group. We then looked at the proportion of complaints closed per day within an income bracket.
-
-```{r}
-nyc_plots %>%
-    filter(status == "Closed") %>% 
-    mutate(closed_year = as.numeric(closed_year),
-        closed_month = as.numeric(closed_month),
-        closed_day = as.numeric(closed_day)) %>% 
-    filter(closed_year != 2047) %>% 
-    mutate(diff_year = abs(closed_year - created_year),
-        diff_month = abs(closed_month - created_month),
-        diff_day = abs(closed_day - created_day),
-        diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day)) %>% 
-    select(income_bracket,
-           median_income,
-           borough, 
-           diff_dayt,
-           diff_year,
-           diff_month,
-           diff_day) %>% 
-    filter(diff_dayt <= 7,
-           !is.na(income_bracket)) %>% 
-    group_by(borough, income_bracket, diff_dayt) %>% 
-    summarize(n = n()) %>% 
-    ggplot(aes(x = diff_dayt, y = n, group = income_bracket, color = income_bracket)) + 
-    geom_line() +
-    facet_wrap(~borough, scales = "free_x") +
-    scale_x_continuous(breaks = scales::pretty_breaks(n = 7)) +
-    scale_color_viridis(discrete = TRUE) +
-    xlab("Days until Complaint Closed") +
-    ylab("Total Complaints Closed") +
-    ggtitle("Number of Complaints Closed Since Complaint Filed") +
-    labs(color = "Income Bracket")
-    
 ```
 
 This revealed no difference in the number of days to close a complaint given the income bracket of a neighborhood.

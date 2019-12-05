@@ -5,17 +5,19 @@ navbar:
   left:
     - text: "Overview"
       href: index.html
-  right:
     - text: "Screencast"
       href: screencast.html
-    - text: "Descriptive Statistics Plots"
+    - text: "Plots"
       href: descript_stats_plots.html
-    - text: "Descriptive Tables"
-      href: DiscriptiveTabels.html
-    - text: "Regression Analysis"
-      href: regression_analysis.html
+    - text: "Tables"
+      href: DiscriptiveTables.html
     - text: "Visualizations"
       href: map_visual.html
+    - text: "Regression"
+      href: regression_analysis.html
+  right:
+    - text: Full Report
+      href: compiled.html
     - icon: fa-envelope fa-lg
       href: mailto:<jpb2210@cumc.columbia.edu>
     - icon: fa-github fa-lg

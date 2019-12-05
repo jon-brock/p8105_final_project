@@ -20,7 +20,11 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
@@ -247,7 +251,73 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
 
 
 
@@ -257,6 +327,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -276,22 +356,25 @@ $(document).ready(function () {
         <li>
   <a href="index.html">Overview</a>
 </li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li>
+<li>
   <a href="screencast.html">Screencast</a>
 </li>
 <li>
-  <a href="descript_stats_plots.html">Descriptive Statistics Plots</a>
+  <a href="descript_stats_plots.html">Plots</a>
 </li>
 <li>
-  <a href="DiscriptiveTabels.html">Descriptive Tables</a>
-</li>
-<li>
-  <a href="regression_analysis.html">Regression Analysis</a>
+  <a href="DiscriptiveTables.html">Tables</a>
 </li>
 <li>
   <a href="map_visual.html">Visualizations</a>
+</li>
+<li>
+  <a href="regression_analysis.html">Regression</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="compiled.html">Full Report</a>
 </li>
 <li>
   <a href="mailto:&lt;jpb2210@cumc.columbia.edu&gt;">
@@ -312,6 +395,14 @@ $(document).ready(function () {
 
 <div class="fluid-row" id="header">
 
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore"><span style='font-size: 25px'>Descriptive Statistics Plots
@@ -320,12 +411,8 @@ $(document).ready(function () {
 </div>
 
 
-<div id="final-plots" class="section level1">
-<h1>Final Plots:</h1>
-<div id="intro-plots" class="section level2">
-<h2>Intro plots</h2>
-<div id="proportion-open-complaints-per-neighborhood" class="section level4">
-<h4>Proportion open complaints per neighborhood</h4>
+<div id="neighborhood-trends" class="section level1">
+<h1>Neighborhood Trends</h1>
 <p>We first wanted to consider if there were differences in the number, type, or status of complaints across each neighborhood.</p>
 <pre class="r"><code>nyc_plots %&gt;%
     select(area_name, borough, complaint_simp, open_complaint) %&gt;% 
@@ -346,19 +433,7 @@ $(document).ready(function () {
     ylab(&quot;Total Complaints&quot;) + 
   labs(fill = &quot;Complaint Type&quot;) +
   scale_fill_viridis(discrete = TRUE)</code></pre>
-<pre><code>## Adding missing grouping variables: `created_year`</code></pre>
-<pre><code>## Warning: Factor `complaint_simp` contains implicit NA, consider using
-## `forcats::fct_explicit_na`
-
-## Warning: Factor `complaint_simp` contains implicit NA, consider using
-## `forcats::fct_explicit_na`
-
-## Warning: Factor `complaint_simp` contains implicit NA, consider using
-## `forcats::fct_explicit_na`
-
-## Warning: Factor `complaint_simp` contains implicit NA, consider using
-## `forcats::fct_explicit_na`</code></pre>
-<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-4-1.png" width="1600" style="display: block; margin: auto;" /></p>
 <p>Looking at the total and type of complaint shows Inwood/Washington Heights to have a much greater number of complaints compared to the rest of Manhattan, many of which are related to Noise, Heat, Water/Plumbing, and Trees (possibly because of Inwood Park). Many more complaints are made in the “safer” area of the Bronx near the VA hospital, Fordham University, and Van Cortland Park (Highbridge/Concourse, Fordham/University Heights, Kingsbridge Heights/Bedford Park). More complaints are raised in St. George/Stapleton in Staten Island than other areas because it is a more populated area of the island in addition to being the more affluent area of the island.</p>
 <p>We next considered how many of the total complaints in each neighborhood have been closed.</p>
 <pre class="r"><code>nyc_plots %&gt;%
@@ -379,23 +454,13 @@ $(document).ready(function () {
     ylab(&quot;Proportion Open&quot;) +
   labs(fill = &quot;Complaint Type&quot;) +
     scale_fill_viridis(discrete = TRUE)</code></pre>
-<pre><code>## Adding missing grouping variables: `created_year`</code></pre>
-<pre><code>## Warning: Factor `complaint_simp` contains implicit NA, consider using
-## `forcats::fct_explicit_na`
-
-## Warning: Factor `complaint_simp` contains implicit NA, consider using
-## `forcats::fct_explicit_na`
-
-## Warning: Factor `complaint_simp` contains implicit NA, consider using
-## `forcats::fct_explicit_na`
-
-## Warning: Factor `complaint_simp` contains implicit NA, consider using
-## `forcats::fct_explicit_na`</code></pre>
-<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-5-1.png" width="1600" style="display: block; margin: auto;" /></p>
 <p>The above plot demonstrates that the highest proportion of open cases are complaints involving a tree. Air Quality and Car/Traffic are also addressed less than other complaints across all neighborhoods. Notably, Hazard Material complaints remain unaddressed in Morrisania/Crotona, Rockaway/Broad Channel and Coney Island. Depending on the neighborhood, Homeless complaints are typically left open.</p>
 </div>
-<div id="proportion-of-open-complaints-by-income-bracket" class="section level4">
-<h4>Proportion of open complaints by income bracket</h4>
+<div id="income-trends" class="section level1">
+<h1>Income Trends</h1>
+<div id="proportion-of-open-complaints-by-income-bracket" class="section level3">
+<h3>Proportion of open complaints by income bracket</h3>
 <p>Because we saw a difference in the number of complaints and open complaints across each neighborhood, we wanted to understand how complaints are distributed based on <code>income_bracket</code>.</p>
 <pre class="r"><code>p &lt;- nyc_plots %&gt;% 
     filter(!is.na(income_bracket)) %&gt;% 
@@ -419,8 +484,8 @@ p %&gt;% mutate(proportion = (open/(open + closed))) %&gt;%
 <p>Surprisingly, across all boroughs (except Brooklyn) the proportion of open cases is greater in higher income groups compared to lower income groups.</p>
 <p>We found the total number of cases per income bracket reflected the economic distribution of each neighborhood and was not informative as to which group filed the most complaints. As such, we did not include this plot.</p>
 </div>
-<div id="proportion-of-health-related-complaints-by-each-income-category" class="section level4">
-<h4>Proportion of health related complaints by each income category:</h4>
+<div id="proportion-of-health-related-complaints-by-each-income-bracket" class="section level3">
+<h3>Proportion of health related complaints by each income bracket:</h3>
 <p>Even though total complaint number was uninformative, we wanted to understand if a type of complaint was more prevalent within an income bracket. The following is a plot of the proportion of health related complaints (which includes: Air Quality, Heat, Hazard Material, Sanitation, and Water/Plumbing) out of all complaints filed.</p>
 <pre class="r"><code>h &lt;- nyc_plots %&gt;% 
     filter(!is.na(income_bracket)) %&gt;% 
@@ -443,11 +508,8 @@ h %&gt;% mutate(proportion = (health_related/(health_related + other))) %&gt;%
 <p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>It is apparent that health related complaints are proportionally higher in lower income groups across all boroughs of NYC.</p>
 </div>
-</div>
-<div id="income-across-complaint-categories" class="section level2">
-<h2>Income across complaint categories</h2>
-<div id="median-income-of-each-complaint-category" class="section level4">
-<h4>Median income of each complaint category:</h4>
+<div id="median-income-of-each-complaint-category" class="section level3">
+<h3>Median income of each complaint category:</h3>
 <p>Given the difference in the proportion of health complaints across income brackets, we wanted to further investigate what incomes are associated with a given complaint.</p>
 <pre class="r"><code>nyc_plots %&gt;% 
     filter(!is.na(median_income),
@@ -468,10 +530,10 @@ h %&gt;% mutate(proportion = (health_related/(health_related + other))) %&gt;%
 <p>This plot demonstrates that neighborhoods with higher median incomes file more complaints relating to Homeless. Neighborhoods with lower median incomes file more complaints related to Heat, Maintenance, and Paint/Plaster.</p>
 </div>
 </div>
-<div id="status-of-complaints-given-race-or-income-level" class="section level2">
-<h2>Status of complaints given race or income level</h2>
-<div id="open-status-given-community-district-population" class="section level4">
-<h4>Open status given Community District Population</h4>
+<div id="complaint-status-or-days-until-resolution-given-race-or-income" class="section level1">
+<h1>Complaint Status or Days until Resolution given Race or Income</h1>
+<div id="open-status-given-community-district-population" class="section level3">
+<h3>Open status given Community District Population</h3>
 <p>One initial question we wanted to address was whether or not the status of complaints was more readily addressed given population characteristics of a neighborhood.</p>
 <p>The following is a plot of the proportion of cases that are open given the racial percentage of a community district.</p>
 <pre class="r"><code>r &lt;- nyc_plots %&gt;% 
@@ -492,64 +554,12 @@ r %&gt;% mutate(proportion = (open/(open + closed))) %&gt;%
     ylab(&quot;Proportion Open&quot;) +
     ggtitle(&quot;Unresolved Complaints as a Function of Neighborhood Population&quot;) +
     scale_color_viridis(name = &quot;Race&quot;, labels = c(&quot;Black&quot;, &quot;Hispanic&quot;, &quot;Other&quot;, &quot;White&quot;), discrete = TRUE)</code></pre>
-<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
 <p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <p>The only trend we were able to discern is a decrease is the proportion of open cases as the percent hispanic population increases.</p>
 </div>
-<div id="days-to-close-given-income-level" class="section level4">
-<h4>Days to close given income level</h4>
+<div id="days-to-close-given-income-level" class="section level3">
+<h3>Days to close given income level</h3>
 <p>We were also curious whether the income bracket of a neighborhood affected the number of days until a complaint was closed.</p>
-<pre class="r"><code>d &lt;- nyc_plots %&gt;%
-    filter(status == &quot;Closed&quot;) %&gt;% 
-    mutate(closed_year = as.numeric(closed_year),
-        closed_month = as.numeric(closed_month),
-        closed_day = as.numeric(closed_day)) %&gt;% 
-    filter(closed_year != 2047) %&gt;% 
-    mutate(diff_year = abs(closed_year - created_year),
-        diff_month = abs(closed_month - created_month),
-        diff_day = abs(closed_day - created_day),
-        diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day)) %&gt;% 
-    select(income_bracket,
-           median_income,
-           borough, 
-           diff_dayt,
-           diff_year,
-           diff_month,
-           diff_day) %&gt;% 
-    filter(diff_dayt &lt;= 7,
-           !is.na(income_bracket)) %&gt;% 
-    group_by(borough, income_bracket, diff_dayt) %&gt;% 
-    summarize(n = n()) %&gt;% 
-    pivot_wider(names_from = diff_dayt, values_from = n) %&gt;% 
-    rename(day0 = `0`,
-           day1 = `1`,
-           day2 = `2`,
-           day3 = `3`,
-           day4 = `4`,
-           day5 = `5`,
-           day6 = `6`,
-           day7 = `7`)</code></pre>
-<pre><code>## Adding missing grouping variables: `area_name`, `created_year`</code></pre>
-<pre class="r"><code>d$total &lt;- d %&gt;% 
-    ungroup() %&gt;% 
-    select(starts_with(&quot;day&quot;)) %&gt;% 
-    rowSums(.)
-
-d %&gt;% 
-    pivot_longer(cols = day0:day7, names_to = &quot;day&quot;, values_to = &quot;day_total&quot;) %&gt;% 
-    mutate(day = recode(day, day0 = 0, day1 = 1, day2 = 2, day3 = 3, day4 = 4, day5 = 5, day6 = 6, day7 = 7),
-           proportion = day_total/total) %&gt;% 
-    ggplot(aes(x = day, y = proportion, group = income_bracket, color = income_bracket)) + 
-    geom_line() +
-    facet_wrap(~borough, scales = &quot;free_x&quot;) +
-    scale_x_continuous(breaks = scales::pretty_breaks(n = 7)) +
-    scale_color_viridis(discrete = TRUE) +
-    xlab(&quot;Days until Complaint Closed&quot;) +
-    ylab(&quot;Proportion Complaints Closed&quot;) +
-    ggtitle(&quot;Proportion of Complaints Closed Since Complaint Filed&quot;) +
-    labs(color = &quot;Income Bracket&quot;)</code></pre>
-<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
-<p>Looking at the total number of complaints largely reflects a difference in the total number of complaints filed by each group. We then looked at the proportion of complaints closed per day within an income bracket.</p>
 <pre class="r"><code>nyc_plots %&gt;%
     filter(status == &quot;Closed&quot;) %&gt;% 
     mutate(closed_year = as.numeric(closed_year),
@@ -580,15 +590,66 @@ d %&gt;%
     ylab(&quot;Total Complaints Closed&quot;) +
     ggtitle(&quot;Number of Complaints Closed Since Complaint Filed&quot;) +
     labs(color = &quot;Income Bracket&quot;)</code></pre>
-<pre><code>## Adding missing grouping variables: `area_name`, `created_year`</code></pre>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>Looking at the total number of complaints largely reflects a difference in the total number of complaints filed by each group. We then looked at the proportion of complaints closed per day within an income bracket.</p>
+<pre class="r"><code>d &lt;- nyc_plots %&gt;%
+    filter(status == &quot;Closed&quot;) %&gt;% 
+    mutate(closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)) %&gt;% 
+    filter(closed_year != 2047) %&gt;% 
+    mutate(diff_year = abs(closed_year - created_year),
+        diff_month = abs(closed_month - created_month),
+        diff_day = abs(closed_day - created_day),
+        diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day)) %&gt;% 
+    select(income_bracket,
+           median_income,
+           borough, 
+           diff_dayt,
+           diff_year,
+           diff_month,
+           diff_day) %&gt;% 
+    filter(diff_dayt &lt;= 7,
+           !is.na(income_bracket)) %&gt;% 
+    group_by(borough, income_bracket, diff_dayt) %&gt;% 
+    summarize(n = n()) %&gt;% 
+    pivot_wider(names_from = diff_dayt, values_from = n) %&gt;% 
+    rename(day0 = `0`,
+           day1 = `1`,
+           day2 = `2`,
+           day3 = `3`,
+           day4 = `4`,
+           day5 = `5`,
+           day6 = `6`,
+           day7 = `7`)
+
+d$total &lt;- d %&gt;% 
+    ungroup() %&gt;% 
+    select(starts_with(&quot;day&quot;)) %&gt;% 
+    rowSums(.)
+
+d %&gt;% 
+    pivot_longer(cols = day0:day7, names_to = &quot;day&quot;, values_to = &quot;day_total&quot;) %&gt;% 
+    mutate(day = recode(day, day0 = 0, day1 = 1, day2 = 2, day3 = 3, day4 = 4, day5 = 5, day6 = 6, day7 = 7),
+           proportion = day_total/total) %&gt;% 
+    ggplot(aes(x = day, y = proportion, group = income_bracket, color = income_bracket)) + 
+    geom_line() +
+    facet_wrap(~borough, scales = &quot;free_x&quot;) +
+    scale_x_continuous(breaks = scales::pretty_breaks(n = 7)) +
+    scale_color_viridis(discrete = TRUE) +
+    xlab(&quot;Days until Complaint Closed&quot;) +
+    ylab(&quot;Proportion Complaints Closed&quot;) +
+    ggtitle(&quot;Proportion of Complaints Closed Since Complaint Filed&quot;) +
+    labs(color = &quot;Income Bracket&quot;)</code></pre>
 <p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <p>This revealed no difference in the number of days to close a complaint given the income bracket of a neighborhood.</p>
 </div>
 </div>
+
+
+
 </div>
-
-
-
+</div>
 
 </div>
 
@@ -620,7 +681,38 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
