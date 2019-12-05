@@ -500,9 +500,59 @@ nyc_plots %>%
 
 # Final Plots:
 
-## Intro Plots
+## Intro plots
 
-#### Proportion of unsolved cases by income bracket
+#### Total number of health complaints filed per neighborhood
+
+```{r}
+
+nyc_plots %>%
+    select(area_name, borough, open_complaint, health_complaint, open_health_complaint) %>% 
+    group_by(area_name, borough, health_complaint) %>%
+    summarize(n = n()) %>% 
+    pivot_wider(names_from = health_complaint, values_from = n) %>% 
+    rename(closed = `0`,
+           open = `1`) %>% 
+    mutate(total_health = (open + closed),
+           proportion = open/(open + closed)) %>% 
+    filter(!is.na(area_name), !is.na(total_health)) %>% 
+    ggplot(aes(x = area_name, y = total_health, fill = borough)) + 
+    geom_col() + 
+    facet_wrap(~borough, scales = "free_x") + 
+    theme(axis.text.x = element_text(angle = 75, hjust = 1)) +
+    xlab("Neighborhood") +
+    ylab("Total Number of Health Complaints") +
+    ggtitle("Total Number of Health Complaints Filed per Neighborhood") +
+    theme(legend.position = "none") +
+    scale_fill_viridis(discrete = TRUE)
+
+```
+
+#### Proportion open complaints per neighborhood
+
+```{r}
+
+nyc_plots %>%
+    select(area_name, borough, open_complaint) %>% 
+    group_by(area_name, borough, open_complaint) %>%
+    summarize(n = n()) %>% 
+    pivot_wider(names_from = open_complaint, values_from = n) %>% 
+    rename(closed = `0`,
+           open = `1`) %>% 
+    mutate(proportion_open = open/(open + closed)) %>% 
+    filter(!is.na(area_name), !is.na(proportion_open)) %>% 
+    ggplot(aes(x = area_name, y = proportion_open, fill = borough)) + 
+    geom_col() + 
+    facet_wrap(~borough, scales = "free_x") + 
+    theme(axis.text.x = element_text(angle = 75, hjust = 1)) +
+    xlab("Neighborhood") +
+    ggtitle("Proportion of Complaints that are Open per Neighborhood") +
+    ylab("Proportion Open") +
+    theme(legend.position = "none") +
+    scale_fill_viridis(discrete = TRUE)
+```
+
+#### Proportion of open complaints by income bracket
 
 ```{r}
 
@@ -527,7 +577,7 @@ p %>% mutate(proportion = (open/(open + closed))) %>%
 
 ```
 
-## Proportion of health related complaints by each income category:
+#### Proportion of health related complaints by each income category:
 
 ```{r}
 
@@ -552,7 +602,10 @@ h %>% mutate(proportion = (health_related/(health_related + other))) %>%
 
 ```
 
-## Median income of each complaint category:
+
+## Income across complaint categories
+
+#### Median income of each complaint category:
 
 ```{r}
 
@@ -574,7 +627,9 @@ nyc_plots %>%
 
 ```
 
-## plot of percent race plotted against proportion open:
+## Differences in open cases by race
+
+#### plot of percent race plotted against proportion open:
 
 ```{r}
 r <- nyc_plots %>% 
@@ -595,10 +650,47 @@ r %>% mutate(proportion = (open/(open + closed))) %>%
     ylab("Proportion Open") +
     ggtitle("Unresolved Complaints as a Function of Neighborhood Population") +
     scale_color_viridis(name = "Race", labels = c("Black", "Hispanic", "Other", "White"), discrete = TRUE)
-    
+
 ```
 
-## days to close given income level
+## Days to close given income level
+
+#### Looking at total cases still open
+
+```{r}
+nyc_plots %>%
+    filter(status == "Closed") %>% 
+    mutate(closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)) %>% 
+    filter(closed_year != 2047) %>% 
+    mutate(diff_year = abs(closed_year - created_year),
+        diff_month = abs(closed_month - created_month),
+        diff_day = abs(closed_day - created_day),
+        diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day)) %>% 
+    select(income_bracket,
+           median_income,
+           borough, 
+           diff_dayt,
+           diff_year,
+           diff_month,
+           diff_day) %>% 
+    filter(diff_dayt <= 7,
+           !is.na(income_bracket)) %>% 
+    group_by(borough, income_bracket, diff_dayt) %>% 
+    summarize(n = n()) %>% 
+    ggplot(aes(x = diff_dayt, y = n, group = income_bracket, color = income_bracket)) + 
+    geom_line() +
+    facet_wrap(~borough, scales = "free_x") +
+    scale_x_continuous(breaks = scales::pretty_breaks(n = 7)) +
+    scale_color_viridis(discrete = TRUE) +
+    xlab("Days until Complaint Closed") +
+    ylab("Total Complaints Closed") +
+    ggtitle("Number of Complaints Closed Since Complaint Filed") +
+    labs(color = "Income Bracket")
+```
+
+#### Then looking at proportion of cases
 
 ```{r}
 
@@ -654,84 +746,3 @@ d %>%
 
 
 ```
-
-not sure if the above plot is more informative, alternative plot:
-
-```{r}
-nyc_plots %>%
-    filter(status == "Closed") %>% 
-    mutate(closed_year = as.numeric(closed_year),
-        closed_month = as.numeric(closed_month),
-        closed_day = as.numeric(closed_day)) %>% 
-    filter(closed_year != 2047) %>% 
-    mutate(diff_year = abs(closed_year - created_year),
-        diff_month = abs(closed_month - created_month),
-        diff_day = abs(closed_day - created_day),
-        diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day)) %>% 
-    select(income_bracket,
-           median_income,
-           borough, 
-           diff_dayt,
-           diff_year,
-           diff_month,
-           diff_day) %>% 
-    filter(diff_dayt <= 7,
-           !is.na(income_bracket)) %>% 
-    group_by(borough, income_bracket, diff_dayt) %>% 
-    summarize(n = n()) %>% 
-    ggplot(aes(x = diff_dayt, y = n, group = income_bracket, color = income_bracket)) + 
-    geom_line() +
-    facet_wrap(~borough, scales = "free_x") +
-    scale_x_continuous(breaks = scales::pretty_breaks(n = 7)) +
-    scale_color_viridis(discrete = TRUE) +
-    xlab("Days until Complaint Closed") +
-    ylab("Total Complaints Closed") +
-    ggtitle("Number of Complaints Closed Since Complaint Filed") +
-    labs(color = "Income Bracket")
-    
-```
-
-## Total number of health complaints filed per neighborhood
-
-```{r}
-
-nyc_plots %>%
-    select(area_name, borough, open_complaint, health_complaint, open_health_complaint) %>% 
-    group_by(area_name, borough, health_complaint) %>%
-    summarize(n = n()) %>% 
-    pivot_wider(names_from = health_complaint, values_from = n) %>% 
-    rename(closed = `0`,
-           open = `1`) %>% 
-    mutate(total_health = (open + closed),
-           proportion = open/(open + closed)) %>% 
-    filter(!is.na(area_name), !is.na(total_health)) %>% 
-    ggplot(aes(x = area_name, y = total_health, fill = borough)) + 
-    geom_col() + 
-    facet_wrap(~borough, scales = "free_x") + 
-    theme(axis.text.x = element_text(angle = 75, hjust = 1)) +
-    xlab("Neighborhood") +
-    ylab("Total Number of Health Complaints") +
-    ggtitle("Total Number of Health Complaints Filed per Neighborhood") +
-    theme(legend.position = "none") +
-    scale_fill_viridis(discrete = TRUE)
-    
-nyc_plots %>%
-    select(area_name, borough, open_complaint) %>% 
-    group_by(area_name, borough, open_complaint) %>%
-    summarize(n = n()) %>% 
-    pivot_wider(names_from = open_complaint, values_from = n) %>% 
-    rename(closed = `0`,
-           open = `1`) %>% 
-    mutate(proportion_open = open/(open + closed)) %>% 
-    filter(!is.na(area_name), !is.na(proportion_open)) %>% 
-    ggplot(aes(x = area_name, y = proportion_open, fill = borough)) + 
-    geom_col() + 
-    facet_wrap(~borough, scales = "free_x") + 
-    theme(axis.text.x = element_text(angle = 75, hjust = 1)) +
-    xlab("Neighborhood") +
-    ggtitle("Proportion of Complaints that are Open per Neighborhood") +
-    ylab("Proportion Open") +
-    theme(legend.position = "none") +
-    scale_fill_viridis(discrete = TRUE)
-```
-
