@@ -815,7 +815,8 @@ p %&gt;% mutate(proportion = (open/(open + closed))) %&gt;%
     xlab(&quot;Income Bracket&quot;) +
     ylab(&quot;Proportion Open&quot;) +
     theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-    scale_fill_viridis(discrete = TRUE)</code></pre>
+    scale_fill_viridis(discrete = TRUE) +
+    labs(fill = &quot;Income Bracket&quot;)</code></pre>
 <p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 </div>
 <div id="proportion-of-health-related-complaints-by-each-income-category" class="section level2">
@@ -869,7 +870,7 @@ h %&gt;% mutate(proportion = (health_related/(health_related + other))) %&gt;%
     summarize(n = n()) %&gt;% 
     pivot_wider(names_from = open_complaint, values_from = n) %&gt;% 
     rename(closed = &#39;0&#39;,
-           open = &#39;1&#39;) 
+           open = &#39;1&#39;)
 
 r %&gt;% mutate(proportion = (open/(open + closed))) %&gt;% 
     ggplot(aes(x = percent_pop, y = proportion, color = race)) +
@@ -884,6 +885,57 @@ r %&gt;% mutate(proportion = (open/(open + closed))) %&gt;%
 </div>
 <div id="days-to-close-given-income-level" class="section level2">
 <h2>days to close given income level</h2>
+<pre class="r"><code>d &lt;- nyc_plots %&gt;%
+    filter(status == &quot;Closed&quot;) %&gt;% 
+    mutate(closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)) %&gt;% 
+    filter(closed_year != 2047) %&gt;% 
+    mutate(diff_year = abs(closed_year - created_year),
+        diff_month = abs(closed_month - created_month),
+        diff_day = abs(closed_day - created_day),
+        diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day)) %&gt;% 
+    select(income_bracket,
+           median_income,
+           borough, 
+           diff_dayt,
+           diff_year,
+           diff_month,
+           diff_day) %&gt;% 
+    filter(diff_dayt &lt;= 7,
+           !is.na(income_bracket)) %&gt;% 
+    group_by(borough, income_bracket, diff_dayt) %&gt;% 
+    summarize(n = n()) %&gt;% 
+    pivot_wider(names_from = diff_dayt, values_from = n) %&gt;% 
+    rename(day0 = `0`,
+           day1 = `1`,
+           day2 = `2`,
+           day3 = `3`,
+           day4 = `4`,
+           day5 = `5`,
+           day6 = `6`,
+           day7 = `7`)</code></pre>
+<pre><code>## Adding missing grouping variables: `area_name`, `created_year`</code></pre>
+<pre class="r"><code>d$total &lt;- d %&gt;% 
+    ungroup() %&gt;% 
+    select(starts_with(&quot;day&quot;)) %&gt;% 
+    rowSums(.)
+
+d %&gt;% 
+    pivot_longer(cols = day0:day7, names_to = &quot;day&quot;, values_to = &quot;day_total&quot;) %&gt;% 
+    mutate(day = recode(day, day0 = 0, day1 = 1, day2 = 2, day3 = 3, day4 = 4, day5 = 5, day6 = 6, day7 = 7),
+           proportion = day_total/total) %&gt;% 
+    ggplot(aes(x = day, y = proportion, group = income_bracket, color = income_bracket)) + 
+    geom_line() +
+    facet_wrap(~borough, scales = &quot;free_x&quot;) +
+    scale_x_continuous(breaks = scales::pretty_breaks(n = 7)) +
+    scale_color_viridis(discrete = TRUE) +
+    xlab(&quot;Days until Complaint Closed&quot;) +
+    ylab(&quot;Proportion Complaints Closed&quot;) +
+    ggtitle(&quot;Proportion of Complaints Closed Since Complaint Filed&quot;) +
+    labs(color = &quot;Income Bracket&quot;)</code></pre>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p>not sure if the above plot is more informative, alternative plot:</p>
 <pre class="r"><code>nyc_plots %&gt;%
     filter(status == &quot;Closed&quot;) %&gt;% 
     mutate(closed_year = as.numeric(closed_year),
@@ -901,16 +953,21 @@ r %&gt;% mutate(proportion = (open/(open + closed))) %&gt;%
            diff_year,
            diff_month,
            diff_day) %&gt;% 
-    filter(diff_dayt &lt; 10,
+    filter(diff_dayt &lt;= 7,
            !is.na(income_bracket)) %&gt;% 
     group_by(borough, income_bracket, diff_dayt) %&gt;% 
     summarize(n = n()) %&gt;% 
     ggplot(aes(x = diff_dayt, y = n, group = income_bracket, color = income_bracket)) + 
     geom_line() +
-    facet_wrap(~borough)</code></pre>
+    facet_wrap(~borough, scales = &quot;free_x&quot;) +
+    scale_x_continuous(breaks = scales::pretty_breaks(n = 7)) +
+    scale_color_viridis(discrete = TRUE) +
+    xlab(&quot;Days until Complaint Closed&quot;) +
+    ylab(&quot;Total Complaints Closed&quot;) +
+    ggtitle(&quot;Number of Complaints Closed Since Complaint Filed&quot;) +
+    labs(color = &quot;Income Bracket&quot;)</code></pre>
 <pre><code>## Adding missing grouping variables: `area_name`, `created_year`</code></pre>
-<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
-<pre class="r"><code># sum total of income by borough</code></pre>
+<p><img src="descript_stats_plots_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 </div>
 </div>
 

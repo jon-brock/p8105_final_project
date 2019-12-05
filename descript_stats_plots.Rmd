@@ -523,7 +523,8 @@ p %>% mutate(proportion = (open/(open + closed))) %>%
     xlab("Income Bracket") +
     ylab("Proportion Open") +
     theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-    scale_fill_viridis(discrete = TRUE)
+    scale_fill_viridis(discrete = TRUE) +
+    labs(fill = "Income Bracket")
 
 ```
 
@@ -585,7 +586,7 @@ r <- nyc_plots %>%
     summarize(n = n()) %>% 
     pivot_wider(names_from = open_complaint, values_from = n) %>% 
     rename(closed = '0',
-           open = '1') 
+           open = '1')
 
 r %>% mutate(proportion = (open/(open + closed))) %>% 
     ggplot(aes(x = percent_pop, y = proportion, color = race)) +
@@ -602,6 +603,62 @@ r %>% mutate(proportion = (open/(open + closed))) %>%
 
 ```{r}
 
+d <- nyc_plots %>%
+    filter(status == "Closed") %>% 
+    mutate(closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)) %>% 
+    filter(closed_year != 2047) %>% 
+    mutate(diff_year = abs(closed_year - created_year),
+        diff_month = abs(closed_month - created_month),
+        diff_day = abs(closed_day - created_day),
+        diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day)) %>% 
+    select(income_bracket,
+           median_income,
+           borough, 
+           diff_dayt,
+           diff_year,
+           diff_month,
+           diff_day) %>% 
+    filter(diff_dayt <= 7,
+           !is.na(income_bracket)) %>% 
+    group_by(borough, income_bracket, diff_dayt) %>% 
+    summarize(n = n()) %>% 
+    pivot_wider(names_from = diff_dayt, values_from = n) %>% 
+    rename(day0 = `0`,
+           day1 = `1`,
+           day2 = `2`,
+           day3 = `3`,
+           day4 = `4`,
+           day5 = `5`,
+           day6 = `6`,
+           day7 = `7`)
+
+d$total <- d %>% 
+    ungroup() %>% 
+    select(starts_with("day")) %>% 
+    rowSums(.)
+
+d %>% 
+    pivot_longer(cols = day0:day7, names_to = "day", values_to = "day_total") %>% 
+    mutate(day = recode(day, day0 = 0, day1 = 1, day2 = 2, day3 = 3, day4 = 4, day5 = 5, day6 = 6, day7 = 7),
+           proportion = day_total/total) %>% 
+    ggplot(aes(x = day, y = proportion, group = income_bracket, color = income_bracket)) + 
+    geom_line() +
+    facet_wrap(~borough, scales = "free_x") +
+    scale_x_continuous(breaks = scales::pretty_breaks(n = 7)) +
+    scale_color_viridis(discrete = TRUE) +
+    xlab("Days until Complaint Closed") +
+    ylab("Proportion Complaints Closed") +
+    ggtitle("Proportion of Complaints Closed Since Complaint Filed") +
+    labs(color = "Income Bracket")
+
+
+```
+
+not sure if the above plot is more informative, alternative plot:
+
+```{r}
 nyc_plots %>%
     filter(status == "Closed") %>% 
     mutate(closed_year = as.numeric(closed_year),
@@ -619,27 +676,20 @@ nyc_plots %>%
            diff_year,
            diff_month,
            diff_day) %>% 
-    filter(diff_dayt < 10,
+    filter(diff_dayt <= 7,
            !is.na(income_bracket)) %>% 
     group_by(borough, income_bracket, diff_dayt) %>% 
     summarize(n = n()) %>% 
     ggplot(aes(x = diff_dayt, y = n, group = income_bracket, color = income_bracket)) + 
     geom_line() +
-    facet_wrap(~borough)
-
-# sum total of income by borough
-
+    facet_wrap(~borough, scales = "free_x") +
+    scale_x_continuous(breaks = scales::pretty_breaks(n = 7)) +
+    scale_color_viridis(discrete = TRUE) +
+    xlab("Days until Complaint Closed") +
+    ylab("Total Complaints Closed") +
+    ggtitle("Number of Complaints Closed Since Complaint Filed") +
+    labs(color = "Income Bracket")
+    
 ```
-
-
-
-
-
-
-
-
-
-
-
 
 
