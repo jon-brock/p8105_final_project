@@ -1,5 +1,5 @@
 ---
-title: "DiscriptiveTables"
+title: "<span style='font-size: 25px'>Descriptive Tables</style>"
 output: 
   html_document:
     code_folding: hide

@@ -276,22 +276,25 @@ $(document).ready(function () {
         <li>
   <a href="index.html">Overview</a>
 </li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li>
+<li>
   <a href="screencast.html">Screencast</a>
 </li>
 <li>
-  <a href="descript_stats_plots.html">Descriptive Statistics Plots</a>
+  <a href="descript_stats_plots.html">Plots</a>
 </li>
 <li>
-  <a href="DiscriptiveTabels.html">Descriptive Tables</a>
-</li>
-<li>
-  <a href="regression_analysis.html">Regression Analysis</a>
+  <a href="DiscriptiveTables.html">Tables</a>
 </li>
 <li>
   <a href="map_visual.html">Visualizations</a>
+</li>
+<li>
+  <a href="regression_analysis.html">Regression</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="compiled.html">Full Report</a>
 </li>
 <li>
   <a href="mailto:&lt;jpb2210@cumc.columbia.edu&gt;">
@@ -337,7 +340,11 @@ Our initial questions included: what is the distribution of 311 complaints in NY
 <p><strong>Exploratory analysis:</strong></p>
 <p>We created an interactive map visual inspired from P8105 in-class map visualizations using the Airbnb dataset. Our map consisted of New York City 311 data combined with community income data from NYC. The primary objective of this visual was to create a map that displayed 311 complaints in NYC by complaint type. Our dataset (2014-2018) contained over 5000000 data points, which was too many data points to create an interactive map. Therefore, we restricted our sample to complaints created in 2018, and we took a random sample of 10000 of the 2018 data points. These data were grouped and colored by complaint type. The map visual includes an interactive aspect where one can click on each data point to reveal a label for the data point. The label describes the complaint type, location or neighborhood, median income, and status of the complaint (open or closed).</p>
 <p><strong>Additional analysis:</strong></p>
-<p>We conducted linear models to examine predictors of number of complaints from 2014-2018 per community district. Our three outcomes were total number of complaints, number of health complaints, and number of unresolved complaints. We looked at these categories of complaints from 2014-2018 predicted by year, and community district level variables including median income (in the 1000s), total population (in the 1000s), percent non-hispanic black and percent Hispanic. For total number of complaints and health complaints we included number of unresolved complaints as a predictor as well.</p>
+<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD We observe cases with complaints that have something to do with tree, paint/plaster, and maintanance take the longest to close 11 - 12 days compared to the other compalaint cases that close with the said interquartile range of 0-9 days. Taking a look at the incomme bracket we observe that higher income brackest mostly complain about the homeless (17.2%) while the lowest income clase mostly complain about heat (20.3%) and maintanance(20.9%) comparing accross all income brackets. Furthermore we can also see that Manhattan has most of its complaints related to air quality (38.8%), hazardous material (30.3%), homeless (77.4%), and noise (30.5%) comparing across all boroughs.</p>
+<div id="additional-analysis-if-you-undertake-formal-statistical-analyses-describe-these-in-detail" class="section level1">
+<h1><strong>Additional analysis:</strong> If you undertake formal statistical analyses, describe these in detail</h1>
+<p>We conducted linear models to examine predictors of number of complaints from 2014-2018 per community district. Our three outcomes were total number of complaints, number of health complaints, and number of unresolved complaints. We looked at these categories of complaints from 2014-2018 predicted by year, and community district level variables including median income (in the 1000s), total population (in the 1000s), percent non-hispanic black and percent Hispanic. For total number of complaints and health complaints we included number of unresolved complaints as a predictor as well.<br />
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; 7a9731ece7509e27d5d3aaa2b8811743528ae2af</p>
 <p><strong>Discussion:</strong></p>
 <p>Between 2014 and 2018, approximately 22 million 311 complaints were made across the 5 boroughs in NYC. We were interested in how complaints differ by borough and community district. Based on our descriptive figures, mapped data, and linear models of NYC 311 complaint data, we see that there are a few key factors that play into how types of complaints are dispersed across the city.</p>
 <p>With approximately 5000 311 complaints made everyday, a majority of which close within the week (66%), it is interesting to look into where the open complaints remain. We see that in four out of the five boroughs, race has an impact on number of unresolved complaints, where an increase in non-Hispanic Black population predicts an increase in number of unresolved complaints. In Manhattan we see the opposite effect, where an increase in non-Hispanic Black population predicts a decrease in number of unresolved complaints.</p>
@@ -345,6 +352,7 @@ Our initial questions included: what is the distribution of 311 complaints in NY
 <p>Ultimately we see that 311 complaints come from all over the city, regardless of community district economic or racial background, and the data is a minefield for answering niche questions about New York City life.</p>
 <hr />
 <p>Team Four Members: Jon Brock, Ava Hamilton, Steven Lawrence, Molly Martorella, Stephen Powers</p>
+</div>
 
 
 
