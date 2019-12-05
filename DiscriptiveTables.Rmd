@@ -218,17 +218,17 @@ Most complaints are closed within a week with a high density of them being close
 summary(tab_clo, title = "NYC 311 Complaints Demographics: table 1")
 
 ```
-In this table we see that individuals in the income bracket 40 - 50k (25.4%) made the most complaints through out all the years in this study while individuals in the 90 - 100k (2.6%)made the least comlaints consistently. 
+In table 2 we see that individuals in the income bracket 40 - 50k (25.4%) made the most complaints through out all the years in this study while individuals in the 90 - 100k (2.6%)made the least comlaints consistently. 
 ```{r, results="asis" }
 summary(tab_inc, title = "NYC 311 Complaints Demographics: table 2 ")
 ```
-In table 2 we see that the most complaints are of noise (17.9%).  Interestingly we see that car/traffic complaints increase overtime that suggest an increase in conjestion. 
+In table 3 we see that the most complaints are of noise (17.9%).  Interestingly we see that car/traffic complaints increase overtime that suggest an increase in conjestion. 
 ```{r,results="asis" }
 summary(tab_comp, title = "NYC 311 Complaints Demographics: table 3 ")
 
 ```
 
-In this table  cases with complaints that have something to do with tree, paint/plaster, and maintanance take the longest to close 11 - 12 days compared to the other compalaint cases that close with the said interquartile range of 0-9 days.  Taking a look at the incomme bracket we observe that higher income brackest mostly complain about the homeless (17.2%) while the lowest income clase mostly complain about heat (20.3%) and maintanance(20.9%) comparing accross all income brackets. Furthermore we can also see that Manhattan has most of its complaints related to air quality (38.8%), hazardous material (30.3%), homeless (77.4%), and noise (30.5%) comparing across all boroughs.  
+For table 4 cases with complaints that have something to do with tree, paint/plaster, and maintanance take the longest to close 11 - 12 days compared to the other compalaint cases that close with the said interquartile range of 0-9 days.  Taking a look at the incomme bracket we observe that higher income brackest mostly complain about the homeless (17.2%) while the lowest income clase mostly complain about heat (20.3%) and maintanance(20.9%) comparing accross all income brackets. Furthermore we can also see that Manhattan has most of its complaints related to air quality (38.8%), hazardous material (30.3%), homeless (77.4%), and noise (30.5%) comparing across all boroughs.  
 
 ```{r,results="asis" }
 summary(tab_com_clo_inc , title = "NYC 311 Complaints Demographics: table 4 ")
