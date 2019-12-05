@@ -147,7 +147,7 @@ inc_df = read_csv("./Med_income_2017.csv") %>%
 nyc_inc = left_join(nyc_tidy, inc_df, by = "community_board")
 ```
 
-#### Creating map visual with n = 10000 
+#### 311 Complaints in NYC in 2018 
 
 ```{r, warning=FALSE}
 pal <- colorFactor(
