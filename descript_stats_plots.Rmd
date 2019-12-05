@@ -12,16 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 theme_set(theme_bw())
 ```
 
-# Data
-
-## NYC 311
-
-Load and tidy the data. Data is 100k randomly sampled complaints from all neighborhoods across all NYC boroughs (600k total samples). Years sampled were 2014-2018.
-
-Data downloaded from:
-https://wetransfer.com/downloads/f8c5d6c17483e279ff56018db9c44cc420191201000026/c5f48b
-
-```{r, warning = FALSE, message = FALSE}
+```{r, warning = FALSE, message = FALSE, include=FALSE}
 
 nyc <- read_csv(file = "./p8105nyc_311_100k.csv") %>% 
     janitor::clean_names()
@@ -130,25 +121,8 @@ nyc_tidy <- nyc %>%
 
 ```
 
-Used skimr::skim, colnames, and levels(factor(nyc$complaint_type)) to investigate and tidy the data. New variables were created to establish a binary status for closed (0) or open (1) complaints.
 
-Key variables include: `year`, `borough`, `community_board`, `complaint_type`, and `status`.
-
-Newly added variables include:
-
-1. `complaint_simp` - based on key words, condenses complaint types into the following categories: Air Quality, Car/Traffic, Collection, Hazard Material, Heat, Homeless, Maintenance, Noise, Paint/Plaster, Sanitation, Street Condition, Tree, and Water/plumbing.
-
-2. `health_complaint` - binary yes (1) or no (0), based on health associated categories within `complaint_simp`.
-
-3. `open_health_complaint` - binary categorization, either health complaint that is open (1), or non-health related complaint or closed health complaint (0).
-
-4. `open_complaint` - binary categorization, closed `status` (0), open (1)
-
-## Income and population characteristics data:
-
-The variable, `community_board`, will be used to left join NYC 311 data with income and population characteristics data sourced from American Community Survey by Community District.
-
-```{r}
+```{r, include=FALSE}
 
 inc_df = read_csv("./Med_income_2017.csv") %>% 
     janitor::clean_names() %>% 
@@ -175,11 +149,7 @@ nyc_inc = left_join(nyc_tidy, inc_df, by = "community_board")
 
 ```
 
-`income_bracket` and `inc_1000s` (rounds income and divides by 1000) variables were added to the neighborhood population characteristics data to ease downstream plots and analyses. The data were left joined using the `community_board` variable.
-
-## Combined and tidied data for plotting
-
-```{r}
+```{r, include=FALSE}
 
 nyc_plots <- nyc_inc %>% 
     group_by(area_name, created_year) %>%
@@ -206,8 +176,6 @@ nyc_plots %>%
         diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day))
 
 ```
-
-Extraneous variables were removed to reduce the dataframe size and ease manipulation of the data.
 
 # Final Plots:
 
