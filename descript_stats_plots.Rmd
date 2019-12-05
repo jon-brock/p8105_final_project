@@ -405,7 +405,80 @@ other med income plot:
     
 ```
 
+density plot of number of days to close by income group or pop proportions?
 
+```{r}
+
+nyc_plots %>%
+    filter(status == "Closed") %>% 
+    mutate(closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)) %>% 
+    filter(closed_year != 2047) %>% 
+    mutate(diff_year = abs(closed_year - created_year),
+        diff_month = abs(closed_month - created_month),
+        diff_day = abs(closed_day - created_day),
+        diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day)) %>% 
+    select(income_bracket,
+           median_income,
+           borough, 
+           diff_dayt,
+           diff_year,
+           diff_month,
+           diff_day) %>% 
+    filter(diff_dayt < 10,
+           !is.na(income_bracket)) %>% 
+    ggplot(aes(x = diff_dayt, y = median_income, group = diff_dayt)) + 
+    geom_boxplot()
+    
+
+nyc_plots %>%
+    filter(status == "Closed") %>% 
+    mutate(closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)) %>% 
+    filter(closed_year != 2047) %>% 
+    mutate(diff_year = abs(closed_year - created_year),
+        diff_month = abs(closed_month - created_month),
+        diff_day = abs(closed_day - created_day),
+        diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day)) %>% 
+    select(per_black_nh:per_other,
+           area_name,
+           created_year,
+           borough, 
+           diff_dayt) %>% 
+    filter(diff_dayt < 10) %>%
+    pivot_longer(cols = per_black_nh:per_other, names_to = "race", values_to = "percent_pop") %>% 
+    filter(!is.na(race),
+           !is.na(percent_pop),
+           !is.na(diff_dayt)) %>%
+    ggplot(aes(x = race, y = diff_dayt, color = race)) +
+    geom_boxplot()
+
+    
+d <- nyc_plots %>% 
+    filter(status == "Closed") %>% 
+    mutate(closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)) %>% 
+    filter(closed_year != 2047) %>% 
+    mutate(diff_year = abs(closed_year - created_year),
+        diff_month = abs(closed_month - created_month),
+        diff_day = abs(closed_day - created_day),
+        diff_dayt = abs(diff_year*365 + diff_month*30 + diff_day)) %>% 
+    select(per_black_nh:per_other, diff_dayt, borough, area_name, created_year) %>% 
+    pivot_longer(cols = per_black_nh:per_other, names_to = "race", values_to = "percent_pop") %>% 
+    filter(!is.na(race),
+           !is.na(percent_pop),
+           !is.na(diff_dayt)) %>% 
+    group_by(race, borough, percent_pop, diff_dayt) %>% 
+    summarize(n = n())
+    
+
+d %>% ggplot(aes(x = percent_pop, y = n, group = race, color = race)) +
+    geom_line()
+
+```
 
 
 # Final Plots:
@@ -429,7 +502,8 @@ p %>% mutate(proportion = (open/(open + closed))) %>%
     ggtitle("Proportion of Open Cases Within Each Income Bracket") +
     xlab("Income Bracket") +
     ylab("Proportion Open") +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1))
+    theme(axis.text.x = element_text(angle = 60, hjust = 1),
+          legend.title = element_text(legend.title))
 
 ```
 
@@ -498,12 +572,6 @@ r %>% mutate(proportion = (open/(open + closed))) %>%
     ggtitle("Unresolved Complaints as a Function of Neighborhood Population")
     
 ```
-
-density plot of number of days to close by income group or pop proportions?
-
-
-
-
 
 
 # Descriptive stastics
