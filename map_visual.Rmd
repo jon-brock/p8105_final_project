@@ -1,0 +1,142 @@
+---
+title: "map_visual"
+author: "Stephen Powers"
+date: "12/4/2019"
+output: github_document
+---
+
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(viridis)
+library(rgdal)
+library(leaflet)
+library(dplyr)
+library(ggplot2)
+# set factors to false
+options(stringsAsFactors = FALSE)
+```
+
+```{r, warning=FALSE}
+nyc <- read_csv(file = "./p8105nyc_311_100k.csv") %>% 
+    janitor::clean_names()
+
+nyc_tidy <- nyc %>% 
+    filter(borough != "Unspecified") %>% 
+    separate(closed_date, 
+             into = c("closed_month","closed_day","closed_year"), 
+             sep = "\\/" ) %>%
+    separate(closed_year, 
+             into = c("closed_year","closed_time"), 
+             sep = " ") %>% 
+    mutate(
+        created_year = as.numeric(created_year),
+        created_month = as.numeric(created_month),
+        created_day = as.numeric(created_day),
+        city = as.factor(city),
+        status = as.factor(status),
+        borough = as.factor(borough),
+        agency = as.factor(agency),
+        complaint_type = as.factor(complaint_type),
+        community_board = as.factor(community_board),
+       open_complaint = ifelse(status == "Closed", yes = 0, no = 1),
+      # open_complaint = ifelse(is.na(closed_year),  yes = 1, no = 0),
+        complaint_simp = case_when(
+            str_detect(complaint_type, 
+                       regex("street", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("sidewalk", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("curb", ignore_case = TRUE)) ~ "Street Condition",
+            str_detect(complaint_type, 
+                       regex("noise", ignore_case = TRUE)) ~ "Noise",
+            str_detect(complaint_type, 
+                       regex("heat", ignore_case = TRUE)) ~ "Heat",
+            str_detect(complaint_type, 
+                       regex("water", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("leak", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("plumbing", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("boiler", ignore_case = TRUE)) ~ "Water/plumbing",
+            str_detect(complaint_type, 
+                       regex("paint", ignore_case = TRUE)) ~ "Paint/Plaster",
+            str_detect(complaint_type, 
+                       regex("asbestos", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("lead", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("hazard", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("mold", ignore_case = TRUE)) ~ "Hazard Material",
+            str_detect(complaint_type, 
+                       regex("elevator", ignore_case = TRUE)) 
+            |str_detect(complaint_type, 
+                        regex("maintenance", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("electric", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("stairs", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("window", ignore_case = TRUE)) 
+            |str_detect(complaint_type, 
+                        regex("appliance", ignore_case = TRUE)) ~ "Maintenance",
+            str_detect(complaint_type, 
+                       regex("sanita", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("rodent", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("dirty", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("sew", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("standing water", ignore_case = TRUE)) ~ "Sanitation",
+            str_detect(complaint_type, 
+                       regex("tree", ignore_case = TRUE)) ~ "Tree",
+            str_detect(complaint_type, 
+                       regex("parking", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("car", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("drive", ignore_case = TRUE))
+            |str_detect(complaint_type,  
+                        regex("vehicle", ignore_case = TRUE))
+            |str_detect(complaint_type,  
+                        regex("traffic", ignore_case = TRUE)) ~ "Car/Traffic",
+            str_detect(complaint_type, 
+                       regex("air", ignore_case = TRUE)) ~ "Air Quality",
+            str_detect(complaint_type, 
+                       regex("collection", ignore_case = TRUE)) ~ "Collection",
+            str_detect(complaint_type, 
+                       regex("homeless", ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex("panhandling", ignore_case = TRUE)) ~ "Homeless"),
+        health_complaint = ifelse(
+            complaint_simp %in% c("Heat", "Water/Plumbing", "Hazard Material", "Sanitation", "Air Quality"), yes = 1, no = 0),
+        complaint_simp = as.factor(complaint_simp),
+        open_health_complaint = case_when(
+            open_complaint == 1 & health_complaint == 1 ~ 1,
+            open_complaint == 0 | health_complaint == 0 ~ 0
+        ),
+       # openCorr = ifelse(status == "Closed", yes = 0, no = 1),
+        status = as.factor(status)
+    )
+```
+
+#### Creating map visualization with n = 10000 
+
+```{r}
+pal <- colorFactor(
+  palette = "viridis",
+  domain = unique(nyc_tidy$complaint_simp))
+
+nyc_tidy %>% 
+  sample_n(10000) %>% 
+    mutate(click_label = str_c(complaint_simp, "")) %>%
+  leaflet() %>% 
+  addProviderTiles(providers$CartoDB.Positron) %>% 
+  addCircleMarkers(lat = ~latitude, lng = ~longitude, radius = .5, color = ~pal(complaint_simp), popup = ~click_label)
+```
+
+
