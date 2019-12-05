@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>DiscriptiveTables</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/sandstone.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 61px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h2 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h3 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h4 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h5 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h6 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Team 4 - Final Project</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Overview</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="screencast.html">Screencast</a>
+</li>
+<li>
+  <a href="descript_stats_plots.html">Descriptive Statistics Plots</a>
+</li>
+<li>
+  <a href="regression_analysis.html">Regression Analysis</a>
+</li>
+<li>
+  <a href="map_visual.html">Visualizations</a>
+</li>
+<li>
+  <a href="mailto:&lt;jpb2210@cumc.columbia.edu&gt;">
+    <span class="fa fa-envelope fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://github.com/jpb2210/p8105_final_project">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">DiscriptiveTables</h1>
+
+</div>
+
+
+<div id="libraries-used" class="section level1">
+<h1>Libraries used</h1>
+<pre class="r"><code>library(tidyverse)
+#install.packages(&quot;arsenal&quot;)
+library(arsenal)</code></pre>
+<div id="read-in-data" class="section level2">
+<h2>read in data</h2>
+<pre class="r"><code>#data previously combined in the nyc_open_data.Rmd file
+nyc &lt;- read_csv(file = &quot;./p8105nyc_311_100k.csv&quot;) %&gt;% 
+    janitor::clean_names()</code></pre>
+<pre><code>## Warning: 13949 parsing failures.
+##    row                   col           expected                        actual                      file
+## 100085 taxi_pick_up_location 1/0/T/F/TRUE/FALSE WEST   50 STREET AND BROADWAY &#39;./p8105nyc_311_100k.csv&#39;
+## 100150 taxi_pick_up_location 1/0/T/F/TRUE/FALSE JFK Airport                   &#39;./p8105nyc_311_100k.csv&#39;
+## 100172 taxi_pick_up_location 1/0/T/F/TRUE/FALSE 625 EAST 14 STREET MANHATTAN  &#39;./p8105nyc_311_100k.csv&#39;
+## 100215 taxi_pick_up_location 1/0/T/F/TRUE/FALSE Other                         &#39;./p8105nyc_311_100k.csv&#39;
+## 100268 taxi_pick_up_location 1/0/T/F/TRUE/FALSE Other                         &#39;./p8105nyc_311_100k.csv&#39;
+## ...... ..................... .................. ............................. .........................
+## See problems(...) for more details.</code></pre>
+<pre class="r"><code>#creating variables that aggragate similiar complaints. 
+nyc_tidy &lt;- nyc %&gt;%   
+    filter(borough != &quot;Unspecified&quot;) %&gt;%  
+    separate(closed_date, 
+             into = c(&quot;closed_month&quot;,&quot;closed_day&quot;,&quot;closed_year&quot;), 
+             sep = &quot;\\/&quot; ) %&gt;%
+    separate(closed_year, 
+             into = c(&quot;closed_year&quot;,&quot;closed_time&quot;), 
+             sep = &quot; &quot;) %&gt;% 
+    mutate(
+        created_year = as.numeric(created_year),
+        created_month = as.numeric(created_month),
+        created_day = as.numeric(created_day),
+        city = as.factor(city),
+        status = as.factor(status),
+        borough = as.factor(borough),
+        agency = as.factor(agency),
+        complaint_type = as.factor(complaint_type),
+        community_board = as.factor(community_board),
+        open_complaint = ifelse(status == &quot;Closed&quot;, yes = 0, no = 1),
+        # open_complaint = ifelse(is.na(closed_year),  yes = 1, no = 0),
+        complaint_simp = case_when(
+            str_detect(complaint_type, 
+                       regex(&quot;street&quot;, ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex(&quot;sidewalk&quot;, ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex(&quot;curb&quot;, ignore_case = TRUE)) ~ &quot;Street Condition&quot;,
+            str_detect(complaint_type, 
+                       regex(&quot;noise&quot;, ignore_case = TRUE)) ~ &quot;Noise&quot;,
+            str_detect(complaint_type, 
+                       regex(&quot;heat&quot;, ignore_case = TRUE)) ~ &quot;Heat&quot;,
+            str_detect(complaint_type, 
+                       regex(&quot;water&quot;, ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex(&quot;leak&quot;, ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex(&quot;plumbing&quot;, ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex(&quot;boiler&quot;, ignore_case = TRUE)) ~ &quot;Water/plumbing&quot;,
+            str_detect(complaint_type, 
+                       regex(&quot;paint&quot;, ignore_case = TRUE)) ~ &quot;Paint/Plaster&quot;,
+            str_detect(complaint_type, 
+                       regex(&quot;asbestos&quot;, ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex(&quot;lead&quot;, ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex(&quot;hazard&quot;, ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex(&quot;mold&quot;, ignore_case = TRUE)) ~ &quot;Hazard Material&quot;,
+            str_detect(complaint_type, 
+                       regex(&quot;elevator&quot;, ignore_case = TRUE)) 
+            |str_detect(complaint_type, 
+                        regex(&quot;maintenance&quot;, ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex(&quot;electric&quot;, ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex(&quot;stairs&quot;, ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex(&quot;window&quot;, ignore_case = TRUE)) 
+            |str_detect(complaint_type, 
+                        regex(&quot;appliance&quot;, ignore_case = TRUE)) ~ &quot;Maintenance&quot;,
+            str_detect(complaint_type, 
+                       regex(&quot;sanita&quot;, ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex(&quot;rodent&quot;, ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex(&quot;dirty&quot;, ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex(&quot;sew&quot;, ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex(&quot;standing water&quot;, ignore_case = TRUE)) ~ &quot;Sanitation&quot;,
+            str_detect(complaint_type, 
+                       regex(&quot;tree&quot;, ignore_case = TRUE)) ~ &quot;Tree&quot;,
+            str_detect(complaint_type, 
+                       regex(&quot;parking&quot;, ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex(&quot;car&quot;, ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex(&quot;drive&quot;, ignore_case = TRUE))
+            |str_detect(complaint_type,  
+                        regex(&quot;vehicle&quot;, ignore_case = TRUE))
+            |str_detect(complaint_type,  
+                        regex(&quot;traffic&quot;, ignore_case = TRUE)) ~ &quot;Car/Traffic&quot;,
+            str_detect(complaint_type, 
+                       regex(&quot;air&quot;, ignore_case = TRUE)) ~ &quot;Air Quality&quot;,
+            str_detect(complaint_type, 
+                       regex(&quot;collection&quot;, ignore_case = TRUE)) ~ &quot;Collection&quot;,
+            str_detect(complaint_type, 
+                       regex(&quot;homeless&quot;, ignore_case = TRUE))
+            |str_detect(complaint_type, 
+                        regex(&quot;panhandling&quot;, ignore_case = TRUE)) ~ &quot;Homeless&quot;),
+        health_complaint = ifelse(
+            complaint_simp %in% c(&quot;Heat&quot;, &quot;Water/Plumbing&quot;, &quot;Hazard Material&quot;, &quot;Sanitation&quot;, &quot;Air Quality&quot;), yes = 1, no = 0),
+        complaint_simp = as.factor(complaint_simp),
+        open_health_complaint = case_when(
+            open_complaint == 1 &amp; health_complaint == 1 ~ 1,
+            open_complaint == 0 | health_complaint == 0 ~ 0
+        ),
+        # openCorr = ifelse(status == &quot;Closed&quot;, yes = 0, no = 1),
+        status = as.factor(status)
+    )</code></pre>
+<pre><code>## Warning: Expected 2 pieces. Additional pieces discarded in 489924 rows [1, 2, 3,
+## 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, ...].</code></pre>
+</div>
+</div>
+<div id="adding-community-district-data" class="section level1">
+<h1>Adding community district data</h1>
+<pre class="r"><code>inc_df = read_csv(&quot;./Med_income_2017.csv&quot;) %&gt;% 
+    janitor::clean_names() %&gt;% 
+    mutate(
+        pop_1000s = round(total_population/1000, 0),
+        inc_1000s = round(median_income/1000, 1),
+        income_bracket = case_when(
+            median_income &gt;= 20000 &amp; median_income &lt;= 30000 ~ &quot;20-30k&quot;,
+            median_income &gt; 30000 &amp; median_income &lt;= 40000 ~ &quot;30-40k&quot;,
+            median_income &gt; 40000 &amp; median_income &lt;= 50000 ~ &quot;40-50k&quot;,
+            median_income &gt; 50000 &amp; median_income &lt;= 60000 ~ &quot;50-60k&quot;,
+            median_income &gt; 60000 &amp; median_income &lt;= 70000 ~ &quot;60-70k&quot;,
+            median_income &gt; 70000 &amp; median_income &lt;= 80000 ~ &quot;70-80k&quot;,
+            median_income &gt; 80000 &amp; median_income &lt;= 90000 ~ &quot;80-90k&quot;,
+            median_income &gt; 90000 &amp; median_income &lt;= 100000 ~ &quot;90-100k&quot;,
+            median_income &gt; 100000 &amp; median_income &lt;= 125000 ~ &quot;100-125k&quot;,
+            median_income &gt; 125000 &amp; median_income &lt;= 150000 ~ &quot;125k+&quot;,
+        ),
+        income_bracket = as.factor(income_bracket)
+    )
+
+# adding income to data and removing any observations that do not have a specific community board to link to income
+add_inc = left_join(nyc_tidy, inc_df, by = &quot;community_board&quot;) %&gt;% 
+    filter(is.na(median_income) == FALSE) %&gt;% 
+    mutate(
+        year_fac = as.factor(created_year)
+    )</code></pre>
+<pre><code>## Warning: Column `community_board` joining factor and character vector, coercing
+## into character vector</code></pre>
+</div>
+<div id="calculate-days-to-close" class="section level1">
+<h1>Calculate days to close</h1>
+<pre class="r"><code>#data with days to close information
+nyc_data &lt;- add_inc %&gt;% 
+ filter(status == &quot;Closed&quot; &amp; closed_year &lt;= 2018) %&gt;% 
+    mutate(
+        closed_year = as.numeric(closed_year),
+        closed_month = as.numeric(closed_month),
+        closed_day = as.numeric(closed_day)
+    ) %&gt;% 
+    mutate(
+        diff_year = closed_year - created_year,
+        diff_month = closed_month - created_month,
+        diff_day = closed_day - created_day,
+        diff_dayt =  diff_year*365 + diff_month*30 + diff_day
+       # diff_dayt = as.factor(diff_dayt)
+  ) %&gt;% 
+  mutate(
+    status = as.character(status)
+  ) %&gt;% 
+  mutate(
+    income_bracket = forcats::fct_relevel(income_bracket, &quot;125k+&quot;, &quot;100-125k&quot;, &quot;90-100k&quot;, &quot;80-90k&quot;, &quot;70-80k&quot;, &quot;60-70k&quot;, &quot;50-60k&quot;, &quot;40-50k&quot;, &quot;30-40k&quot;, &quot;20-30k&quot;)
+  ) %&gt;% 
+  drop_na(closed_year)</code></pre>
+</div>
+<div id="tables" class="section level1">
+<h1>Tables</h1>
+<pre class="r"><code>mycontrols  &lt;- tableby.control(test=F, total=T,
+                               cat.simplify = F,
+                               numeric.stats=c(&quot;N&quot;, &quot;median&quot;, &quot;q1q3&quot;),
+                               cat.stats=c(&quot;countpct&quot;),
+                               stats.labels=list(N=&#39;Count&#39;, median=&#39;Median&#39;, q1q3=&#39;Q1,Q3&#39;),
+                               digits = 1)
+
+tab_clo&lt;- tableby(created_year ~ diff_dayt + status  + borough, data = nyc_data, control = mycontrols)
+
+tab_inc&lt;- tableby(created_year ~ income_bracket, data = nyc_data, control = mycontrols)
+
+tab_comp &lt;- tableby(created_year ~ complaint_simp, data = nyc_data, control = mycontrols)
+
+tab_com_clo_inc &lt;- tableby(complaint_simp ~ diff_dayt +income_bracket + borough , data = nyc_data, control = mycontrols)</code></pre>
+<p>In this table I calculated the median and interquartile range of how many days it took for cases to close. Given the data is skewed right I reported the median values being <code>1</code> to <code>2</code> days and largest interqutile range being <code>0 - 9</code> and smallest being <code>0 - 6</code> acroos years <code>2014 - 2018</code>.</p>
+<p>Most complaints are closed within a week with a high density of them being closed within a day or two. Additionally, we observe even distribution across all boroughs and closed cases.</p>
+<pre class="r"><code>summary(tab_clo, title = &quot;NYC 311 Complaints Demographics &quot;)</code></pre>
+<pre><code>## 
+## Table: NYC 311 Complaints Demographics 
+## 
+## |                                | 2014 (N=76023) | 2015 (N=86641) | 2016 (N=89461) | 2017 (N=93844) | 2018 (N=100931) | Total (N=446900) |
+## |:-------------------------------|:--------------:|:--------------:|:--------------:|:--------------:|:---------------:|:----------------:|
+## |**diff_dayt**                   |                |                |                |                |                 |                  |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;Count         |     76023      |     86641      |     89461      |     93844      |     100931      |      446900      |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;Median        |      2.0       |      2.0       |      1.0       |      1.0       |       2.0       |       2.0        |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;Q1,Q3         |    0.0, 9.0    |    0.0, 8.0    |    0.0, 7.0    |    0.0, 6.0    |    0.0, 6.0     |     0.0, 7.0     |
+## |**status**                      |                |                |                |                |                 |                  |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;Closed        | 76023 (100.0%) | 86641 (100.0%) | 89461 (100.0%) | 93844 (100.0%) | 100931 (100.0%) | 446900 (100.0%)  |
+## |**borough**                     |                |                |                |                |                 |                  |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;BRONX         | 15756 (20.7%)  | 17458 (20.1%)  | 18572 (20.8%)  | 18580 (19.8%)  |  19313 (19.1%)  |  89679 (20.1%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;BROOKLYN      | 15448 (20.3%)  | 17367 (20.0%)  | 17580 (19.7%)  | 18666 (19.9%)  |  20391 (20.2%)  |  89452 (20.0%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;MANHATTAN     | 15673 (20.6%)  | 18096 (20.9%)  | 19603 (21.9%)  | 18174 (19.4%)  |  18189 (18.0%)  |  89735 (20.1%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;QUEENS        | 14954 (19.7%)  | 17039 (19.7%)  | 16863 (18.8%)  | 18953 (20.2%)  |  20922 (20.7%)  |  88731 (19.9%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;STATEN ISLAND | 14192 (18.7%)  | 16681 (19.3%)  | 16843 (18.8%)  | 19471 (20.7%)  |  22116 (21.9%)  |  89303 (20.0%)   |</code></pre>
+<pre class="r"><code>#In this table we see that individuals in the income bracket 40 - 50k (25.4%) made the most complaints through out all the years in this study while individuals in the 90 - 100k (2.6%)made the least comlaints consistently. 
+
+summary(tab_inc, title = &quot;NYC 311 Complaints Demographics &quot;)</code></pre>
+<pre><code>## 
+## Table: NYC 311 Complaints Demographics 
+## 
+## |                           | 2014 (N=76023) | 2015 (N=86641) | 2016 (N=89461) | 2017 (N=93844) | 2018 (N=100931) | Total (N=446900) |
+## |:--------------------------|:--------------:|:--------------:|:--------------:|:--------------:|:---------------:|:----------------:|
+## |**income_bracket**         |                |                |                |                |                 |                  |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;125k+    |  3212 (4.2%)   |  3433 (4.0%)   |  3790 (4.2%)   |  3394 (3.6%)   |   3518 (3.5%)   |   17347 (3.9%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;100-125k |  4121 (5.4%)   |  4741 (5.5%)   |  5315 (5.9%)   |  5191 (5.5%)   |   4986 (4.9%)   |   24354 (5.4%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;90-100k  |  1855 (2.4%)   |  2310 (2.7%)   |  2671 (3.0%)   |  2373 (2.5%)   |   2477 (2.5%)   |   11686 (2.6%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;80-90k   |  4137 (5.4%)   |  5291 (6.1%)   |  5033 (5.6%)   |  6299 (6.7%)   |   6993 (6.9%)   |   27753 (6.2%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;70-80k   |  6514 (8.6%)   |  7501 (8.7%)   |  7603 (8.5%)   |  8599 (9.2%)   |   9808 (9.7%)   |   40025 (9.0%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;60-70k   | 11482 (15.1%)  | 12616 (14.6%)  | 12791 (14.3%)  | 14420 (15.4%)  |  15729 (15.6%)  |  67038 (15.0%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;50-60k   | 12763 (16.8%)  | 14389 (16.6%)  | 14696 (16.4%)  | 15807 (16.8%)  |  17946 (17.8%)  |  75601 (16.9%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;40-50k   | 19825 (26.1%)  | 22656 (26.1%)  | 23089 (25.8%)  | 23391 (24.9%)  |  24424 (24.2%)  |  113385 (25.4%)  |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;30-40k   |  4159 (5.5%)   |  4608 (5.3%)   |  4529 (5.1%)   |  4712 (5.0%)   |   4826 (4.8%)   |   22834 (5.1%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;20-30k   |  7955 (10.5%)  |  9096 (10.5%)  |  9944 (11.1%)  |  9658 (10.3%)  |  10224 (10.1%)  |  46877 (10.5%)   |</code></pre>
+<pre class="r"><code>summary(tab_comp, title = &quot;NYC 311 Complaints Demographics &quot;)</code></pre>
+<pre><code>## 
+## Table: NYC 311 Complaints Demographics 
+## 
+## |                                   | 2014 (N=76023) | 2015 (N=86641) | 2016 (N=89461) | 2017 (N=93844) | 2018 (N=100931) | Total (N=446900) |
+## |:----------------------------------|:--------------:|:--------------:|:--------------:|:--------------:|:---------------:|:----------------:|
+## |**complaint_simp**                 |                |                |                |                |                 |                  |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;Air Quality      |   414 (0.7%)   |   404 (0.5%)   |   482 (0.6%)   |   459 (0.6%)   |   484 (0.5%)    |   2243 (0.6%)    |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;Car/Traffic      |  7607 (12.0%)  | 10298 (13.8%)  | 12161 (15.7%)  | 14294 (17.8%)  |  15411 (17.4%)  |  59771 (15.5%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;Collection       |  1286 (2.0%)   |  1398 (1.9%)   |  1627 (2.1%)   |  3714 (4.6%)   |  9956 (11.2%)   |   17981 (4.7%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;Hazard Material  |   300 (0.5%)   |   282 (0.4%)   |   657 (0.8%)   |   505 (0.6%)   |   566 (0.6%)    |   2310 (0.6%)    |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;Heat             |  8011 (12.6%)  |  8438 (11.3%)  |  8545 (11.0%)  |  8124 (10.1%)  |   7855 (8.9%)   |  40973 (10.6%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;Homeless         |   192 (0.3%)   |   458 (0.6%)   |  1905 (2.5%)   |  1088 (1.4%)   |   784 (0.9%)    |   4427 (1.2%)    |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;Maintenance      |  4435 (7.0%)   |  5201 (7.0%)   |  5123 (6.6%)   |  4982 (6.2%)   |   5132 (5.8%)   |   24873 (6.5%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;Noise            | 12018 (18.9%)  | 13242 (17.8%)  | 14132 (18.2%)  | 14804 (18.4%)  |  14492 (16.3%)  |  68688 (17.9%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;Paint/Plaster    |  2810 (4.4%)   |  2695 (3.6%)   |  2286 (2.9%)   |  2017 (2.5%)   |   2135 (2.4%)   |   11943 (3.1%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;Sanitation       |  7958 (12.5%)  |  8925 (12.0%)  |  8699 (11.2%)  |  8702 (10.8%)  |  9095 (10.3%)   |  43379 (11.3%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;Street Condition |  8304 (13.1%)  | 12433 (16.7%)  | 11222 (14.5%)  | 11452 (14.3%)  |  11553 (13.0%)  |  54964 (14.3%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;Tree             |  2314 (3.6%)   |  1992 (2.7%)   |  2183 (2.8%)   |  2303 (2.9%)   |   2651 (3.0%)   |   11443 (3.0%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;Water/plumbing   |  7969 (12.5%)  |  8799 (11.8%)  |  8634 (11.1%)  |  7820 (9.7%)   |   8555 (9.6%)   |  41777 (10.9%)   |</code></pre>
+<pre class="r"><code>#In this table I observe that cases with complaints that have something to do with tree, paint/plaster, and maintanance take the longest to close 11 - 12 days compared to the other compalaint cases that close with the said interquartile range of 0-9 days.  Taking a look at the incomme bracket we observe that higher income brackest mostly complain about the homeless (17.2%) while the lowest income clase mostly complain about heat (20.3%) and maintanance(20.9%) comparing accross all income brackets. Furthermore we can also see that Manhattan has most of its complaints related to air quality (38.8%), hazardous material (30.3%), homeless (77.4%), and noise (30.5%) comparing across all boroughs.  
+
+summary(tab_com_clo_inc , title = &quot;NYC 311 Complaints Demographics &quot;)</code></pre>
+<pre><code>## 
+## Table: NYC 311 Complaints Demographics 
+## 
+## |                                | Air Quality (N=2243) | Car/Traffic (N=59771) | Collection (N=17981) | Hazard Material (N=2310) | Heat (N=40973) | Homeless (N=4427) | Maintenance (N=24873) | Noise (N=68688) | Paint/Plaster (N=11943) | Sanitation (N=43379) | Street Condition (N=54964) | Tree (N=11443) | Water/plumbing (N=41777) | Total (N=384772) |
+## |:-------------------------------|:--------------------:|:---------------------:|:--------------------:|:------------------------:|:--------------:|:-----------------:|:---------------------:|:---------------:|:-----------------------:|:--------------------:|:--------------------------:|:--------------:|:------------------------:|:----------------:|
+## |**diff_dayt**                   |                      |                       |                      |                          |                |                   |                       |                 |                         |                      |                            |                |                          |                  |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;Count         |         2243         |         59771         |        17981         |           2310           |     40973      |       4427        |         24873         |      68688      |          11943          |        43379         |           54964            |     11443      |          41777           |      384772      |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;Median        |         3.0          |          0.0          |         2.0          |           1.0            |      3.0       |        0.0        |         11.0          |       0.0       |          11.0           |         3.0          |            1.0             |      12.0      |           5.0            |       1.0        |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;Q1,Q3         |       1.0, 6.0       |       0.0, 0.0        |       1.0, 4.0       |         0.0, 1.0         |    2.0, 5.0    |     0.0, 0.0      |       5.0, 21.0       |    0.0, 1.0     |        6.0, 19.0        |      1.0, 11.0       |          0.0, 7.0          |   2.0, 84.0    |        1.0, 16.0         |     0.0, 6.0     |
+## |**income_bracket**              |                      |                       |                      |                          |                |                   |                       |                 |                         |                      |                            |                |                          |                  |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;125k+         |     239 (10.7%)      |      1504 (2.5%)      |      448 (2.5%)      |        158 (6.8%)        |  1044 (2.5%)   |    761 (17.2%)    |      532 (2.1%)       |   4027 (5.9%)   |       209 (1.7%)        |     1085 (2.5%)      |        2218 (4.0%)         |   337 (2.9%)   |       1200 (2.9%)        |   13762 (3.6%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;100-125k      |     338 (15.1%)      |      2028 (3.4%)      |      837 (4.7%)      |       286 (12.4%)        |  1754 (4.3%)   |   1722 (38.9%)    |      950 (3.8%)       |   4796 (7.0%)   |       306 (2.6%)        |     1571 (3.6%)      |        2630 (4.8%)         |   369 (3.2%)   |       1858 (4.4%)        |   19445 (5.1%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;90-100k       |      129 (5.8%)      |      1208 (2.0%)      |      357 (2.0%)      |        94 (4.1%)         |   780 (1.9%)   |    409 (9.2%)     |      493 (2.0%)       |   2672 (3.9%)   |       200 (1.7%)        |      837 (1.9%)      |        1262 (2.3%)         |   187 (1.6%)   |        962 (2.3%)        |   9590 (2.5%)    |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;80-90k        |      92 (4.1%)       |      3745 (6.3%)      |     2339 (13.0%)     |        123 (5.3%)        |   201 (0.5%)   |     13 (0.3%)     |      404 (1.6%)       |   1569 (2.3%)   |        51 (0.4%)        |     3200 (7.4%)      |        6205 (11.3%)        |  1796 (15.7%)  |       2455 (5.9%)        |   22193 (5.8%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;70-80k        |      102 (4.5%)      |     6681 (11.2%)      |     3195 (17.8%)     |        211 (9.1%)        |   783 (1.9%)   |     45 (1.0%)     |      849 (3.4%)       |   3246 (4.7%)   |       233 (2.0%)        |     4562 (10.5%)     |        7647 (13.9%)        |  2169 (19.0%)  |       3740 (9.0%)        |   33463 (8.7%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;60-70k        |     312 (13.9%)      |     14040 (23.5%)     |     3800 (21.1%)     |       340 (14.7%)        |  4698 (11.5%)  |    210 (4.7%)     |     2477 (10.0%)      |  8799 (12.8%)   |       1132 (9.5%)       |     6531 (15.1%)     |        8305 (15.1%)        |  2177 (19.0%)  |       5288 (12.7%)       |  58109 (15.1%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;50-60k        |     348 (15.5%)      |     12436 (20.8%)     |     4119 (22.9%)     |       361 (15.6%)        |  4352 (10.6%)  |    241 (5.4%)     |     3589 (14.4%)      |  10206 (14.9%)  |      1460 (12.2%)       |     8042 (18.5%)     |       10144 (18.5%)        |  2392 (20.9%)  |       6834 (16.4%)       |  64524 (16.8%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;40-50k        |     479 (21.4%)      |     12701 (21.2%)     |     2314 (12.9%)     |       568 (24.6%)        | 15301 (37.3%)  |    715 (16.2%)    |     8272 (33.3%)      |  21448 (31.2%)  |      4417 (37.0%)       |    10344 (23.8%)     |       11292 (20.5%)        |  1600 (14.0%)  |      11180 (26.8%)       |  100631 (26.2%)  |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;30-40k        |      66 (2.9%)       |      2401 (4.0%)      |      265 (1.5%)      |        57 (2.5%)         |  3753 (9.2%)   |     74 (1.7%)     |      2099 (8.4%)      |   3725 (5.4%)   |       1175 (9.8%)       |     2363 (5.4%)      |        1865 (3.4%)         |   174 (1.5%)   |       2552 (6.1%)        |   20569 (5.3%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;20-30k        |      138 (6.2%)      |      3027 (5.1%)      |      307 (1.7%)      |        112 (4.8%)        |  8307 (20.3%)  |    237 (5.4%)     |     5208 (20.9%)      |  8200 (11.9%)   |      2760 (23.1%)       |     4844 (11.2%)     |        3396 (6.2%)         |   242 (2.1%)   |       5708 (13.7%)       |  42486 (11.0%)   |
+## |**borough**                     |                      |                       |                      |                          |                |                   |                       |                 |                         |                      |                            |                |                          |                  |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;BRONX         |     265 (11.8%)      |     8971 (15.0%)      |      995 (5.5%)      |       266 (11.5%)        | 15792 (38.5%)  |    204 (4.6%)     |     8466 (34.0%)      |  14523 (21.1%)  |      4661 (39.0%)       |     9059 (20.9%)     |        7279 (13.2%)        |   860 (7.5%)   |       9816 (23.5%)       |  81157 (21.1%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;BROOKLYN      |     410 (18.3%)      |     14065 (23.5%)     |     3580 (19.9%)     |       508 (22.0%)        |  8676 (21.2%)  |    386 (8.7%)     |     5595 (22.5%)      |  13751 (20.0%)  |      2837 (23.8%)       |     8902 (20.5%)     |        9353 (17.0%)        |  2048 (17.9%)  |       8508 (20.4%)       |  78619 (20.4%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;MANHATTAN     |     870 (38.8%)      |      5645 (9.4%)      |     1446 (8.0%)      |       701 (30.3%)        |  9917 (24.2%)  |   3425 (77.4%)    |     5311 (21.4%)      |  20930 (30.5%)  |      2505 (21.0%)       |     6269 (14.5%)     |        9596 (17.5%)        |   900 (7.9%)   |       7926 (19.0%)       |  75441 (19.6%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;QUEENS        |     365 (16.3%)      |     18643 (31.2%)     |     5148 (28.6%)     |       406 (17.6%)        |  4926 (12.0%)  |    279 (6.3%)     |     2927 (11.8%)      |  11565 (16.8%)  |       1157 (9.7%)       |     8469 (19.5%)     |       11928 (21.7%)        |  3365 (29.4%)  |       6947 (16.6%)       |  76125 (19.8%)   |
+## |&amp;nbsp;&amp;nbsp;&amp;nbsp;STATEN ISLAND |     333 (14.8%)      |     12447 (20.8%)     |     6812 (37.9%)     |       429 (18.6%)        |  1662 (4.1%)   |    133 (3.0%)     |     2574 (10.3%)      |  7919 (11.5%)   |       783 (6.6%)        |    10680 (24.6%)     |       16808 (30.6%)        |  4270 (37.3%)  |       8580 (20.5%)       |  73430 (19.1%)   |</code></pre>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

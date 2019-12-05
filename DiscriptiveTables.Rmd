@@ -1,26 +1,29 @@
 ---
 title: "DiscriptiveTables"
-output: html_document
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float: true
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
-```{r}
+# Libraries used
+```{r, message=FALSE, warning=FALSE}
 library(tidyverse)
 #install.packages("arsenal")
 library(arsenal)
-library(tidyverse)
-library(viridis)
-library(mgcv)
-
 ```
 ## read in data
 ```{r message = FALSE}
+
+#data previously combined in the nyc_open_data.Rmd file
 nyc <- read_csv(file = "./p8105nyc_311_100k.csv") %>% 
     janitor::clean_names()
 
+#creating variables that aggragate similiar complaints. 
 nyc_tidy <- nyc %>%   
     filter(borough != "Unspecified") %>%  
     separate(closed_date, 
@@ -126,7 +129,7 @@ nyc_tidy <- nyc %>%
 
 ```
 
-Adding community district data
+# Adding community district data
 ```{r message = FALSE}
 
 inc_df = read_csv("./Med_income_2017.csv") %>% 
@@ -160,7 +163,7 @@ add_inc = left_join(nyc_tidy, inc_df, by = "community_board") %>%
 ```
 
 
-
+# Calculate days to close
 ```{r}
 
 #data with days to close information
@@ -187,8 +190,7 @@ nyc_data <- add_inc %>%
   drop_na(closed_year)
   
 ```
-
-
+# Tables
 ```{r, results="asis" }
 
 mycontrols  <- tableby.control(test=F, total=T,
@@ -206,8 +208,12 @@ tab_comp <- tableby(created_year ~ complaint_simp, data = nyc_data, control = my
 
 tab_com_clo_inc <- tableby(complaint_simp ~ diff_dayt +income_bracket + borough , data = nyc_data, control = mycontrols)
 
+```
 
-#in this table I calculated the median and interquartile range of how many days it took for cases to close.  Given the data is skewed right I reported the median values being 1 to 2 days and largest interqutile range being 0 - 9 and smallest being 0 - 6 acroos years 2014 - 2018.   With this table we see that most complaints are closed within a week with a high density of them becing clases within a day or two. Additionally, we observe even distribution across all boroughs and closed cases. 
+In this table I calculated the median and interquartile range of how many days it took for cases to close.  Given the data is skewed right I reported the median values being `1` to `2` days and largest interqutile range being `0 - 9` and smallest being `0 - 6` acroos years `2014 - 2018`. 
+
+Most complaints are closed within a week with a high density of them being closed within a day or two. Additionally, we observe even distribution across all boroughs and closed cases. 
+```{r}
 summary(tab_clo, title = "NYC 311 Complaints Demographics ")
 
 #In this table we see that individuals in the income bracket 40 - 50k (25.4%) made the most complaints through out all the years in this study while individuals in the 90 - 100k (2.6%)made the least comlaints consistently. 
